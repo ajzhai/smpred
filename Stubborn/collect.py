@@ -18,7 +18,7 @@ def main():
     nav_agent = StubbornAgent(args=args_2,task_config=config)
     hab_env = Env(config=config)
     
-    num_episodes = len(self._env.episodes)
+    num_episodes = len(hab_env.episodes)
     print(num_episodes)
     exit(0)
     count_episodes = 0
