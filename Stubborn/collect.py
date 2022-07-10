@@ -16,7 +16,7 @@ def main():
     config_paths = os.environ["CHALLENGE_CONFIG_FILE"]
     config = habitat.get_config(config_paths)
     nav_agent = StubbornAgent(args=args_2,task_config=config)
-    hab_env = Env(config=config_env)
+    hab_env = Env(config=config)
     
     num_episodes = len(self._env.episodes)
     print(num_episodes)
