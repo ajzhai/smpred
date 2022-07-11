@@ -45,7 +45,7 @@ def main():
             observations = hab_env.step(action)
             
             if step_i % 50 == 0:
-                print('episode %d, step %d' % [count_episodes, step_i])
+                print('episode %d, step %d' % (count_episodes, step_i))
                 sys.stdout.flush()
             
             step_i += 1
