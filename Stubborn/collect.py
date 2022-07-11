@@ -39,7 +39,7 @@ def main():
 
         step_i = 0
         seq_i = 0
-        full_map_seq = np.zeros((5, 4 + args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h), dtype=bool)
+        full_map_seq = np.zeros((5, 4 + args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h), dtype=np.uint8)
         while not hab_env.episode_over:
             action = nav_agent.act(observations)
             observations = hab_env.step(action)
@@ -50,8 +50,8 @@ def main():
             
             step_i += 1
             if step_i in [25, 50, 75, 100, 500]:
-                full_map = nav_agent.agent_states.full_map.cpu().numpy()
-                full_map_seq[seq_i] = full_map.astype(bool)
+                full_map = nav_agent.agent_states.full_map.cpu().numpy() * 255
+                full_map_seq[seq_i] = full_map.astype(np.uint8)
                 seq_i += 1
         np.save('./data/saved_maps/f%05d.npy' % count_episodes, full_map_seq)
 
