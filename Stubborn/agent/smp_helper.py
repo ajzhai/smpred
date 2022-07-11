@@ -60,7 +60,7 @@ class Agent_Helper:
         if args.sem_gpu_id == -1:
             args.sem_gpu_id = 1
 
-        self.sem_pred_rednet = QuickSemanticPredRedNet(args)
+        self.sem_pred_rednet = SemanticPredRedNet(args)
 
         # initializations for planning:
         self.selem = skimage.morphology.disk(3)
@@ -493,7 +493,7 @@ class Agent_Helper:
         if self.args.print_images == 1:
             self.rgb_vis = rgb
 
-        semantic_pred_rednet = self.sem_pred_rednet.get_prediction(rgb,depth,self.goal_cat)
+        semantic_pred_rednet = self.sem_pred_rednet.get_prediction(rgb,depth)
         return semantic_pred_rednet.astype(np.float32)
 
     def save_semantic(self, img,fn):
@@ -605,3 +605,5 @@ class Agent_Helper:
                 self.rank, self.episode_no, self.timestep)
             #if self.mask is not None:
             #    self.save_semantic(self.mask.cpu().numpy(),fn2)
+
+

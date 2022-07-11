@@ -31,7 +31,7 @@ class Semantic_Mapping(nn.Module):
         self.cat_pred_threshold = args.cat_pred_threshold
         self.exp_pred_threshold = args.exp_pred_threshold
         self.map_pred_threshold = args.map_pred_threshold
-        self.num_sem_categories = 3 + 2 + args.use_gt_mask # args.num_sem_categories + args.num_sem_categories_for_exp
+        self.num_sem_categories = args.num_sem_categories
 
         self.max_height = int(360 / self.z_resolution)
         self.min_height = int(-40 / self.z_resolution)
@@ -53,10 +53,6 @@ class Semantic_Mapping(nn.Module):
             1, 1 + self.num_sem_categories,
             self.screen_h // self.du_scale * self.screen_w // self.du_scale
         ).float().to(self.device)
-
-        self.local_grid_w = args.map_size_cm // args.map_resolution // args.global_downscaling // args.grid_resolution
-        self.local_grid_h = self.local_grid_w
-        self.grid_nc = args.record_frames + args.record_angle
 
     def forward(self, obs, pose_obs, maps_last, poses_last,agent_states):
         pose_obs = pose_obs[None,:]
@@ -165,48 +161,8 @@ class Semantic_Mapping(nn.Module):
 
         rotated = F.grid_sample(agent_view, rot_mat, align_corners=True)
         translated = F.grid_sample(rotated, trans_mat, align_corners=True)
-        t2 = translated.unsqueeze(1)
 
-        for i in range(4,4+2+2+self.args.use_gt_mask):
-            k = torch.max(self.feat[0,i-3,:])
-            t2[0,0,i,:,:][t2[0,0,i,:,:]>0.0] = k
-        #t2[t2>0.0] = 0.88
-        maps2 = torch.cat((maps_last.unsqueeze(1), t2), 1)
-        #total view: correspond to exp, channel 1
-        if self.args.record_frames == 2:
-            agent_states.local_grid[0] += torch.clone(nn.MaxPool2d(self.args.grid_resolution)(
-                t2[0, 0, 1:2, :, :])[0])
-            # goal item view: correspond to goal, channel 4
-            agent_states.local_grid[1] += torch.clone(nn.MaxPool2d(self.args.grid_resolution)(
-                t2[0, 0, 4:5, :, :])[0])
-        #view angle: haha
-        if self.args.record_angle == 2:
-            coordinates = torch.nonzero(agent_states.local_grid[1])
-
-            def get_grid_rc(pose):
-                r, c = pose[0, 1], pose[0, 0]
-                loc_r, loc_c = [int(r * 100.0 / self.args.map_resolution),
-                                int(c * 100.0 / self.args.map_resolution)]
-                return loc_r // self.args.grid_resolution, loc_c // self.args.grid_resolution
-
-            if len(coordinates) != 0:
-                r, c = get_grid_rc(current_poses)
-                for i in range(len(coordinates)):
-                    r2,c2 = coordinates[i]
-                    y,x = r-r2,c-c2
-                    ny = y+0.001
-                    nx = x + 0.001
-                    angle = torch.atan(ny/nx)
-                    if x<0:
-                        angle += 3.14
-                    elif y<0:
-                        angle += 6.28
-                    agent_states.local_grid[2,r2,c2] = torch.min(agent_states.local_grid[2,r2,c2],angle)
-                    agent_states.local_grid[3,r2,c2] = torch.max(agent_states.local_grid[3,r2,c2],angle)
-
+        maps2 = torch.cat((maps_last.unsqueeze(1), translated.unsqueeze(1)), 1)
 
         map_pred, _ = torch.max(maps2, 1)
-        agent_states.local_grid[5,:,:] = torch.clone(nn.MaxPool2d(self.args.grid_resolution)(
-            map_pred[0, 4:5, :, :])[0])
-
         return fp_map_pred[0], map_pred[0], pose_pred[0], current_poses[0]
