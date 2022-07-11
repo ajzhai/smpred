@@ -26,7 +26,7 @@ def main():
     config = habitat.get_config(config_paths)
     nav_agent = SMPAgent(args=args_2,task_config=config)
     hab_env = Env(config=config)
-    hab_env.dataset.max_scene_repetition_episodes = 2
+    hab_env._dataset.max_scene_repetition_episodes = 2
     
     num_episodes = 4
     #print(len(hab_env.episodes))
