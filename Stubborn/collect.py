@@ -3,6 +3,7 @@ import os
 import random
 import habitat
 import torch
+import sys
 from arguments import get_args
 from habitat.core.env import Env
 import numpy as np
@@ -42,6 +43,10 @@ def main():
         while not hab_env.episode_over:
             action = nav_agent.act(observations)
             observations = hab_env.step(action)
+            
+            if step_i % 50 == 0:
+                print('episode %d, step %d' % [count_episodes, step_i])
+                sys.stdout.flush()
             
             step_i += 1
             if step_i in [25, 50, 75, 100, 500]:
