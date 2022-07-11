@@ -31,6 +31,7 @@ class Semantic_Mapping(nn.Module):
         self.cat_pred_threshold = args.cat_pred_threshold
         self.exp_pred_threshold = args.exp_pred_threshold
         self.map_pred_threshold = args.map_pred_threshold
+        
         self.num_sem_categories = args.num_sem_categories
 
         self.max_height = int(360 / self.z_resolution)

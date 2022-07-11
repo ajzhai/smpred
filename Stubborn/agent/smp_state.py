@@ -21,7 +21,7 @@ class Agent_State:
         self.args = args
         np.random.seed(args.seed)
         torch.manual_seed(args.seed)
-        self.nc = 2 + 4 + 1 + 2 + self.args.use_gt_mask# num channels
+        self.nc = 4 + args.num_sem_categories # num channels
         self.gt_mask_channel = 8
         if args.cuda:
             torch.cuda.manual_seed(args.seed)
