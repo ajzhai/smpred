@@ -493,7 +493,7 @@ class Agent_Helper:
         if self.args.print_images == 1:
             self.rgb_vis = rgb
 
-        semantic_pred_rednet = self.sem_pred_rednet.get_prediction(rgb,depth)
+        semantic_pred_rednet = self.sem_pred_rednet.get_prediction(rgb,depth)[0]
         return semantic_pred_rednet.astype(np.float32)
 
     def save_semantic(self, img,fn):
