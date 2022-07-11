@@ -38,7 +38,7 @@ def main():
 
         step_i = 0
         seq_i = 0
-        full_map_seq = np.zeros((5, args.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h))
+        full_map_seq = np.zeros((5, args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h))
         while not hab_env.episode_over:
             action = nav_agent.act(observations)
             observations = hab_env.step(action)
