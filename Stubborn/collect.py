@@ -52,7 +52,7 @@ def main():
             if step_i in [25, 50, 75, 100, 500]:
                 full_map_seq[seq_i] = nav_agent.agent_states.full_map[0].cpu().numpy()
                 seq_i += 1
-        np.save('./saved_maps/f%05d.npy' % count_episodes, full_map_seq)
+        np.save('./data/saved_maps/f%05d.npy' % count_episodes, full_map_seq)
 
         count_episodes += 1
 
