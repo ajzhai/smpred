@@ -29,7 +29,7 @@ def main():
     hab_env = Env(config=config)
     hab_env._dataset.max_scene_repetition_episodes = 2
     
-    num_episodes = 1
+    num_episodes = 4
     #print(len(hab_env.episodes))
     
     count_episodes = 0
@@ -39,20 +39,19 @@ def main():
 
         step_i = 0
         seq_i = 0
-        full_map_seq = np.zeros((5, 4 + args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h))
+        full_map_seq = np.zeros((5, 4 + args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h), dtype=bool)
         while not hab_env.episode_over:
             action = nav_agent.act(observations)
             observations = hab_env.step(action)
             
-            if step_i % 50 == 0:
+            if step_i % 100 == 0:
                 print('episode %d, step %d' % (count_episodes, step_i))
                 sys.stdout.flush()
             
             step_i += 1
             if step_i in [25, 50, 75, 100, 500]:
                 full_map = nav_agent.agent_states.full_map.cpu().numpy()
-                print(np.percentile(full_map, [0, 25, 50, 75, 100]))
-                full_map_seq[seq_i] = full_map
+                full_map_seq[seq_i] = full_map.astype(bool)
                 seq_i += 1
         np.save('./data/saved_maps/f%05d.npy' % count_episodes, full_map_seq)
 
