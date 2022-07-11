@@ -29,7 +29,7 @@ def main():
     hab_env = Env(config=config)
     hab_env._dataset.max_scene_repetition_episodes = 2
     
-    num_episodes = 4
+    num_episodes = 1
     #print(len(hab_env.episodes))
     
     count_episodes = 0
@@ -50,7 +50,9 @@ def main():
             
             step_i += 1
             if step_i in [25, 50, 75, 100, 500]:
-                full_map_seq[seq_i] = nav_agent.agent_states.full_map[0].cpu().numpy()
+                full_map = nav_agent.agent_states.full_map[0].cpu().numpy()
+                print(full_map.shape)
+                full_map_seq[seq_i] = full_map
                 seq_i += 1
         np.save('./data/saved_maps/f%05d.npy' % count_episodes, full_map_seq)
 
