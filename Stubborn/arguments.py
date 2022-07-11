@@ -63,6 +63,7 @@ def get_args():
                                 between each global step""")
 
     # Mapping
+    parser.add_argument('--num_sem_categories', type=int, default=23)
     parser.add_argument('--global_downscaling', type=int, default=6) # originally 6 (don't forget the change goal threshold)
     parser.add_argument('--vision_range', type=int, default=100)
     parser.add_argument('--map_resolution', type=int, default=5)
