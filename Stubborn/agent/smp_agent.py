@@ -10,7 +10,6 @@ from constants import coco_categories, hab2coco, hab2name, habitat_labels_r, fou
 import copy
 from agent.smp_state import Agent_State
 from agent.smp_helper import Agent_Helper
-from agent.utils.object_identification import get_prediction
 
 
 
@@ -43,9 +42,9 @@ class SMPAgent(habitat.Agent):
     def act(self, observations):
         self.timestep += 1
         # if passed the step limit and we haven't found the goal, stop.
-        if self.timestep > self.args.timestep_limit and self.agent_states.found_goal == False:
-            return {'action': 0}
-        if self.timestep > 500:
+        # if self.timestep > self.args.timestep_limit and self.agent_states.found_goal == False:
+        #     return {'action': 0}
+        if self.timestep > self.args.timestep_limit:
             return {'action': 0}
         #get first preprocess
         goal = observations['objectgoal']
@@ -54,7 +53,9 @@ class SMPAgent(habitat.Agent):
             self.agent_states.score_threshold = self.low_score_threshold
 
         info = self.get_info(observations)
-
+        if self.args.use_gt_seg:
+            info['sem'] = observations['semantic']
+            
         # get second preprocess
         self.agent_helper.set_goal_cat(goal)
         obs, info = self.agent_helper.preprocess_inputs(observations['rgb'],observations['depth'],info)
@@ -82,6 +83,7 @@ class SMPAgent(habitat.Agent):
         info = {}
         dx, dy, do = self.get_pose_change(obs)
         info['sensor_pose'] = [dx, dy, do]
+        
         # set goal
         return info
 

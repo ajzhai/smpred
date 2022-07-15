@@ -8,7 +8,7 @@ from torchvision import transforms
 import matplotlib.pyplot as plt
 import math
 from agent.utils.fmm_planner import FMMPlanner
-from agent.utils.rednet import QuickSemanticPredRedNet, SemanticPredRedNet
+from agent.utils.rednet import QuickSemanticPredRedNet, SemanticPredRedNet, SemanticPredMaskRCNN
 from constants import color_palette
 import agent.utils.pose as pu
 import agent.utils.visualization as vu
@@ -60,7 +60,7 @@ class Agent_Helper:
         if args.sem_gpu_id == -1:
             args.sem_gpu_id = 1
 
-        self.sem_pred_rednet = SemanticPredRedNet(args)
+        self.sem_pred_rednet = SemanticPredMaskRCNN(args)
 
         # initializations for planning:
         self.selem = skimage.morphology.disk(3)
@@ -187,7 +187,7 @@ class Agent_Helper:
 
     def preprocess_inputs(self,rgb,depth,info,rew = 0):
         # preprocess obs
-        obs = self._preprocess_obs(rgb,depth)
+        obs = self._preprocess_obs(rgb,depth,info)
         self.obs = obs
         self.info = info
         if 'g_reward' not in info.keys():
@@ -451,10 +451,13 @@ class Agent_Helper:
         self.stg = (stg_x, stg_y)
         return (stg_x, stg_y), stop
 
-    def _preprocess_obs(self, rgb, depth, use_seg=True):
+    def _preprocess_obs(self, rgb, depth, info, use_seg=True):
         args = self.args
-        sem_seg_pred = self._get_sem_pred(
-            rgb.astype(np.uint8), use_seg=use_seg, depth=depth)
+        if args.use_gt_seg:
+            sem_seg_pred = info['sem']
+        else:
+            sem_seg_pred = self._get_sem_pred(
+                rgb.astype(np.uint8), use_seg=use_seg, depth=depth)
 
 
 

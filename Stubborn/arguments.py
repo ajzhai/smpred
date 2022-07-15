@@ -63,7 +63,8 @@ def get_args():
                                 between each global step""")
 
     # Mapping
-    parser.add_argument('--num_sem_categories', type=int, default=23)
+    parser.add_argument('--num_sem_categories', type=int, default=16)
+    parser.add_argument('--sem_pred_prob_thr', type=int, default=0.9)
     parser.add_argument('--global_downscaling', type=int, default=2) # originally 6 (don't forget the change goal threshold)
     parser.add_argument('--vision_range', type=int, default=100)
     parser.add_argument('--map_resolution', type=int, default=5)
@@ -96,6 +97,7 @@ def get_args():
     # for data collection purposes. Use 0 to turn off
     # use 1 to turn on
     parser.add_argument("--no_stop",type = int, default = 0)
+    parser.add_argument('--use_gt_seg',type = int, default = 0)
     parser.add_argument('--use_gt_mask',type = int, default = 0)
     parser.add_argument('--detect_stuck',type = int, default = 0)
     parser.add_argument('--only_explore',type = int, default = 0)
