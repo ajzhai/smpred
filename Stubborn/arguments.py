@@ -65,11 +65,11 @@ def get_args():
     # Mapping
     parser.add_argument('--num_sem_categories', type=int, default=16)
     parser.add_argument('--sem_pred_prob_thr', type=int, default=0.9)
-    parser.add_argument('--global_downscaling', type=int, default=2) # originally 6 (don't forget the change goal threshold)
+    parser.add_argument('--global_downscaling', type=int, default=3) # originally 6 (don't forget the change goal threshold)
     parser.add_argument('--vision_range', type=int, default=100)
     parser.add_argument('--map_resolution', type=int, default=5)
     parser.add_argument('--du_scale', type=int, default=1)
-    parser.add_argument('--map_size_cm', type=int, default=2400) # the global downscaling also need to be changed
+    parser.add_argument('--map_size_cm', type=int, default=3600) # the global downscaling also need to be changed
     parser.add_argument('--cat_pred_threshold', type=float, default=5.0)
     parser.add_argument('--map_pred_threshold', type=float, default=1.0)
     parser.add_argument('--exp_pred_threshold', type=float, default=1.0)

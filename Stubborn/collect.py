@@ -25,12 +25,12 @@ def main():
     args_2.only_explore = 1
     config_paths = os.environ["CHALLENGE_CONFIG_FILE"]
     config = habitat.get_config(config_paths)
-    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 5
+    print(config.DATASET.SPLIT)
     
     nav_agent = SMPAgent(args=args_2,task_config=config)
     hab_env = Env(config=config)
     
-    num_episodes = 500
+    num_episodes = 4000
     #print(len(hab_env.episodes))
     
     count_episodes = 0
@@ -51,11 +51,11 @@ def main():
                 sys.stdout.flush()
             
             step_i += 1
-            if step_i in [25, 50, 100, 200, 800]:
+            if step_i in [25, 50, 100, 200, 500]:
                 full_map = nav_agent.agent_states.full_map.cpu().numpy() * 255
                 full_map_seq[seq_i] = full_map.astype(np.uint8)
                 seq_i += 1
-        np.save('./data/saved_maps/val/f%05d.npy' % count_episodes, full_map_seq)
+        np.savez('./data/saved_maps/train/f%05d.npz' % count_episodes, maps=full_map_seq)
 
         count_episodes += 1
 

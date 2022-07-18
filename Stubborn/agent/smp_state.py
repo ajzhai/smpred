@@ -504,8 +504,8 @@ class Agent_State:
                 self.global_goal_preset = self.global_goal_rotation[self.global_goal_rotation_id]
                 self.hard_goal = False
                
-            ang = np.random.uniform(low=-np.pi, high=np.pi)
-            self.global_goal_preset = [np.cos(ang) * 0.25 + 0.5, np.sin(ang) * 0.25 + 0.5]
+            # ang = np.random.uniform(low=-np.pi, high=np.pi)
+            # self.global_goal_preset = [np.cos(ang) * 0.25 + 0.5, np.sin(ang) * 0.25 + 0.5]
 
             self.global_goals = [[int(self.global_goal_preset[0] * self.local_w),
                              int(self.global_goal_preset[1] * self.local_h)]
