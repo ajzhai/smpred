@@ -59,7 +59,7 @@ def main():
                     full_map = nav_agent.agent_states.full_map.cpu().numpy() * 255
                     full_map_seq[seq_i] = full_map.astype(np.uint8)
                     seq_i += 1
-            np.savez('./data/saved_maps/train/f%05d.npz' % count_episodes, maps=full_map_seq)
+            np.savez_compressed('./data/saved_maps/train/f%05d.npz' % count_episodes, maps=full_map_seq)
 
         count_episodes += 1
 
