@@ -32,7 +32,7 @@ def main():
     
     print(len(hab_env.episodes))
     
-    num_episodes = 0
+    num_episodes = 4000
     #print(len(hab_env.episodes))
     
     count_episodes = 0
