@@ -19,7 +19,8 @@ def main():
         challenge = habitat.Challenge(eval_remote=False)
     else:
         challenge = habitat.Challenge(eval_remote=True)
-    challenge.submit(nav_agent)
+    print(len(challenge._env.episodes))
+    #challenge.submit(nav_agent)
 
 
 if __name__ == "__main__":

@@ -30,7 +30,9 @@ def main():
     nav_agent = SMPAgent(args=args_2,task_config=config)
     hab_env = Env(config=config)
     
-    num_episodes = 4000
+    print(len(hab_env.episodes))
+    
+    num_episodes = 0
     #print(len(hab_env.episodes))
     
     count_episodes = 0
@@ -38,24 +40,26 @@ def main():
         observations = hab_env.reset()
         nav_agent.reset()
         print(hab_env._current_episode.scene_id)
+        
+        if count_episodes > 2776:
 
-        step_i = 0
-        seq_i = 0
-        full_map_seq = np.zeros((5, 4 + args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h), dtype=np.uint8)
-        while not hab_env.episode_over:
-            action = nav_agent.act(observations)
-            observations = hab_env.step(action)
-            
-            if step_i % 100 == 0:
-                print('episode %d, step %d' % (count_episodes, step_i))
-                sys.stdout.flush()
-            
-            step_i += 1
-            if step_i in [25, 50, 100, 200, 500]:
-                full_map = nav_agent.agent_states.full_map.cpu().numpy() * 255
-                full_map_seq[seq_i] = full_map.astype(np.uint8)
-                seq_i += 1
-        np.savez('./data/saved_maps/train/f%05d.npz' % count_episodes, maps=full_map_seq)
+            step_i = 0
+            seq_i = 0
+            full_map_seq = np.zeros((5, 4 + args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h), dtype=np.uint8)
+            while not hab_env.episode_over:
+                action = nav_agent.act(observations)
+                observations = hab_env.step(action)
+
+                if step_i % 100 == 0:
+                    print('episode %d, step %d' % (count_episodes, step_i))
+                    sys.stdout.flush()
+
+                step_i += 1
+                if step_i in [25, 50, 100, 200, 500]:
+                    full_map = nav_agent.agent_states.full_map.cpu().numpy() * 255
+                    full_map_seq[seq_i] = full_map.astype(np.uint8)
+                    seq_i += 1
+            np.savez('./data/saved_maps/train/f%05d.npz' % count_episodes, maps=full_map_seq)
 
         count_episodes += 1
 
