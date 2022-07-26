@@ -12,8 +12,12 @@ def get_args():
 
     parser.add_argument('--no_cuda', action='store_true', default=False,
                         help='disables CUDA training')
-    parser.add_argument('--sem_gpu_id', type=int, default=-1,
+    parser.add_argument('--sem_gpu_id', type=int, default=0,
                         help='GPU ID')
+    parser.add_argument('--start_ep', type=int, default=0,
+                        help='start episode for data collection')
+    parser.add_argument('--end_ep', type=int, default=-1,
+                        help='end episode for data collection')
 
     parser.add_argument('-d', '--dump_location', type=str, default="./tmp/",
                         help='path to dump models and log (default: ./tmp/)')

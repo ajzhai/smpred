@@ -100,7 +100,7 @@ class Agent_Helper:
 
 
         if args.visualize or args.print_images:
-            self.legend = cv2.imread('Stubborn/docs/legend.png')
+            self.legend = cv2.imread('Stubborn/sem_legend.png')[:118]
             self.vis_image = None
             self.rgb_vis = None
 
@@ -494,7 +494,7 @@ class Agent_Helper:
 
     def _get_sem_pred(self, rgb, use_seg=True,depth = None):
         if self.args.print_images == 1:
-            self.rgb_vis = rgb
+            self.rgb_vis = rgb[:, :, ::-1]
 
         semantic_pred_rednet = self.sem_pred_rednet.get_prediction(rgb,depth)[0]
         return semantic_pred_rednet.astype(np.float32)
@@ -542,7 +542,7 @@ class Agent_Helper:
         sem_map[int(self.stg[0]),int(self.stg[1])] = 15
         #print(sem_map.shape,self.collision_map[gx1:gx2, gy1:gy2].shape)
         #exit(0)
-        no_cat_mask = sem_map == 2+4+1+2 + self.args.use_gt_mask
+        no_cat_mask = sem_map == 20
         map_mask = np.rint(map_pred) == 1
         exp_mask = np.rint(exp_pred) == 1
         vis_mask = self.visited_vis[gx1:gx2, gy1:gy2] == 1#1 TODO: change back
@@ -557,10 +557,11 @@ class Agent_Helper:
 
         sem_map[vis_mask] = 3
 
-        selem = skimage.morphology.disk(4)
-        goal_mat = 1 - skimage.morphology.binary_dilation(
-            goal, selem) != True
-
+        # selem = skimage.morphology.disk(4)
+        # goal_mat = 1 - skimage.morphology.binary_dilation(
+        #     goal, selem) != True
+        goal_mat = goal
+        
         goal_mask = goal_mat == 1
         sem_map[goal_mask] = 4
 

@@ -8,6 +8,7 @@ import torch.nn as nn
 import torch
 import numpy as np
 import pickle
+import skimage.morphology
 
 from agent.mapping import Semantic_Mapping
 from constants import habitat_goal_label_to_similar_coco
@@ -25,7 +26,7 @@ class Agent_State:
         self.gt_mask_channel = 8
         if args.cuda:
             torch.cuda.manual_seed(args.seed)
-        self.device = args.device = torch.device("cuda:0" if args.cuda else "cpu")
+        self.device = args.device = torch.device("cuda:" + str(ags.sem_gpu_id) if args.cuda else "cpu")
 
         self.map_size = args.map_size_cm // args.map_resolution
         self.full_w, self.full_h = self.map_size, self.map_size
@@ -529,34 +530,46 @@ class Agent_State:
         maxc = -1
         maxa = 0.0
         self.goal_cat = infos['goal_cat_id']
-        e = 0
-        cn = 4
-        # use the grid to determine global goal
-        # requires >= 0.75 on the cumulated channel (channel 1)
-        # now change to >= 0.85 on the single channel (channel 5)
+#         e = 0
+#         cn = 4
+#         # use the grid to determine global goal
+#         # requires >= 0.75 on the cumulated channel (channel 1)
+#         # now change to >= 0.85 on the single channel (channel 5)
+#         if self.args.only_explore == 0:
+#             max_score = torch.max(self.local_grid[5][self.local_grid[4] == 0])
+#             if max_score > self.score_threshold:
+#                 indices = torch.nonzero(self.local_grid[5] >= max_score)
+#                 self.cat_semantic_map.fill_(0.)
+#                 self.local_grid_vis.fill_(0.)
+#                 for index in indices:
+#                     r1 = index[0] * self.args.grid_resolution
+#                     c1 = index[1] * self.args.grid_resolution
+#                     r2 = r1 + self.args.grid_resolution
+#                     c2 = c1 + self.args.grid_resolution
+#                     if self.local_grid[4, index[0], index[1]] == 0:
+#                         if self.recur_fill_grid(index[0], index[1]):
+#                             found_goal = 1
+
+#                 if found_goal == 1:
+#                     self.found_goal = True
+#                     cat_semantic_scores = self.cat_semantic_map.cpu().numpy()
+#                     cat_semantic_scores[
+#                         cat_semantic_scores < self.score_threshold - 0.01] = 0.
+#                     goal_maps = cat_semantic_scores
+
         if self.args.only_explore == 0:
-            max_score = torch.max(self.local_grid[5][self.local_grid[4] == 0])
-            if max_score > self.score_threshold:
-                indices = torch.nonzero(self.local_grid[5] >= max_score)
-                self.cat_semantic_map.fill_(0.)
-                self.local_grid_vis.fill_(0.)
-                for index in indices:
-                    r1 = index[0] * self.args.grid_resolution
-                    c1 = index[1] * self.args.grid_resolution
-                    r2 = r1 + self.args.grid_resolution
-                    c2 = c1 + self.args.grid_resolution
-                    if self.local_grid[4, index[0], index[1]] == 0:
-                        if self.recur_fill_grid(index[0], index[1]):
-                            found_goal = 1
-
-                if found_goal == 1:
-                    self.found_goal = True
-                    cat_semantic_scores = self.cat_semantic_map.cpu().numpy()
-                    cat_semantic_scores[
-                        cat_semantic_scores < self.score_threshold - 0.01] = 0.
-                    goal_maps = cat_semantic_scores
-
-
+            cn = self.goal_cat + 4
+            if self.local_map[cn, :, :].sum() != 0.:
+                cat_semantic_map = self.local_map[cn, :, :].cpu().numpy()
+                cat_semantic_scores = cat_semantic_map
+                cat_semantic_scores[cat_semantic_scores > 0] = 1.
+                temp_goal = cat_semantic_scores
+                for _ in range(3):
+                    temp_goal = skimage.morphology.binary_erosion(temp_goal.astype(bool)).astype(float)
+                temp_goal = skimage.morphology.binary_dilation(temp_goal.astype(bool)).astype(float)
+                if temp_goal.sum() != 0.:
+                    goal_maps = temp_goal
+                    found_goal = 1
 
         # ------------------------------------------------------------------
 
@@ -573,10 +586,9 @@ class Agent_State:
         p_input['wait'] = 0
         p_input['goal_name'] = infos['goal_name']
         if args.visualize or args.print_images:
-            self.local_map[8 + self.args.use_gt_mask, :, :] = 1e-5
-
-            p_input['sem_map_pred'] = self.local_map[4:, :,
-                                      :].argmax(0).cpu().numpy()
+            vlm = torch.clone(self.local_map[4:, :, :])
+            vlm[-1] = 1e-5
+            p_input['sem_map_pred'] = vlm.argmax(0).cpu().numpy()
             p_input['opp_score'] = maxi
             p_input['opp_cat'] = maxc
             p_input['itself'] = maxa

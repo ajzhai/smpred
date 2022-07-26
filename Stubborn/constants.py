@@ -1,4 +1,30 @@
 import copy
+coco_categories = {
+    "chair": 0,
+    "couch": 1,
+    "potted plant": 2,
+    "bed": 3,
+    "toilet": 4,
+    "tv": 5,
+    "dining-table": 6,
+    "oven": 7,
+    "sink": 8,
+    "refrigerator": 9,
+    "book": 10,
+    "clock": 11,
+    "vase": 12,
+    "cup": 13,
+    "bottle": 14
+}
+hm3d_names = {0: "chair", 1: "bed", 2: "plant",  3: "toilet",  4: "tv_monitor",  5: "sofa"}
+hm3d_to_coco = {0: 0, 
+                1: 3, 
+                2: 2,
+                3: 4,
+                4: 5,
+                5: 1}
+
+
 scenes = {}
 scenes["train"] = [
     'Allensville',
@@ -127,23 +153,7 @@ hab2name = {
     11:"toilet",
     14:"tv",
 }
-coco_categories = {
-    "chair": 0,
-    "couch": 1,
-    "potted plant": 2,
-    "bed": 3,
-    "toilet": 4,
-    "tv": 5,
-    "dining-table": 6,
-    "oven": 7,
-    "sink": 8,
-    "refrigerator": 9,
-    "book": 10,
-    "clock": 11,
-    "vase": 12,
-    "cup": 13,
-    "bottle": 14
-}
+
 habitat_goal_label_to_similar_coco = {
     1:0, #chair chair
     2:6, #table dining table

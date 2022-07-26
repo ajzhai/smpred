@@ -6,7 +6,9 @@ import torch
 from arguments import get_args
 import numpy as np
 
-from agent.stubborn_agent import StubbornAgent
+from agent.smp_agent import SMPAgent
+
+from habitat.core.logging import logger
 
 def main():
 
@@ -14,14 +16,17 @@ def main():
     args_2.sem_gpu_id = 0
     config_paths = os.environ["CHALLENGE_CONFIG_FILE"]
     config = habitat.get_config(config_paths)
-    nav_agent = StubbornAgent(args=args_2,task_config=config)
+    nav_agent = SMPAgent(args=args_2,task_config=config)
     if args_2.evaluation == "local":
         challenge = habitat.Challenge(eval_remote=False)
     else:
         challenge = habitat.Challenge(eval_remote=True)
-    print(len(challenge._env.episodes))
-    #challenge.submit(nav_agent)
-
+    # print(len(challenge._env.episodes))
+    # challenge.submit(nav_agent)
+    
+    metrics = challenge.evaluate(nav_agent, num_episodes=200)
+    for k, v in metrics.items():
+        logger.info("{}: {}".format(k, v))
 
 if __name__ == "__main__":
     main()

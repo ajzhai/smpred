@@ -6,7 +6,7 @@ import torch
 from arguments import get_args
 import numpy as np
 import agent.utils.pose as pu
-from constants import coco_categories, hab2coco, hab2name, habitat_labels_r, fourty221, fourty221_ori, habitat_goal_label_to_similar_coco
+from constants import coco_categories, hab2coco, hab2name, habitat_labels_r, fourty221, fourty221_ori, habitat_goal_label_to_similar_coco, hm3d_names, hm3d_to_coco
 import copy
 from agent.smp_state import Agent_State
 from agent.smp_helper import Agent_Helper
@@ -47,8 +47,8 @@ class SMPAgent(habitat.Agent):
         if self.timestep > self.args.timestep_limit:
             return {'action': 0}
         #get first preprocess
-        goal = observations['objectgoal']
-        goal = goal[0]+1
+        goal = observations['objectgoal'][0]
+        
         if goal in self.low_score_categories:
             self.agent_states.score_threshold = self.low_score_threshold
 
@@ -57,10 +57,12 @@ class SMPAgent(habitat.Agent):
             info['sem'] = observations['semantic']
             
         # get second preprocess
+        info['goal_name'] = hm3d_names[goal]
+        goal = hm3d_to_coco[goal]
         self.agent_helper.set_goal_cat(goal)
         obs, info = self.agent_helper.preprocess_inputs(observations['rgb'],observations['depth'],info)
         info['goal_cat_id'] = goal
-        info['goal_name'] = habitat_labels_r[goal]
+        
         obs = obs[np.newaxis,:,:,:]
         # now ready to be passed to agent states
         obs = torch.from_numpy(obs).float().to(self.device)
