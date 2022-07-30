@@ -173,7 +173,11 @@ class SemMapDataset(CustomDataset):
 def my_loss(pred, target):
     target = torch.permute(target, (0, 3, 1, 2))
     assert pred.size() == target.size() and target.numel() > 0
-    loss = F.binary_cross_entropy_with_logits(pred, target / 255., reduction='none')
+    wts = [36.64341412, 30.19407855, 106.23704066, 25.58503269, 100.4556983, 167.64383946]
+    pos_weight = torch.ones(6, 720, 720).to(pred.device) #torch.ones(6)
+    for i, wt in enumerate(wts):
+        pos_weight[i] = wts[i]
+    loss = F.binary_cross_entropy_with_logits(pred, target / 255., reduction='none', pos_weight=pos_weight)
     return loss
 
 @LOSSES.register_module
@@ -225,8 +229,8 @@ if __name__ == '__main__':
     cfg.dataset_type = 'SemMapDataset'
     cfg.data_root = '../data/saved_maps'
 
-    cfg.data.samples_per_gpu = 2
-    cfg.data.workers_per_gpu = 4
+    cfg.data.samples_per_gpu = 8
+    cfg.data.workers_per_gpu = 8
 
     cfg.img_norm_cfg = dict(
         mean=[0, 0, 0], std=[1 ,1, 1], to_rgb=False)
@@ -279,12 +283,12 @@ if __name__ == '__main__':
     cfg.data.test.pipeline = cfg.test_pipeline
 
     # Set up working dir to save files and logs.
-    cfg.work_dir = './work_dirs/smp_r50'
+    cfg.work_dir = './work_dirs/smp_weighted'
 
-    cfg.runner.max_iters = 16000
-    cfg.log_config.interval = 100
+    cfg.runner.max_iters = 60000
+    cfg.log_config.interval = 500
     cfg.evaluation.interval = cfg.runner.max_iters + 1  
-    cfg.checkpoint_config.interval = 1000
+    cfg.checkpoint_config.interval = 4000
     cfg.optimizer = optimizer = dict(type='Adam', lr=0.0005)
     cfg.lr_config.min_lr = 1e-5
     
