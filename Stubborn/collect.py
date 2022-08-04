@@ -23,13 +23,14 @@ def shuffle_episodes(env, shuffle_interval):
 def main():
 
     args_2 = get_args()
-    args_2.only_explore = 1  ########## whether to NOT go for goal detections 
+    args_2.only_explore = 0  ########## whether to NOT go for goal detections 
     
     config_paths = os.environ["CHALLENGE_CONFIG_FILE"]
     config = habitat.get_config(config_paths)
     config.defrost()
     config.SIMULATOR.HABITAT_SIM_V0.GPU_DEVICE_ID = args_2.sem_gpu_id
-    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 50
+    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 1
+    config.DATASET.SPLIT = 'val'
     config.freeze()
     print(config.DATASET.SPLIT)
     
@@ -38,7 +39,7 @@ def main():
     
     print(len(hab_env.episodes), 'episodes in dataset')
     
-    num_episodes = 800 * 50
+    num_episodes = 1 * 1
     start = args_2.start_ep
     end = args_2.end_ep if args_2.end_ep > 0 else num_episodes
     
@@ -82,18 +83,20 @@ def main():
                 spls.append(metrics['spl'])
                 dtgs.append(metrics['distance_to_goal'])
                 epls.append(step_i)
-
-                plt.imshow(observations['rgb'])
-                plt.savefig('./data/tmp/end%d.png' % count_episodes)
-                plt.close()
+                print(metrics)
                 
-            np.savez_compressed('./data/saved_maps/train/f%05d.npz' % count_episodes, maps=full_map_seq)
+                if args_2.print_images:
+                    plt.imshow(observations['rgb'])
+                    plt.savefig('./data/tmp/end%d.png' % count_episodes)
+                    plt.close()
+                
+            np.savez_compressed('./data/saved_maps/temp/f%05d.npz' % count_episodes, maps=full_map_seq)
 
         count_episodes += 1
         
     if args_2.only_explore == 0:
         stats = np.array([succs, spls, dtgs, epls])
-        np.save('data/tmp/logged_metrics.npy', stats)
+        np.save('data/tmp/logged_metrics_smp_a%04d.npy' % args_2.alpha, stats)
     
 
 if __name__ == "__main__":

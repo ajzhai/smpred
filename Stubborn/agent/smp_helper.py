@@ -557,10 +557,10 @@ class Agent_Helper:
 
         sem_map[vis_mask] = 3
 
-        # selem = skimage.morphology.disk(4)
-        # goal_mat = 1 - skimage.morphology.binary_dilation(
-        #     goal, selem) != True
-        goal_mat = goal
+        selem = skimage.morphology.disk(4)
+        goal_mat = 1 - skimage.morphology.binary_dilation(
+            goal, selem) != True
+        #goal_mat = goal
         
         goal_mask = goal_mat == 1
         sem_map[goal_mask] = 4

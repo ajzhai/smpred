@@ -124,63 +124,83 @@ def neg_log_likelihood(pred, gt):
     return -np.mean(np.log(pred[gt_locs]))
 
 
+def bce_loss(pred, gt):
+    """
+    Takes prediction heatmap for a single class and ground-truth map for that class
+    and returns the mean pixel-wise binary cross entropy between the two.
+    Lower is better. 
+    """
+    pred = torch.tensor(pred).unsqueeze(0)
+    gt = torch.tensor(gt).unsqueeze(0)
+    wts = [36.64341412, 30.19407855, 106.23704066, 25.58503269, 100.4556983, 167.64383946]
+    pos_weight = torch.ones(1, 720, 720)  #torch.ones(6)
+    return F.binary_cross_entropy_with_logits(pred, gt, reduction='mean', pos_weight=pos_weight)
+    
+    
 if __name__ == '__main__':
     
-    out_dir = './work_dirs/smp_r50'
-    ckpt = osp.join(out_dir, 'iter_10000.pth')
-    
-    cfg = Config.fromfile(osp.join(out_dir, 'cfg.py'))
-    # print(f'Config:\n{cfg.pretty_text}')
-    
-    # build the model from a config file and a checkpoint file
-    model = init_segmentor(cfg, checkpoint=ckpt, device='cuda:0')
-    # Add an attribute for visualization convenience
-    model.CLASSES = common_cls
+    out_dir = '../work_dirs/sgd_t4'
+    for train_i in [88000]:
+        ckpt = osp.join(out_dir, 'iter_' + str(train_i) + '.pth')
 
-    # Create work_dir
-    mmcv.mkdir_or_exist(osp.abspath(cfg.work_dir))
-    model.eval()
+        cfg = Config.fromfile(osp.join(out_dir, 'cfg.py'))
+        # print(f'Config:\n{cfg.pretty_text}')
 
-    model.cfg = cfg
+        # build the model from a config file and a checkpoint file
+        model = init_segmentor(cfg, checkpoint=ckpt, device='cuda:0')
+        # Add an attribute for visualization convenience
+        model.CLASSES = common_cls
 
-    # Save some qualitative results
-    for i in [5]:
-        for t_idx in range(4):
-            print(i, t_idx)
-            result = inference_smp(model, '../data/saved_maps/val/f%05d.npz' % i, t_idx=t_idx)
-            pred = result[0]
-            xd = np.load('../data/saved_maps/val/f%05d.npz' % i)['maps'] / 255.
-            z_map = xd[-1, 0]
-            obj_map = xd[-1, 4:]
-            mask = xd[t_idx, 1] > 0
-            visualize_obj_preds(pred, [0, 1, 2, 3, 4, 5], z_map, obj_map, mask)
-            plt.savefig(osp.join(out_dir, 'qual%d_%d.png' % (i, t_idx)))
-            plt.close()
-            
-#     # MSE and NLL evaluation 
-#     dists = [[] for c in range(6)]
-#     nlls = [[] for c in range(6)] 
-#     for i in range(500):
-#         if i % 50 == 0:
-#             print(i)
-#         mf =  np.load('../data/saved_maps/val/f%05d.npz' % i)['maps']/ 255.
-#         z_map = mf[-1, 0]
-#         obj_map = mf[-1, 4:]
-#         for t_idx in range(4):
-            
-#             result = inference_smp(model, '../data/saved_maps/val/f%05d.npz' % i, t_idx=t_idx)
-#             for c in range(6):
-#                 pred = result[0][c]
-#                 gt = obj_map[c]
-#                 dist = nearest_dist(pred, gt)
-#                 nll = neg_log_likelihood(pred, gt)
-#                 if dist >= 0:
-#                     dists[c].append(dist)
-#                     nlls[c].append(nll)
-                
-#     for c in range(6):
-#         print('%12s: %.3f MSE, %.3f NLL, %d occurrences' % (common_cls[c], np.mean(dists[c]), np.mean(nlls[c]), len(dists[c])))
-#     all_dists = sum(dists, [])
-#     all_nlls = sum(nlls, [])
-#     print('-' * 60)
-#     print('%12s: %.3f MSE, %.3f NLL, %d occurrences' % ('ALL CLASSES', np.mean(all_dists), np.mean(all_nlls),len(all_dists)))
+        # Create work_dir
+        # mmcv.mkdir_or_exist(osp.abspath(cfg.work_dir))
+        model.eval()
+
+        model.cfg = cfg
+
+        # Save some qualitative results
+        # for i in [0, 1]:
+        #     for t_idx in range(4):
+        #         print(i, t_idx)
+        #         result = inference_smp(model, '../data/saved_maps/val/f%05d.npz' % i, t_idx=t_idx)
+        #         pred = result[0]
+        #         gt = np.load('../data/saved_maps/val/f%05d.npz' % i)['maps'] / 255.
+        #         z_map = gt[-1, 0]
+        #         obj_map = gt[-1, 4:]
+        #         mask = gt[t_idx, 1] > 0
+        #         visualize_obj_preds(pred, [0, 1, 2, 3, 4, 5], z_map, obj_map, mask)
+        #         plt.savefig(osp.join(out_dir, 'i8000/qual%d_%d.png' % (i, t_idx)))
+        #         plt.close()
+
+        # MSE and NLL evaluation 
+        dists = [[] for c in range(6)]
+        nlls = [[] for c in range(6)] 
+        bces = [[] for c in range(6)] 
+        for i in range(500):
+            if i % 50 == 0:
+                print(i)
+            mf =  np.load('../data/saved_maps/val/f%05d.npz' % i)['maps']/ 255.
+            z_map = mf[-1, 0]
+            obj_map = mf[-1, 4:]
+            for t_idx in range(4):
+
+                result = inference_smp(model, '../data/saved_maps/val/f%05d.npz' % i, t_idx=t_idx)
+                for c in range(6):
+                    pred = result[0][c]
+                    gt = obj_map[c]
+                    dist = nearest_dist(pred, gt)
+                    nll = neg_log_likelihood(pred, gt)
+                    bce = bce_loss(pred, gt)
+                    if dist >= 0:
+                        dists[c].append(dist)
+                        nlls[c].append(nll)
+                    bces[c].append(bce)
+
+        for c in range(6):
+            print('%12s: %.3f MSE, %.3f NLL, %.5f BCE, %d occurrences' % 
+                  (common_cls[c], np.mean(dists[c]), np.mean(nlls[c]), np.mean(bces[c]), len(dists[c])))
+        all_dists = sum(dists, [])
+        all_nlls = sum(nlls, [])
+        all_bces = sum(bces, [])
+        print('-' * 60)
+        print('%12s: %.3f MSE, %.3f NLL, %.5f BCE, %d occurrences' % 
+              ('ALL CLASSES', np.mean(all_dists), np.mean(all_nlls), np.mean(all_bces), len(all_dists)))

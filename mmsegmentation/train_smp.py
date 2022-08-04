@@ -144,7 +144,7 @@ class SemMapDataset(CustomDataset):
                 list_dir=False,
                 suffix=img_suffix,
                 recursive=True):
-            for t_idx in range(4):
+            for t_idx in range(10):
                 img_info = dict(filename=img)
                 img_info['t_idx'] = t_idx
                 # if ann_dir is not None:
@@ -283,7 +283,7 @@ if __name__ == '__main__':
     cfg.data.test.pipeline = cfg.test_pipeline
 
     # Set up working dir to save files and logs.
-    cfg.work_dir = './work_dirs/smp_weighted'
+    cfg.work_dir = '../work_dirs/smp_weighted_t10'
 
     cfg.runner.max_iters = 60000
     cfg.log_config.interval = 500

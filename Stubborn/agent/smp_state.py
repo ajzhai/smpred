@@ -8,9 +8,12 @@ import torch.nn as nn
 import torch
 import numpy as np
 import pickle
+import skfmm
 import skimage.morphology
+from numpy import ma
 
 from agent.mapping import Semantic_Mapping
+from agent.prediction import SemOccPred
 from constants import habitat_goal_label_to_similar_coco
 from arguments import get_args
 import pickle
@@ -105,7 +108,9 @@ class Agent_State:
         if args.detect_stuck == 1:
             self.pos_record = []
 
-
+        # Semantic Occupancy Prediction
+        self.sem_occ_pred = SemOccPred(args)
+        self.selem = skimage.morphology.disk(3)
 
     def reset(self):
         self.l_step = 0
@@ -436,6 +441,7 @@ class Agent_State:
     def upd_agent_state(self,obs,infos):
 
         args = self.args
+        self.goal_cat = infos['goal_cat_id']
         self.poses = torch.from_numpy(np.asarray(
             infos['sensor_pose'] )
         ).float().to(self.device)
@@ -500,6 +506,9 @@ class Agent_State:
 
 
             locs = self.local_pose.cpu().numpy()
+            r, c = locs[1], locs[0]
+            loc_r, loc_c = [int(r * 100.0 / args.map_resolution),
+                            int(c * 100.0 / args.map_resolution)]
             if self.hard_goal:
                 self.global_goal_rotation_id = (self.global_goal_rotation_id + 1)%4
                 self.global_goal_preset = self.global_goal_rotation[self.global_goal_rotation_id]
@@ -516,9 +525,37 @@ class Agent_State:
                             for x, y in self.global_goals]
 
 
+        
         # ------------------------------------------------------------------
+        if self.step % 25 == 24:
+            self.full_map[:, self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]] = \
+                    self.local_map
+            # Extract the prediction in the local map bounds
+            so_pred = self.sem_occ_pred.get_prediction(self.full_map.cpu().numpy())
+            so_pred = so_pred[self.goal_cat,
+                              self.lmb[0]:self.lmb[1],
+                              self.lmb[2]:self.lmb[3]]
 
+            # Weight value based on inverse geodesic distance
+            trav = skimage.morphology.binary_dilation(np.rint(self.local_map[0].cpu().numpy()), self.selem) != True
+            traversible_ma = ma.masked_values(trav * 1, 0)
+            traversible_ma[np.clip(loc_r, a_min=0, a_max=self.local_w-1), np.clip(loc_c, a_min=0, a_max=self.local_h-1)] = 0
+            dd = skfmm.distance(traversible_ma, dx=1)
+            dd = ma.filled(dd, np.max(dd) + 1)
+            dd[np.where(dd == np.max(dd))] = np.inf
+            #dd[np.where(dd < 100)] = np.inf
+            #dd_wt = 20./ (np.clip(dd, a_min=20, a_max=None)) 
+            dd_wt = np.exp(-dd / args.alpha)
+            value = so_pred * dd_wt
+            if self.step % 50 == 49 and args.print_images:
+                np.save('data/tmp/so_pred%03d.npy' % self.step, so_pred)
+                np.save('data/tmp/dd%03d.npy' % self.step, dd)
+                np.save('data/tmp/ddwt%03d.npy' % self.step, 1/ dd_wt)
+                np.save('data/tmp/value%03d.npy' % self.step, value)
+            self.global_goals = [np.unravel_index(value.argmax(), value.shape)]
         # ------------------------------------------------------------------
+        
+        
         # Update long-term goal if target object is found
         found_goal = 0
         goal_maps = np.zeros((self.local_w, self.local_h))
@@ -529,7 +566,7 @@ class Agent_State:
         maxi = 0.0
         maxc = -1
         maxa = 0.0
-        self.goal_cat = infos['goal_cat_id']
+        
 #         e = 0
 #         cn = 4
 #         # use the grid to determine global goal

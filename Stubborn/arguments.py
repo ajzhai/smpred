@@ -98,6 +98,8 @@ def get_args():
     parser.add_argument("--move_forward_after_stop",type = int, default = 1) #originally 1
     parser.add_argument("--small_collision_map_for_goal",type = int, default = 0)
 
+    parser.add_argument('--alpha', type = float, default = 400)
+    
     # for data collection purposes. Use 0 to turn off
     # use 1 to turn on
     parser.add_argument("--no_stop",type = int, default = 0)
