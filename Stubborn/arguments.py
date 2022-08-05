@@ -67,7 +67,7 @@ def get_args():
                                 between each global step""")
 
     # Mapping
-    parser.add_argument('--num_sem_categories', type=int, default=16)
+    parser.add_argument('--num_sem_categories', type=int, default=23)
     parser.add_argument('--sem_pred_prob_thr', type=int, default=0.9)
     parser.add_argument('--global_downscaling', type=int, default=3) # originally 6 (don't forget the change goal threshold)
     parser.add_argument('--vision_range', type=int, default=100)
@@ -99,6 +99,7 @@ def get_args():
     parser.add_argument("--small_collision_map_for_goal",type = int, default = 0)
 
     parser.add_argument('--alpha', type = float, default = 400)
+    parser.add_argument('--switch_step', type = float, default = 24)
     
     # for data collection purposes. Use 0 to turn off
     # use 1 to turn on

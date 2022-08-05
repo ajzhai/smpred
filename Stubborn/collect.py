@@ -39,7 +39,7 @@ def main():
     
     print(len(hab_env.episodes), 'episodes in dataset')
     
-    num_episodes = 1 * 1
+    num_episodes = 100 * 1
     start = args_2.start_ep
     end = args_2.end_ep if args_2.end_ep > 0 else num_episodes
     
@@ -49,7 +49,7 @@ def main():
     count_episodes = 0
     while count_episodes < num_episodes:
         observations = hab_env.reset()
-        # print(hm3d_names[observations['objectgoal'][0]], '############' * 5)
+        print(hm3d_names[observations['objectgoal'][0]], '############' * 5)
         nav_agent.reset()
         print(hab_env._current_episode.scene_id)
         
@@ -96,7 +96,8 @@ def main():
         
     if args_2.only_explore == 0:
         stats = np.array([succs, spls, dtgs, epls])
-        np.save('data/tmp/logged_metrics_smp_a%04d.npy' % args_2.alpha, stats)
+        # np.save('data/tmp/logged_metrics_smp_a%04d.npy' % args_2.alpha, stats)
+        np.save('data/tmp/logged_metrics_stbrn_erode.npy', stats)
     
 
 if __name__ == "__main__":

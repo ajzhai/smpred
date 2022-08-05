@@ -60,7 +60,10 @@ class Agent_Helper:
         if args.sem_gpu_id == -1:
             args.sem_gpu_id = 1
 
-        self.sem_pred_rednet = SemanticPredMaskRCNN(args)
+        if args.num_sem_categories == 16:
+            self.sem_pred_rednet = SemanticPredMaskRCNN(args)
+        else:
+            self.sem_pred_rednet = SemanticPredRedNet(args)
 
         # initializations for planning:
         self.selem = skimage.morphology.disk(3)
@@ -219,6 +222,7 @@ class Agent_Helper:
 
         # Get Map prediction
         map_pred = np.rint(planner_inputs['map_pred'])
+        map_pred = skimage.morphology.binary_erosion(map_pred.astype(bool)).astype(int)
         self.found_goal = planner_inputs['found_goal']
         goal = planner_inputs['goal']
 

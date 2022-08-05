@@ -139,8 +139,8 @@ def bce_loss(pred, gt):
     
 if __name__ == '__main__':
     
-    out_dir = '../work_dirs/sgd_t4'
-    for train_i in [88000]:
+    out_dir = '../work_dirs/t10'
+    for train_i in [3000, 4000, 5000, 6000]:
         ckpt = osp.join(out_dir, 'iter_' + str(train_i) + '.pth')
 
         cfg = Config.fromfile(osp.join(out_dir, 'cfg.py'))

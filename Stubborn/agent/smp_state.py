@@ -527,7 +527,7 @@ class Agent_State:
 
         
         # ------------------------------------------------------------------
-        if self.step % 25 == 24:
+        if self.step % 25 == 24 and self.step >= args.switch_step:
             self.full_map[:, self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]] = \
                     self.local_map
             # Extract the prediction in the local map bounds
@@ -624,7 +624,7 @@ class Agent_State:
         p_input['goal_name'] = infos['goal_name']
         if args.visualize or args.print_images:
             vlm = torch.clone(self.local_map[4:, :, :])
-            vlm[-1] = 1e-5
+            vlm[15] = 1e-5
             p_input['sem_map_pred'] = vlm.argmax(0).cpu().numpy()
             p_input['opp_score'] = maxi
             p_input['opp_cat'] = maxc

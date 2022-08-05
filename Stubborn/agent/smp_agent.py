@@ -6,7 +6,7 @@ import torch
 from arguments import get_args
 import numpy as np
 import agent.utils.pose as pu
-from constants import coco_categories, hab2coco, hab2name, habitat_labels_r, fourty221, fourty221_ori, habitat_goal_label_to_similar_coco, hm3d_names, hm3d_to_coco
+from constants import coco_categories, hab2coco, hab2name, habitat_labels_r, fourty221, fourty221_ori, habitat_goal_label_to_similar_coco, hm3d_names, hm3d_to_coco, hm3d_to_21
 import copy
 from agent.smp_state import Agent_State
 from agent.smp_helper import Agent_Helper
@@ -58,7 +58,13 @@ class SMPAgent(habitat.Agent):
             
         # get second preprocess
         info['goal_name'] = hm3d_names[goal]
-        goal = hm3d_to_coco[goal]
+        if args.num_sem_categories == 16:
+            goal = hm3d_to_coco[goal]
+        elif args.num_sem_categories == 23:
+            goal = hm3d_to_21[goal]
+        else:
+            assert False
+            
         self.agent_helper.set_goal_cat(goal)
         obs, info = self.agent_helper.preprocess_inputs(observations['rgb'],observations['depth'],info)
         info['goal_cat_id'] = goal
