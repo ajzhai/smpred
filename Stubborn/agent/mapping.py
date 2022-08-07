@@ -166,4 +166,6 @@ class Semantic_Mapping(nn.Module):
         maps2 = torch.cat((maps_last.unsqueeze(1), translated.unsqueeze(1)), 1)
 
         map_pred, _ = torch.max(maps2, 1)
+        # new_exp = torch.where(translated[0][1] > 0)
+        # map_pred[0][agent_states.goal_cat + 4][new_exp] = translated[0][agent_states.goal_cat + 4][new_exp]
         return fp_map_pred[0], map_pred[0], pose_pred[0], current_poses[0]

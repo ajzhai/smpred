@@ -445,10 +445,10 @@ class Agent_State:
         self.poses = torch.from_numpy(np.asarray(
             infos['sensor_pose'] )
         ).float().to(self.device)
-
+        
         _, self.local_map, _, self.local_pose = \
             self.sem_map_module(obs, self.poses, self.local_map, self.local_pose,self)
-
+        
         locs = self.local_pose.cpu().numpy()
         self.planner_pose_inputs[:3] = locs + self.origins
         self.local_map[2, :, :].fill_(0.)  # Resetting current location channel
@@ -478,8 +478,8 @@ class Agent_State:
                 self.local_map
             res = self.args.grid_resolution
 
-            self.grid[:, self.lmb[0] // res:self.lmb[1] // res, self.lmb[2] // res: self.lmb[3] // res] = \
-                torch.clone(self.local_grid)
+            # self.grid[:, self.lmb[0] // res:self.lmb[1] // res, self.lmb[2] // res: self.lmb[3] // res] = \
+            #     torch.clone(self.local_grid)
             self.full_pose = self.local_pose + \
                              torch.from_numpy(self.origins).to(self.device).float()
 
@@ -501,8 +501,8 @@ class Agent_State:
                              self.lmb[2]:self.lmb[3]]
             self.local_pose = self.full_pose - \
                               torch.from_numpy(self.origins).to(self.device).float()
-            self.local_grid = torch.clone(self.grid[:, self.lmb[0] // res:self.lmb[1] // res,
-                                          self.lmb[2] // res: self.lmb[3] // res])
+            # self.local_grid = torch.clone(self.grid[:, self.lmb[0] // res:self.lmb[1] // res,
+            #                               self.lmb[2] // res: self.lmb[3] // res])
 
 
             locs = self.local_pose.cpu().numpy()

@@ -463,7 +463,7 @@ class SemanticPredRedNet():
         self.segmentation_model.eval()
         self.args = args
         self.all_labels = set()
-        self.threshold = 0.8
+        self.threshold = args.sem_pred_prob_thr
         self.gt_mask = None
         self.goal_cat = None
 
