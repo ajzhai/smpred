@@ -24,7 +24,7 @@ RUN /bin/bash -c ". activate habitat; cd mmsegmentation; pip install -e ."
 
 RUN /bin/bash -c ". activate habitat; pip install gym==0.10.5 "
 ARG INCUBATOR_VER=unknown
-ADD remote_submission.sh remote_submission.sh
+ADD submission.sh remote_submission.sh
 ADD configs/challenge_objectnav2021.local.rgbd.yaml /challenge_objectnav2021.local.rgbd.yaml
 ADD configs/challenge_objectnav2022.local.rgbd.yaml /challenge_objectnav2022.local.rgbd.yaml
 ENV AGENT_EVALUATION_TYPE remote
