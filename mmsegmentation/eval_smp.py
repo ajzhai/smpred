@@ -5,6 +5,7 @@ import mmseg
 
 import mmcv
 import os.path as osp
+import sys
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -15,7 +16,7 @@ from mmseg.utils import get_device
 from mmseg.datasets.pipelines import Compose
 from mmcv.parallel import collate, scatter
 
-from train_smp import MyLoss, SemMapDataset, LoadMapFromFile
+from train_smp import MyLoss, SemMapDataset, LoadMapFromFile, rn_goals, use_rn
 from constants import id_color, common_cls
 
 
@@ -133,13 +134,15 @@ def bce_loss(pred, gt):
     pred = torch.tensor(pred).unsqueeze(0)
     gt = torch.tensor(gt).unsqueeze(0)
     wts = [36.64341412, 30.19407855, 106.23704066, 25.58503269, 100.4556983, 167.64383946]
-    pos_weight = torch.ones(1, 720, 720)  #torch.ones(6)
-    return F.binary_cross_entropy_with_logits(pred, gt, reduction='mean', pos_weight=pos_weight)
+    pos_weight = torch.ones(pred.shape)  #torch.ones(6)
+    return F.binary_cross_entropy_with_logits(pred, gt, reduction='mean') #, pos_weight=pos_weight)
     
     
 if __name__ == '__main__':
     
     out_dir = '../work_dirs/weighted'
+    
+    data_dir = '../data/saved_maps/val' + ('_rn' if use_rn)
     for train_i in [20000, 24000, 28000, 32000]:
         ckpt = osp.join(out_dir, 'iter_' + str(train_i) + '.pth')
 
@@ -161,9 +164,9 @@ if __name__ == '__main__':
         # for i in [0, 1]:
         #     for t_idx in range(4):
         #         print(i, t_idx)
-        #         result = inference_smp(model, '../data/saved_maps/val/f%05d.npz' % i, t_idx=t_idx)
+        #         result = inference_smp(model, osp.join(data_dir, '/f%05d.npz' % i), t_idx=t_idx)
         #         pred = result[0]
-        #         gt = np.load('../data/saved_maps/val/f%05d.npz' % i)['maps'] / 255.
+        #         gt = np.load( osp.join(data_dir, '/f%05d.npz' % i))['maps'] / 255.
         #         z_map = gt[-1, 0]
         #         obj_map = gt[-1, 4:]
         #         mask = gt[t_idx, 1] > 0
@@ -178,12 +181,13 @@ if __name__ == '__main__':
         for i in range(500):
             if i % 50 == 0:
                 print(i)
-            mf =  np.load('../data/saved_maps/val/f%05d.npz' % i)['maps']/ 255.
+                sys.stdout.flush()
+            mf =  np.load( osp.join(data_dir, '/f%05d.npz' % i))['maps']/ 255.
             z_map = mf[-1, 0]
-            obj_map = mf[-1, 4:]
+            obj_map = mf[-1, rn_goals] if user_rn else mf[-1, 4:]
             for t_idx in range(4):
 
-                result = inference_smp(model, '../data/saved_maps/val/f%05d.npz' % i, t_idx=t_idx)
+                result = inference_smp(model,  osp.join(data_dir, '/f%05d.npz' % i), t_idx=t_idx)
                 for c in range(6):
                     pred = result[0][c]
                     gt = obj_map[c]

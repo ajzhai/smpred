@@ -24,6 +24,9 @@ from mmseg.models import build_segmentor
 from mmseg.apis import train_segmentor
 
 
+rn_goals = [(gi + 4) for gi in [1, 7, 9, 11, 14, 6]]
+use_rn = 1
+
 @PIPELINES.register_module()
 class LoadMapFromFile(object):
     """Load semantic maps from file.
@@ -79,7 +82,8 @@ class LoadMapFromFile(object):
             to_rgb=False)
         
         mask = (img[:, :, 1] > 0)
-        results['gt_semantic_seg'] = (maps[-1, 4:10] * (1 - mask)).transpose(1, 2, 0)
+        goals = rn_goals if use_rn else range(4, 10)
+        results['gt_semantic_seg'] = (maps[-1, goals] * (1 - mask)).transpose(1, 2, 0)
         results['seg_fields'].append('gt_semantic_seg')
         return results
 
@@ -174,10 +178,10 @@ def my_loss(pred, target):
     target = torch.permute(target, (0, 3, 1, 2))
     assert pred.size() == target.size() and target.numel() > 0
     wts = [36.64341412, 30.19407855, 106.23704066, 25.58503269, 100.4556983, 167.64383946]
-    pos_weight = torch.ones(6, 720, 720).to(pred.device) #torch.ones(6)
+    pos_weight = torch.ones(pred[0].shape).to(pred.device) #torch.ones(6)
     for i, wt in enumerate(wts):
         pos_weight[i] = wts[i]
-    loss = F.binary_cross_entropy_with_logits(pred, target / 255., reduction='none', pos_weight=pos_weight)
+    loss = F.binary_cross_entropy_with_logits(pred, target / 255., reduction='none') #, pos_weight=pos_weight)
     return loss
 
 @LOSSES.register_module
@@ -216,7 +220,7 @@ if __name__ == '__main__':
     cfg.norm_cfg = dict(type='BN', requires_grad=True)
     cfg.model.backbone.norm_cfg = cfg.norm_cfg
     cfg.model.decode_head.norm_cfg = cfg.norm_cfg
-    cfg.model.backbone.in_channels = 20
+    cfg.model.backbone.in_channels = 27 if use_rn else 20
     cfg.model.decode_head.num_classes = 6
     cfg.model.decode_head.loss_decode = dict(type='MyLoss', loss_weight=1.0)
     
@@ -235,11 +239,12 @@ if __name__ == '__main__':
     cfg.img_norm_cfg = dict(
         mean=[0, 0, 0], std=[1 ,1, 1], to_rgb=False)
 
-    in_size = 720
+    orig_in_size = 960 if use_rn else 720
+    in_size = orig_in_size
     cfg.crop_size = (in_size, in_size)
     cfg.train_pipeline = [
         dict(type='LoadMapFromFile'),
-        dict(type='Resize', img_scale=None, ratio_range=(in_size / 720, in_size / 720)),
+        dict(type='Resize', img_scale=None, ratio_range=(in_size / orig_in_size, in_size / orig_in_size)),
         dict(type='Pad', size=(int(in_size * 1.25), int(in_size * 1.25)), pad_val=0, seg_pad_val=0),
         dict(type='RandomCrop', crop_size=cfg.crop_size, cat_max_ratio=1.),
         dict(type='RandomFlip', flip_ratio=0.5),
@@ -254,7 +259,7 @@ if __name__ == '__main__':
         dict(
             type='MultiScaleFlipAug',
             img_scale=None,
-            img_ratios=[in_size / 720],
+            img_ratios=[in_size / orig_in_size],
             flip=False,
             transforms=[
                 dict(type='Resize', keep_ratio=True),
@@ -266,29 +271,29 @@ if __name__ == '__main__':
 
     cfg.data.train.type = cfg.dataset_type
     cfg.data.train.data_root = cfg.data_root
-    cfg.data.train.img_dir = 'train'
+    cfg.data.train.img_dir = 'train_rn' if use_rn else 'train'
     cfg.data.train.ann_dir = None
     cfg.data.train.pipeline = cfg.train_pipeline
 
     cfg.data.val.type = cfg.dataset_type
     cfg.data.val.data_root = cfg.data_root
-    cfg.data.val.img_dir = 'val'
+    cfg.data.val.img_dir = 'val_rn' if use_rn else 'val'
     cfg.data.train.ann_dir = None
     cfg.data.val.pipeline = cfg.test_pipeline
 
     cfg.data.test.type = cfg.dataset_type
     cfg.data.test.data_root = cfg.data_root
-    cfg.data.test.img_dir = 'val'
+    cfg.data.test.img_dir = 'val_rn' if use_rn else 'val'
     cfg.data.train.ann_dir = None
     cfg.data.test.pipeline = cfg.test_pipeline
 
     # Set up working dir to save files and logs.
-    cfg.work_dir = '../work_dirs/smp_weighted_t10'
+    cfg.work_dir =  '/shared/perception/personals/albert/work_dirs/rn' #'../work_dirs/smp_weighted_t10'
 
     cfg.runner.max_iters = 60000
     cfg.log_config.interval = 500
     cfg.evaluation.interval = cfg.runner.max_iters + 1  
-    cfg.checkpoint_config.interval = 4000
+    cfg.checkpoint_config.interval = 2000
     cfg.optimizer = optimizer = dict(type='Adam', lr=0.0005)
     cfg.lr_config.min_lr = 1e-5
     
