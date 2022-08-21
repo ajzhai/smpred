@@ -140,9 +140,9 @@ def bce_loss(pred, gt):
     
 if __name__ == '__main__':
     
-    out_dir = '../work_dirs/weighted'
+    out_dir = '/shared/perception/personals/albert/work_dirs/rn_t4' #'../work_dirs/weighted'
     
-    data_dir = '../data/saved_maps/val' + ('_rn' if use_rn)
+    data_dir = '../data/saved_maps/val' + ('_rn' if use_rn else '')
     for train_i in [20000, 24000, 28000, 32000]:
         ckpt = osp.join(out_dir, 'iter_' + str(train_i) + '.pth')
 
