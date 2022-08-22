@@ -5,6 +5,7 @@ import mmseg
 
 import mmcv
 import os.path as osp
+import os
 import sys
 import numpy as np
 from PIL import Image
