@@ -184,7 +184,7 @@ if __name__ == '__main__':
                 sys.stdout.flush()
             mf =  np.load( osp.join(data_dir, 'f%05d.npz' % i))['maps']/ 255.
             z_map = mf[-1, 0]
-            obj_map = mf[-1, rn_goals] if user_rn else mf[-1, 4:]
+            obj_map = mf[-1, rn_goals] if use_rn else mf[-1, 4:]
             for t_idx in range(4):
 
                 result = inference_smp(model,  osp.join(data_dir, 'f%05d.npz' % i), t_idx=t_idx)
