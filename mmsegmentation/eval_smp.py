@@ -178,8 +178,8 @@ if __name__ == '__main__':
         dists = [[] for c in range(6)]
         nlls = [[] for c in range(6)] 
         bces = [[] for c in range(6)] 
-        for i in range(500):
-            if i % 50 == 0:
+        for i in range(len(os.listdir(data_dir))):
+            if i % 100 == 0:
                 print(i)
                 sys.stdout.flush()
             mf =  np.load( osp.join(data_dir, 'f%05d.npz' % i))['maps']/ 255.
