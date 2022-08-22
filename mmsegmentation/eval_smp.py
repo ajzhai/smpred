@@ -143,7 +143,7 @@ if __name__ == '__main__':
     out_dir = '/shared/perception/personals/albert/work_dirs/rn_t4' #'../work_dirs/weighted'
     
     data_dir = '../data/saved_maps/val' + ('_rn' if use_rn else '')
-    for train_i in [20000, 24000, 28000, 32000]:
+    for train_i in range(10000, 60000, 10000):
         ckpt = osp.join(out_dir, 'iter_' + str(train_i) + '.pth')
 
         cfg = Config.fromfile(osp.join(out_dir, 'cfg.py'))
@@ -164,9 +164,9 @@ if __name__ == '__main__':
         # for i in [0, 1]:
         #     for t_idx in range(4):
         #         print(i, t_idx)
-        #         result = inference_smp(model, osp.join(data_dir, '/f%05d.npz' % i), t_idx=t_idx)
+        #         result = inference_smp(model, osp.join(data_dir, 'f%05d.npz' % i), t_idx=t_idx)
         #         pred = result[0]
-        #         gt = np.load( osp.join(data_dir, '/f%05d.npz' % i))['maps'] / 255.
+        #         gt = np.load( osp.join(data_dir, 'f%05d.npz' % i))['maps'] / 255.
         #         z_map = gt[-1, 0]
         #         obj_map = gt[-1, 4:]
         #         mask = gt[t_idx, 1] > 0
@@ -182,12 +182,12 @@ if __name__ == '__main__':
             if i % 50 == 0:
                 print(i)
                 sys.stdout.flush()
-            mf =  np.load( osp.join(data_dir, '/f%05d.npz' % i))['maps']/ 255.
+            mf =  np.load( osp.join(data_dir, 'f%05d.npz' % i))['maps']/ 255.
             z_map = mf[-1, 0]
             obj_map = mf[-1, rn_goals] if user_rn else mf[-1, 4:]
             for t_idx in range(4):
 
-                result = inference_smp(model,  osp.join(data_dir, '/f%05d.npz' % i), t_idx=t_idx)
+                result = inference_smp(model,  osp.join(data_dir, 'f%05d.npz' % i), t_idx=t_idx)
                 for c in range(6):
                     pred = result[0][c]
                     gt = obj_map[c]
