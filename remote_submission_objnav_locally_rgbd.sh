@@ -21,7 +21,7 @@ done
 
 docker run -v $(pwd)/habitat-challenge-data:/habitat-challenge-data \
     -v $(pwd)/data:/data\
-    --gpus='"device=0,1,2,3,4,5,6,7,8"' \
+    --gpus='all' \
     -e "AGENT_EVALUATION_TYPE=local" \
     -e "TRACK_CONFIG_FILE=/challenge_objectnav2022.local.rgbd.yaml" \
     ${DOCKER_NAME}\

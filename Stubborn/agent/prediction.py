@@ -142,7 +142,7 @@ def inference_smp(model, full_map):
 class SemOccPred():
     def __init__(self, args):
         self.args = args
-        ckpt = osp.join('./Stubborn/iter_10000.pth')
+        ckpt = osp.join('./Stubborn/smp_wts.pth')
     
         cfg = Config.fromfile('./Stubborn/agent/utils/smp_cfg.py')
 

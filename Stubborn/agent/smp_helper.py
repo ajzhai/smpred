@@ -603,12 +603,12 @@ class Agent_Helper:
             cv2.waitKey(1)
 
         if args.print_images:
-            fn = '{}/episodes/thread_{}/eps_{}/{}-{}-Vis-{}.png'.format(
+            fn = '{}/episodes/thread_{}/eps_{}/{}-{}-Vis-{}.jpg'.format(
                 dump_dir, self.rank, self.episode_no,
                 self.rank, self.episode_no, self.timestep)
 
-            cv2.imwrite(fn, self.vis_image)
-            fn2 = '{}/episodes/thread_{}/eps_{}/{}-{}-Vis-{}.png'.format(
+            cv2.imwrite(fn, self.vis_image, [cv2.IMWRITE_JPEG_QUALITY, 80])
+            fn2 = '{}/episodes/thread_{}/eps_{}/{}-{}-Vis-{}.jpg'.format(
                 dump_dir, self.rank+1, self.episode_no,
                 self.rank, self.episode_no, self.timestep)
             #if self.mask is not None:

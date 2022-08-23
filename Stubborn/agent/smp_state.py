@@ -527,7 +527,7 @@ class Agent_State:
 
         
         # ------------------------------------------------------------------
-        if self.step % 25 == 24 and self.step >= args.switch_step:
+        if self.step % args.smp_step == args.smp_step - 1 and self.step >= args.switch_step:
             self.full_map[:, self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]] = \
                     self.local_map
             # Extract the prediction in the local map bounds
@@ -547,11 +547,11 @@ class Agent_State:
             #dd_wt = 20./ (np.clip(dd, a_min=20, a_max=None)) 
             dd_wt = np.exp(-dd / args.alpha)
             value = so_pred * dd_wt
-            if self.step % 50 == 49 and args.print_images:
-                np.save('data/tmp/so_pred%03d.npy' % self.step, so_pred)
-                np.save('data/tmp/dd%03d.npy' % self.step, dd)
-                np.save('data/tmp/ddwt%03d.npy' % self.step, 1/ dd_wt)
-                np.save('data/tmp/value%03d.npy' % self.step, value)
+            # if self.step % 50 == 49 and args.print_images:
+            #     np.save('data/tmp/so_pred%03d.npy' % self.step, so_pred)
+            #     np.save('data/tmp/dd%03d.npy' % self.step, dd)
+            #     np.save('data/tmp/ddwt%03d.npy' % self.step, 1/ dd_wt)
+            #     np.save('data/tmp/value%03d.npy' % self.step, value)
             self.global_goals = [np.unravel_index(value.argmax(), value.shape)]
         # ------------------------------------------------------------------
         

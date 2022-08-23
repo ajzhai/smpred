@@ -17,14 +17,17 @@ RUN /bin/bash -c ". activate habitat; python -m pip install detectron2 -f https:
 
 # RUN /bin/bash -c ". activate habitat; pip install torchvision==0.11.0 "
 
-# Install mmseg
-ADD mmsegmentation mmsegmentation
+
 RUN /bin/bash -c ". activate habitat; python -m pip install openmim; mim install mmcv-full==1.6.0"
-RUN /bin/bash -c ". activate habitat; cd mmsegmentation; pip install -e ."
 
 RUN /bin/bash -c ". activate habitat; pip install gym==0.10.5 "
+
+# Install mmseg
+ADD mmsegmentation mmsegmentation
+RUN /bin/bash -c ". activate habitat; cd mmsegmentation; pip install -e ."
+
 ARG INCUBATOR_VER=unknown
-ADD submission.sh remote_submission.sh
+ADD remote_submission.sh remote_submission.sh
 ADD configs/challenge_objectnav2021.local.rgbd.yaml /challenge_objectnav2021.local.rgbd.yaml
 ADD configs/challenge_objectnav2022.local.rgbd.yaml /challenge_objectnav2022.local.rgbd.yaml
 ENV AGENT_EVALUATION_TYPE remote
