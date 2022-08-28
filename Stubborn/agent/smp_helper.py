@@ -6,6 +6,7 @@ import skimage.morphology
 from PIL import Image
 from torchvision import transforms
 import matplotlib.pyplot as plt
+import matplotlib
 import math
 from agent.utils.fmm_planner import FMMPlanner
 from agent.utils.rednet import QuickSemanticPredRedNet, SemanticPredRedNet, SemanticPredMaskRCNN
@@ -66,7 +67,7 @@ class Agent_Helper:
             self.sem_pred_rednet = SemanticPredRedNet(args)
 
         # initializations for planning:
-        self.selem = skimage.morphology.disk(3)
+        self.selem = skimage.morphology.disk(args.col_rad)
 
         self.obs = None
         self.obs_shape = None
@@ -222,7 +223,10 @@ class Agent_Helper:
 
         # Get Map prediction
         map_pred = np.rint(planner_inputs['map_pred'])
-        map_pred = skimage.morphology.binary_erosion(map_pred.astype(bool)).astype(int)
+        
+        # OBSTACLE EROSION
+        # map_pred = skimage.morphology.binary_erosion(map_pred.astype(bool)).astype(int)
+        
         self.found_goal = planner_inputs['found_goal']
         goal = planner_inputs['goal']
 
@@ -263,7 +267,7 @@ class Agent_Helper:
                 if self.col_width == 7:
                     length = 4
                     buf = 3
-                self.col_width = min(self.col_width, 3)
+                self.col_width = min(self.col_width, 1)
             else:
                 self.col_width = 1
                 # after fix
@@ -382,6 +386,7 @@ class Agent_Helper:
             grid[x1:x2, y1:y2],
             self.selem) != True
 
+        #self.use_small_num = 1
         if self.use_small_num > 0:
             self.use_small_num -= 1
             traversible[self.collision_map[gx1:gx2, gy1:gy2]
@@ -418,14 +423,97 @@ class Agent_Helper:
 
         state = [start[0] - x1 + 1, start[1] - y1 + 1]
         # assume replan true suggests failure in planning
-        stg_x, stg_y, distance, stop = planner.get_short_term_goal(state)
-
+        stg_x, stg_y, distance, stop, replan = planner.get_short_term_goal(state)
+        if self.found_goal == 0 and replan:
+            self.use_small_num = 20
+            
         # Failed to plan a path
-        if self.found_goal == 0 and distance > self.args.change_goal_threshold:
+        if self.agent_states.step < self.args.switch_step and self.found_goal == 0 and distance > self.args.change_goal_threshold:
             self.use_small_num = 20
             # tell the global planner to change goal
             self.agent_states.set_hard_goal()
 
+        # If we fail to plan a path to the goal, make sure to use optimistic collision map
+        if self.found_goal == 1:
+            if self.args.small_collision_map_for_goal == 1:
+                self.use_small_num = 20
+        
+        if self.found_goal == 1 or replan:
+            # Try again with eroded obstacle map
+            grid = skimage.morphology.binary_erosion(grid.astype(bool)).astype(int)
+            traversible = skimage.morphology.binary_dilation(
+                grid[x1:x2, y1:y2],
+                self.selem) != True
+
+            if self.use_small_num > 0:
+                self.use_small_num -= 1
+                traversible[self.collision_map[gx1:gx2, gy1:gy2]
+                            [x1:x2, y1:y2] == 1] = 0
+                if surrounded_by_obstacle(self.collision_map[gx1:gx2, gy1:gy2], start[0], start[1]) or \
+                    surrounded_by_obstacle(grid,start[0],start[1]):
+                    traversible[
+                        self.visited_vis[gx1:gx2, gy1:gy2][x1:x2,
+                        y1:y2] == 1] = 1
+            else:
+                traversible[self.collision_map_big[gx1:gx2, gy1:gy2]
+                            [x1:x2, y1:y2] == 1] = 0
+                if surrounded_by_obstacle(self.collision_map_big[gx1:gx2, gy1:gy2], start[0], start[1]) or \
+                    surrounded_by_obstacle(grid,start[0],start[1]):
+                    traversible[
+                        self.visited_vis[gx1:gx2, gy1:gy2][x1:x2,
+                        y1:y2] == 1] = 1
+
+
+            traversible[int(start[0] - x1) - 1:int(start[0] - x1) + 2,
+                        int(start[1] - y1) - 1:int(start[1] - y1) + 2] = 1
+
+            traversible = add_boundary(traversible)
+
+            planner = FMMPlanner(traversible)
+            planner.set_multi_goal(goal)
+
+            state = [start[0] - x1 + 1, start[1] - y1 + 1]
+            # assume replan true suggests failure in planning
+            stg_x, stg_y, distance, stop, replan = planner.get_short_term_goal(state)
+            
+            if replan:
+                # Try again with eroded obstacle map
+                grid = skimage.morphology.binary_erosion(grid.astype(bool)).astype(int)
+                traversible = skimage.morphology.binary_dilation(
+                    grid[x1:x2, y1:y2],
+                    self.selem) != True
+
+                if self.use_small_num > 0:
+                    self.use_small_num -= 1
+                    traversible[self.collision_map[gx1:gx2, gy1:gy2]
+                                [x1:x2, y1:y2] == 1] = 0
+                    if surrounded_by_obstacle(self.collision_map[gx1:gx2, gy1:gy2], start[0], start[1]) or \
+                        surrounded_by_obstacle(grid,start[0],start[1]):
+                        traversible[
+                            self.visited_vis[gx1:gx2, gy1:gy2][x1:x2,
+                            y1:y2] == 1] = 1
+                else:
+                    traversible[self.collision_map_big[gx1:gx2, gy1:gy2]
+                                [x1:x2, y1:y2] == 1] = 0
+                    if surrounded_by_obstacle(self.collision_map_big[gx1:gx2, gy1:gy2], start[0], start[1]) or \
+                        surrounded_by_obstacle(grid,start[0],start[1]):
+                        traversible[
+                            self.visited_vis[gx1:gx2, gy1:gy2][x1:x2,
+                            y1:y2] == 1] = 1
+
+
+                traversible[int(start[0] - x1) - 1:int(start[0] - x1) + 2,
+                            int(start[1] - y1) - 1:int(start[1] - y1) + 2] = 1
+
+                traversible = add_boundary(traversible)
+
+                planner = FMMPlanner(traversible)
+                planner.set_multi_goal(goal)
+
+                state = [start[0] - x1 + 1, start[1] - y1 + 1]
+                # assume replan true suggests failure in planning
+                stg_x, stg_y, distance, stop, replan = planner.get_short_term_goal(state)
+            
 
         #If we are already using the optimistic collision map, but still fail to plan a path to the goal, make goal larger
         if self.args.small_collision_map_for_goal == 0 or (self.args.small_collision_map_for_goal == 1 and self.use_small_num > 0):
@@ -434,7 +522,7 @@ class Agent_Helper:
                 step = 0
                 while distance > 100:
                     step += 1
-                    if step > 10:
+                    if step > 5:
                         break
                     selem = skimage.morphology.disk(radius)
                     goal = skimage.morphology.binary_dilation(
@@ -443,12 +531,9 @@ class Agent_Helper:
                     planner.set_multi_goal(goal)
 
                     # assume replan true suggests failure in planning
-                    stg_x, stg_y, distance, stop = planner.get_short_term_goal(
+                    stg_x, stg_y, distance, stop, replan = planner.get_short_term_goal(
                         state)
-        # If we fail to plan a path to the goal, make sure to use optimistic collision map
-        if self.found_goal == 1 and distance > self.args.change_goal_threshold:
-            if self.args.small_collision_map_for_goal == 1:
-                self.use_small_num = 20
+        
 
 
         stg_x, stg_y = stg_x + x1 - 1, stg_y + y1 - 1
@@ -490,7 +575,7 @@ class Agent_Helper:
 
         mask1 = depth == 0
         depth[mask1] = 100.0
-        depth = min_d * 100.0 + depth * max_d * 100.0
+        depth = min_d * 100.0 + depth * (max_d - min_d) * 100.0
         return depth
 
     def call_sem(self,rgb,depth):
@@ -500,7 +585,7 @@ class Agent_Helper:
         if self.args.print_images == 1:
             self.rgb_vis = rgb[:, :, ::-1]
 
-        semantic_pred_rednet = self.sem_pred_rednet.get_prediction(rgb,depth)[0]
+        semantic_pred_rednet = self.sem_pred_rednet.get_prediction(rgb,depth,goal_cat=self.goal_cat)[0]
         return semantic_pred_rednet.astype(np.float32)
 
     def save_semantic(self, img,fn):
@@ -514,13 +599,13 @@ class Agent_Helper:
         dump_dir = "{}/dump/{}/".format(args.dump_location,
                                         args.exp_name)
         ep_dir = '{}/episodes/thread_{}/eps_{}/'.format(
-            dump_dir, self.rank, self.episode_no)
+            dump_dir, self.rank, self.episode_no - 1)
         if not os.path.exists(ep_dir):
             os.makedirs(ep_dir)
-        ep_dir = '{}/episodes/thread_{}/eps_{}/'.format(
-            dump_dir, self.rank+1, self.episode_no)
-        if not os.path.exists(ep_dir):
-            os.makedirs(ep_dir)
+        # ep_dir = '{}/episodes/thread_{}/eps_{}/'.format(
+        #     dump_dir, self.rank+1, self.episode_no - 1)
+        # if not os.path.exists(ep_dir):
+        #     os.makedirs(ep_dir)
         map_pred = inputs['map_pred']
         exp_pred = inputs['exp_pred']
         start_x, start_y, start_o, gx1, gx2, gy1, gy2 = inputs['pose_pred']
@@ -543,7 +628,8 @@ class Agent_Helper:
 
         sem_map += 5
         sem_map[self.collision_map[gx1:gx2, gy1:gy2] == 1] = 14
-        sem_map[int(self.stg[0]),int(self.stg[1])] = 15
+        if int(self.stg[0]) < 240 and int(self.stg[1]) < 240:
+            sem_map[int(self.stg[0]),int(self.stg[1])] = 15
         #print(sem_map.shape,self.collision_map[gx1:gx2, gy1:gy2].shape)
         #exit(0)
         no_cat_mask = sem_map == 20
@@ -582,7 +668,34 @@ class Agent_Helper:
                                  interpolation=cv2.INTER_NEAREST)
         self.vis_image[50:530, 15:655] = self.rgb_vis
         self.vis_image[50:530, 670:1150] = sem_map_vis
+        
+                        
+        right_panel = np.ones((655, 250, 3)).astype(np.uint8) * 255
+                                   
+        my_cm = matplotlib.cm.get_cmap('inferno')
+        data = self.agent_states.so_pred
+        if data is not None:
+            normed_data = (data - np.min(data)) / (np.max(data) - np.min(data))
+                                   
+            mapped_data = my_cm(normed_data)[::-1, :, [2, 1, 0]] * 255
+            
+            white_idx = np.where(np.sum(sem_map_vis, axis=2) == 255 * 3) 
+            mapped_data_vis = cv2.resize(mapped_data, (480, 480),
+                                 interpolation=cv2.INTER_NEAREST)
+            self.vis_image[50:530, 670:1150][white_idx] = mapped_data_vis[white_idx]
 
+            data = self.agent_states.value
+            normed_data = (data - np.min(data)) / (np.max(data) - np.min(data))
+            mapped_data = my_cm(normed_data)
+            right_panel[300:540, :240] = mapped_data[::-1, :, [2, 1, 0]] * 255
+            
+            data = self.agent_states.dd_wt
+            normed_data = (data - np.min(data)) / (np.max(data) - np.min(data))
+            mapped_data = my_cm(normed_data)
+            right_panel[50:290, :240] = mapped_data[::-1, :, [2, 1, 0]] * 255
+                                   
+        self.vis_image = np.append(self.vis_image, right_panel, axis=1)
+        
         pos = (
             (start_x * 100. / args.map_resolution - gy1)
             * 480 / map_pred.shape[0],
@@ -595,8 +708,8 @@ class Agent_Helper:
         color = (int(color_palette[11] * 255),
                  int(color_palette[10] * 255),
                  int(color_palette[9] * 255))
-        #cv2.drawContours(self.vis_image, [agent_arrow], 0, color, -1) # TODO: change back
-
+        cv2.drawContours(self.vis_image, [agent_arrow], 0, color, -1) # TODO: change back
+        
         if args.visualize:
             # Displaying the image
             cv2.imshow("Thread {}".format(self.rank), self.vis_image)
@@ -604,8 +717,8 @@ class Agent_Helper:
 
         if args.print_images:
             fn = '{}/episodes/thread_{}/eps_{}/{}-{}-Vis-{}.jpg'.format(
-                dump_dir, self.rank, self.episode_no,
-                self.rank, self.episode_no, self.timestep)
+                dump_dir, self.rank, self.episode_no - 1,
+                self.rank, self.episode_no - 1, self.timestep)
 
             cv2.imwrite(fn, self.vis_image, [cv2.IMWRITE_JPEG_QUALITY, 80])
             fn2 = '{}/episodes/thread_{}/eps_{}/{}-{}-Vis-{}.jpg'.format(

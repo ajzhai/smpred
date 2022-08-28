@@ -112,7 +112,7 @@ class FMMPlanner():
             replan = False
 
         return (stg_x + state[0] - self.du) * scale, \
-               (stg_y + state[1] - self.du) * scale, distance, stop
+               (stg_y + state[1] - self.du) * scale, distance, stop, replan
 
     def _find_nearest_goal(self, goal):
         traversible = skimage.morphology.binary_dilation(

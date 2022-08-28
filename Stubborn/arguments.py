@@ -62,20 +62,20 @@ def get_args():
                         help="Maximum depth for depth sensor in meters")
 
 
-    parser.add_argument('--num_local_steps', type=int, default=25,
+    parser.add_argument('--num_local_steps', type=int, default=20,
                         help="""Number of steps the local policy
                                 between each global step""")
 
     # Mapping
     parser.add_argument('--num_sem_categories', type=int, default=16)
-    parser.add_argument('--sem_pred_prob_thr', type=int, default=0.9)
+    parser.add_argument('--sem_pred_prob_thr', type=float, default=0.5)
     parser.add_argument('--global_downscaling', type=int, default=3) # originally 6 (don't forget the change goal threshold)
     parser.add_argument('--vision_range', type=int, default=100)
     parser.add_argument('--map_resolution', type=int, default=5)
     parser.add_argument('--du_scale', type=int, default=1)
     parser.add_argument('--map_size_cm', type=int, default=3600) # the global downscaling also need to be changed
     parser.add_argument('--cat_pred_threshold', type=float, default=5.0)
-    parser.add_argument('--map_pred_threshold', type=float, default=1.0)
+    parser.add_argument('--map_pred_threshold', type=float, default=0.1)
     parser.add_argument('--exp_pred_threshold', type=float, default=1.0)
     parser.add_argument('--collision_threshold', type=float, default=0.20)
     parser.add_argument(
@@ -101,7 +101,10 @@ def get_args():
     parser.add_argument('--alpha', type = float, default = 400)
     parser.add_argument('--smp_step', type = float, default = 25)
     parser.add_argument('--switch_step', type = float, default = 501)
-    
+    parser.add_argument('--col_rad', type = float, default = 4.5) 
+    parser.add_argument('--sf_thr', type = str, default = '-2') 
+    parser.add_argument('--goal_erode', type = int, default = 3) 
+                        
     # for data collection purposes. Use 0 to turn off
     # use 1 to turn on
     parser.add_argument("--no_stop",type = int, default = 0)

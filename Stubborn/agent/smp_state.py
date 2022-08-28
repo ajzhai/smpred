@@ -19,6 +19,11 @@ from arguments import get_args
 import pickle
 
 
+def add_boundary(mat, value=1):
+            h, w = mat.shape
+            new_mat = np.zeros((h + 2, w + 2)) + value
+            new_mat[1:h + 1, 1:w + 1] = mat
+            return new_mat
 
 class Agent_State:
     def __init__(self,args):
@@ -110,7 +115,11 @@ class Agent_State:
 
         # Semantic Occupancy Prediction
         self.sem_occ_pred = SemOccPred(args)
-        self.selem = skimage.morphology.disk(3)
+        self.selem = skimage.morphology.disk(args.col_rad)
+        self.selem4idx = np.where(skimage.morphology.disk(args.col_rad + 1) > 0)
+        self.so_pred = None
+        self.value = None
+        self.dd_wt = None
 
     def reset(self):
         self.l_step = 0
@@ -128,6 +137,9 @@ class Agent_State:
         self.score_threshold = 0.85
         self.init_map_and_pose()
         self.stuck = False
+        self.so_pred = None
+        self.value = None
+        self.dd_wt = None
         if self.args.detect_stuck == 1:
             self.pos_record = []
 
@@ -185,8 +197,9 @@ class Agent_State:
         self.local_map[2:4, loc_r - 1:loc_r + 2,
         loc_c - 1:loc_c + 2] = 1.
         
-        ang = np.random.uniform(low=-np.pi, high=np.pi)
-        rgoal = [np.cos(ang) * 0.25 + 0.5, np.sin(ang) * 0.25 + 0.5]
+        # ang = np.random.uniform(low=-np.pi, high=np.pi)
+        # rgoal = [np.cos(ang) * 0.25 + 0.5, np.sin(ang) * 0.25 + 0.5]
+        rgoal = [0.1, 0.1]
         self.global_goals = [[int(rgoal[0] * self.local_w), int(rgoal[1] * self.local_h)]]
         self.global_goals = [[min(x, int(self.local_w - 1)), min(y, int(self.local_h - 1))]
                         for x, y in self.global_goals]
@@ -207,9 +220,9 @@ class Agent_State:
         p_input['found_goal'] = 0
         p_input['wait'] = 0  # does it matter?
         if self.args.visualize or self.args.print_images:
-            self.local_map[-1, :, :] = 1e-5
-            p_input['sem_map_pred'] = self.local_map[4:, :, :
-                                      ].argmax(0).cpu().numpy()
+            vlm = torch.clone(self.local_map[4:, :, :])
+            vlm[15] = 1e-5
+            p_input['sem_map_pred'] = vlm.argmax(0).cpu().numpy()
 
 
         self.planner_inputs = p_input
@@ -457,6 +470,15 @@ class Agent_State:
         loc_r, loc_c = [int(r * 100.0 / args.map_resolution),
                         int(c * 100.0 / args.map_resolution)]
         self.local_map[2:4, loc_r - 2:loc_r + 3, loc_c - 2:loc_c + 3] = 1.
+        
+        # Explored under the agent
+        to_fill = (self.selem4idx[0] - 4 + loc_r, self.selem4idx[1] - 4 + loc_c)
+        self.local_map[1][to_fill] = 1.
+        
+        dist_to_goal = (loc_r - (self.global_goals[0][0]))**2 + (loc_c - (self.global_goals[0][1]))**2
+        if dist_to_goal < 16:
+            self.local_map[1][self.global_goals[0][0], self.global_goals[0][1]] = 1
+                
         if self.args.detect_stuck == 1:
             glo_r, glo_c = self.lmb[0] + loc_r, self.lmb[2] + loc_c
             self.pos_record.append((glo_r, glo_c))
@@ -509,25 +531,28 @@ class Agent_State:
             r, c = locs[1], locs[0]
             loc_r, loc_c = [int(r * 100.0 / args.map_resolution),
                             int(c * 100.0 / args.map_resolution)]
-            if self.hard_goal:
-                self.global_goal_rotation_id = (self.global_goal_rotation_id + 1)%4
-                self.global_goal_preset = self.global_goal_rotation[self.global_goal_rotation_id]
-                self.hard_goal = False
-               
-            # ang = np.random.uniform(low=-np.pi, high=np.pi)
-            # self.global_goal_preset = [np.cos(ang) * 0.25 + 0.5, np.sin(ang) * 0.25 + 0.5]
+            if self.step < args.switch_step:
+                if self.hard_goal:
+                    self.global_goal_rotation_id = (self.global_goal_rotation_id + 1)%4
+                    self.global_goal_preset = self.global_goal_rotation[self.global_goal_rotation_id]
+                    self.hard_goal = False
 
-            self.global_goals = [[int(self.global_goal_preset[0] * self.local_w),
-                             int(self.global_goal_preset[1] * self.local_h)]
-                            ]
-            self.global_goals = [[min(x, int(self.local_w - 1)),
-                             min(y, int(self.local_h - 1))]
-                            for x, y in self.global_goals]
+                # ang = np.random.uniform(low=-np.pi, high=np.pi)
+                # self.global_goal_preset = [np.cos(ang) * 0.25 + 0.5, np.sin(ang) * 0.25 + 0.5]
+
+                self.global_goals = [[int(self.global_goal_preset[0] * self.local_w),
+                                 int(self.global_goal_preset[1] * self.local_h)]
+                                ]
+                self.global_goals = [[min(x, int(self.local_w - 1)),
+                                 min(y, int(self.local_h - 1))]
+                                for x, y in self.global_goals]
 
 
         
         # ------------------------------------------------------------------
-        if self.step % args.smp_step == args.smp_step - 1 and self.step >= args.switch_step:
+        
+        if self.step % args.smp_step == args.smp_step - 1 or dist_to_goal < 16 and self.step >= args.switch_step:
+            
             self.full_map[:, self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]] = \
                     self.local_map
             # Extract the prediction in the local map bounds
@@ -537,16 +562,34 @@ class Agent_State:
                               self.lmb[2]:self.lmb[3]]
 
             # Weight value based on inverse geodesic distance
-            trav = skimage.morphology.binary_dilation(np.rint(self.local_map[0].cpu().numpy()), self.selem) != True
+            trav = skimage.morphology.binary_dilation(np.rint(self.full_map[0].cpu().numpy()), self.selem) != True
+            gx1, gx2, gy1, gy2 = int(self.lmb[0]), int(self.lmb[1]), int(self.lmb[2]), int(self.lmb[3])
+            
+            trav[self.helper.collision_map == 1] = 0
+            trav[self.helper.visited_vis == 1] = 1
+            
+#             trav[0] = 1
+#             trav[-1] = 1
+#             trav[:, 0] = 1
+#             trav[:, -1] = 1
+            
             traversible_ma = ma.masked_values(trav * 1, 0)
-            traversible_ma[np.clip(loc_r, a_min=0, a_max=self.local_w-1), np.clip(loc_c, a_min=0, a_max=self.local_h-1)] = 0
+            traversible_ma[np.clip(loc_r + self.lmb[0], a_min=0, a_max=self.full_w-1), 
+                           np.clip(loc_c + self.lmb[2], a_min=0, a_max=self.full_h-1)] = 0
             dd = skfmm.distance(traversible_ma, dx=1)
             dd = ma.filled(dd, np.max(dd) + 1)
             dd[np.where(dd == np.max(dd))] = np.inf
             #dd[np.where(dd < 100)] = np.inf
             #dd_wt = 20./ (np.clip(dd, a_min=20, a_max=None)) 
-            dd_wt = np.exp(-dd / args.alpha)
+            dd_wt = np.exp(-dd / args.alpha)[self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]]
+            
+            if np.sum(dd_wt) < 10 and self.dd_wt is not None:
+                dd_wt = self.dd_wt
             value = so_pred * dd_wt
+            self.dd_wt = dd_wt
+            self.so_pred = so_pred
+            self.value = value
+            
             # if self.step % 50 == 49 and args.print_images:
             #     np.save('data/tmp/so_pred%03d.npy' % self.step, so_pred)
             #     np.save('data/tmp/dd%03d.npy' % self.step, dd)
@@ -601,9 +644,10 @@ class Agent_State:
                 cat_semantic_scores = cat_semantic_map
                 cat_semantic_scores[cat_semantic_scores > 0] = 1.
                 temp_goal = cat_semantic_scores
-                for _ in range(3):
-                    temp_goal = skimage.morphology.binary_erosion(temp_goal.astype(bool)).astype(float)
-                temp_goal = skimage.morphology.binary_dilation(temp_goal.astype(bool)).astype(float)
+                if self.goal_cat != 5:  # don't erode TV
+                    for _ in range(self.args.goal_erode):
+                        temp_goal = skimage.morphology.binary_erosion(temp_goal.astype(bool)).astype(float)
+                    temp_goal = skimage.morphology.binary_dilation(temp_goal.astype(bool)).astype(float)
                 if temp_goal.sum() != 0.:
                     goal_maps = temp_goal
                     found_goal = 1

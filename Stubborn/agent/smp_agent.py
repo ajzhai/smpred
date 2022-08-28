@@ -18,6 +18,7 @@ class SMPAgent(habitat.Agent):
         self._POSSIBLE_ACTIONS = task_config.TASK.POSSIBLE_ACTIONS
         self.agent_states = Agent_State(args)
         self.agent_helper = Agent_Helper(args,self.agent_states)
+        self.agent_states.helper = self.agent_helper
         self.last_sim_location = None
         self.device = args.device
         self.first_obs = True
@@ -25,7 +26,7 @@ class SMPAgent(habitat.Agent):
         self.total_episodes = 0
         self.args = args
         self.timestep = 0
-        self.low_score_threshold = 0.7
+        self.low_score_threshold = 0.5
         self.high_score_threshold = 0.9
         # towel tv shower gym clothes
         # use a lower confidence score threshold for those categories

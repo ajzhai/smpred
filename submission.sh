@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-
-python Stubborn/eval.py -v 0 --alpha 100 --timestep_limit 1000 --evaluation remote $@
+# Switch step: explore -> smp
+python Stubborn/eval.py -v 0 --smp_step 10 --switch_step 19 --alpha 400 --timestep_limit 1000 --evaluation remote $@

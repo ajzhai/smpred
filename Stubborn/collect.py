@@ -28,8 +28,10 @@ def main():
     config_paths = os.environ["CHALLENGE_CONFIG_FILE"]
     config = habitat.get_config(config_paths)
     config.defrost()
+    config.SEED = 100
+    # config.ENVIRONMENT.ITERATOR_OPTIONS.SHUFFLE = False
     config.SIMULATOR.HABITAT_SIM_V0.GPU_DEVICE_ID = args_2.sem_gpu_id
-    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 5
+    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 1
     config.DATASET.SPLIT = 'val'
     config.freeze()
     print(config.DATASET.SPLIT)
@@ -39,7 +41,7 @@ def main():
     
     print(len(hab_env.episodes), 'episodes in dataset')
     
-    num_episodes = 100 * 5
+    num_episodes = 30
     start = args_2.start_ep
     end = args_2.end_ep if args_2.end_ep > 0 else num_episodes
     
@@ -59,9 +61,13 @@ def main():
             seq_i = 0
             full_map_seq = np.zeros((len(save_steps), 4 + args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h), dtype=np.uint8)
             while not hab_env.episode_over:
+                
                 action = nav_agent.act(observations)
                 observations = hab_env.step(action)
-
+                # if step_i in range(21, 32):
+                #     #print(step_i, observations['gps'], observations['compass'])
+                #     np.save('data/tmp/rgb%03d.npy' % step_i, observations['rgb'])
+                          
                 if step_i % 100 == 0:
                     print('episode %d, step %d' % (count_episodes, step_i))
                     sys.stdout.flush()
@@ -85,9 +91,9 @@ def main():
                 epls.append(step_i)
                 stats = np.array([succs, spls, dtgs, epls])
                 # np.save('data/tmp/logged_metrics_smp_a%04d.npy' % args_2.alpha, stats)
-                np.save('data/tmp/logged_metrics_smp_a800_u10.npy', stats)
+                np.save('data/tmp/logged_metrics_smp_' + args_2.exp_name + '.npy', stats)
                 print(metrics)
-                
+                np.save('data/tmp/end%03d.npy' % count_episodes, observations['rgb'])
                 # if args_2.print_images:
                 #     plt.imshow(observations['rgb'])
                 #     plt.savefig('./data/tmp/end%d.png' % count_episodes)

@@ -19,9 +19,8 @@ RUN /bin/bash -c ". activate habitat; python -m pip install detectron2 -f https:
 
 
 RUN /bin/bash -c ". activate habitat; python -m pip install openmim; mim install mmcv-full==1.6.0"
-
 RUN /bin/bash -c ". activate habitat; pip install gym==0.10.5 "
-
+RUN /bin/bash -c ". activate habitat; python -m pip install transformers"
 # Install mmseg
 ADD mmsegmentation mmsegmentation
 RUN /bin/bash -c ". activate habitat; cd mmsegmentation; pip install -e ."

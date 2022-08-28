@@ -28,8 +28,10 @@ from detectron2.modeling import build_model
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.utils.visualizer import ColorMode, Visualizer
 import detectron2.data.transforms as T
+from transformers import SegformerFeatureExtractor, SegformerForSemanticSegmentation
 
-from constants import coco_categories_mapping,fourty221, twentyone240,compatible_dict, white_list,black_list
+
+from constants import hm3d_to_ade, coco_to_hm3d, coco_categories_mapping,fourty221, twentyone240,compatible_dict, white_list,black_list
 
 
 # Resnet model urls
@@ -587,15 +589,36 @@ class SemanticPredMaskRCNN():
 
     def __init__(self, args):
         self.segmentation_model = ImageSegmentation(args)
+        self.device = torch.device("cuda:" + str(args.sem_gpu_id))
+
+        model_path = "Stubborn/agent/utils/segformer-b4-finetuned-ade-512-512"
+        self.feature_extractor = SegformerFeatureExtractor.from_pretrained(model_path)
+        self.segformer = SegformerForSemanticSegmentation.from_pretrained(model_path)
+        self.segformer.to(self.device)
+        self.segformer.eval()
         self.args = args
 
-    def get_prediction(self, img, depth=None):
+    def get_prediction(self, img, depth=None, goal_cat=None):
         args = self.args
+        with torch.no_grad():
+            pixel_values = self.feature_extractor(img, return_tensors="pt").pixel_values.to(self.device)
+            outputs = self.segformer(pixel_values)
+            gc = hm3d_to_ade[coco_to_hm3d[goal_cat]]
+            smx = outputs.logits.softmax(dim=1)[0, gc]
+            logits = nn.functional.interpolate(outputs.logits.detach().cpu()[:, gc:gc+1],
+                size=(480, 640), # (height, width)
+                mode='bilinear',
+                align_corners=False)
+            msk = logits > float(args.sf_thr)
+    
         image_list = []
         img = img[:, :, ::-1]
+        
         image_list.append(img)
         seg_predictions, vis_output = self.segmentation_model.get_predictions(
             image_list, visualize=args.visualize == 2)
+        
+        
 
         if args.visualize == 2:
             img = vis_output.get_image()
@@ -606,9 +629,12 @@ class SemanticPredMaskRCNN():
                 seg_predictions[0]['instances'].pred_classes.cpu().numpy()):
             if class_idx in list(coco_categories_mapping.keys()):
                 idx = coco_categories_mapping[class_idx]
+                if (idx not in [5]) and seg_predictions[0]['instances'].scores[j] < 0.9:
+                    continue
                 obj_mask = seg_predictions[0]['instances'].pred_masks[j] * 1.
                 semantic_input[:, :, idx] += obj_mask.cpu().numpy()
 
+        semantic_input[:, :, goal_cat] = msk
         return semantic_input, img
 
 

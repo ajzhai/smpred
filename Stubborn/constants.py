@@ -23,7 +23,7 @@ hm3d_to_coco = {0: 0,
                 3: 4,
                 4: 5,
                 5: 1}
-
+coco_to_hm3d = {v : k for k, v in hm3d_to_coco.items()}
 hm3d_to_21 = {
     0: 1,
     1: 7,
@@ -31,6 +31,14 @@ hm3d_to_21 = {
     3: 11,
     4: 14,
     5: 6
+}
+hm3d_to_ade = {
+    0:19, 
+    1:7, 
+    2:17, 
+    3:65, 
+    4:89, 
+    5:23
 }
 
 scenes = {}

@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
-python Stubborn/collect.py -v 0 --dump_location ./data/tmp --print_images 0 --smp_step 10 --switch_step 20 --alpha 800 --evaluation $AGENT_EVALUATION_TYPE $@
-#python Stubborn/collect.py -v 0 --alpha 100 --timestep_limit 1000 --evaluation $AGENT_EVALUATION_TYPE $@
+#python Stubborn/collect.py -v 0 --dump_location ./data/tmp --exp_name debug --print_images 1 --sem_pred_prob_thr 0.9 --smp_step 20 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --sf_thr '-2' --evaluation $AGENT_EVALUATION_TYPE $@ 
+#python Stubborn/collect.py --dump_location ./data/tmp --exp_name debug --print_images 1 --switch_step 501 --map_resolution 2 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
-
+python Stubborn/collect.py -sem_gpu_id 1 --exp_name sf20 --print_images 1 --sem_pred_prob_thr 0.9 --smp_step 20 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --sf_thr '-2' --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py -sem_gpu_id 1 --exp_name sf15 --print_images 1 --sem_pred_prob_thr 0.9 --smp_step 20 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --sf_thr '-1.5' --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py -sem_gpu_id 3 --exp_name sf10 --print_images 1 --sem_pred_prob_thr 0.9 --smp_step 20 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --sf_thr '-1' --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py -sem_gpu_id 3 --exp_name sf10_ge2 --print_images 1 --sem_pred_prob_thr 0.9 --smp_step 20 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --sf_thr '-1' --goal_erode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 8 --start_ep 0 --end_ep 2000 --timestep_limit 1000 --evaluation $AGENT_EVALUATION_TYPE $@  &
 # python Stubborn/collect.py --sem_gpu_id 8 --start_ep 2000 --end_ep 4000 --timestep_limit 1000 --evaluation $AGENT_EVALUATION_TYPE $@  &
 # python Stubborn/collect.py --sem_gpu_id 8 --start_ep 4000 --end_ep 6000 --timestep_limit 1000 --evaluation $AGENT_EVALUATION_TYPE $@  &

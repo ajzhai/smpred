@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 
-def get_contour_points(pos, origin, size=20):
+def get_contour_points(pos, origin, size=12):
     x, y, o = pos
     pt1 = (int(x) + origin[0],
            int(y) + origin[1])
