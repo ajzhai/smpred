@@ -475,7 +475,7 @@ class Agent_State:
         to_fill = (self.selem4idx[0] - 4 + loc_r, self.selem4idx[1] - 4 + loc_c)
         self.local_map[1][to_fill] = 1.
         
-        dist_to_goal = (loc_r - (self.global_goals[0][0]))**2 + (loc_c - (self.global_goals[0][1]))**2
+        dist_to_goal = np.sqrt((loc_r - (self.global_goals[0][0]))**2 + (loc_c - (self.global_goals[0][1]))**2)
         if dist_to_goal < 16:
             self.local_map[1][self.global_goals[0][0], self.global_goals[0][1]] = 1
                 

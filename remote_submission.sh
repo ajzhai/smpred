@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-#python Stubborn/collect.py -v 0 --dump_location ./data/tmp --exp_name debug --print_images 1 --sem_pred_prob_thr 0.9 --smp_step 20 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --sf_thr '-2' --evaluation $AGENT_EVALUATION_TYPE $@ 
+#python Stubborn/collect.py -v 0 --dump_location ./data/tmp --exp_name debug --print_images 1 --sem_pred_prob_thr 0.9 --smp_step 20 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 2 --sf_thr '-2' --evaluation $AGENT_EVALUATION_TYPE $@ 
 #python Stubborn/collect.py --dump_location ./data/tmp --exp_name debug --print_images 1 --switch_step 501 --map_resolution 2 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
+python Stubborn/collect.py -sem_gpu_id 0 --exp_name sf20_a800 --print_images 1 --sem_pred_prob_thr 0.9 --smp_step 20 --switch_step 19 --alpha 800 --col_rad 4 --start_ep 0 --sf_thr '-2' --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py -sem_gpu_id 0 --exp_name sf20_a200 --print_images 1 --sem_pred_prob_thr 0.9 --smp_step 20 --switch_step 19 --alpha 200 --col_rad 4 --start_ep 0 --sf_thr '-2' --evaluation $AGENT_EVALUATION_TYPE $@ &
 python Stubborn/collect.py -sem_gpu_id 1 --exp_name sf20 --print_images 1 --sem_pred_prob_thr 0.9 --smp_step 20 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --sf_thr '-2' --evaluation $AGENT_EVALUATION_TYPE $@ &
 python Stubborn/collect.py -sem_gpu_id 1 --exp_name sf15 --print_images 1 --sem_pred_prob_thr 0.9 --smp_step 20 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --sf_thr '-1.5' --evaluation $AGENT_EVALUATION_TYPE $@ &
 python Stubborn/collect.py -sem_gpu_id 3 --exp_name sf10 --print_images 1 --sem_pred_prob_thr 0.9 --smp_step 20 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --sf_thr '-1' --evaluation $AGENT_EVALUATION_TYPE $@ &

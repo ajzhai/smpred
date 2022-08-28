@@ -610,6 +610,20 @@ class SemanticPredMaskRCNN():
                 mode='bilinear',
                 align_corners=False)
             msk = logits > float(args.sf_thr)
+            if goal_cat == 3:  # bed vs sofa
+                oc = hm3d_to_ade[coco_to_hm3d[1]]
+                otherlogits = nn.functional.interpolate(outputs.logits.detach().cpu()[:, oc:oc+1],
+                    size=(480, 640), # (height, width)
+                    mode='bilinear',
+                    align_corners=False)
+                msk *= logits > otherlogits
+            if goal_cat == 1:  # sofa vs chair
+                oc = hm3d_to_ade[coco_to_hm3d[0]]
+                otherlogits = nn.functional.interpolate(outputs.logits.detach().cpu()[:, oc:oc+1],
+                    size=(480, 640), # (height, width)
+                    mode='bilinear',
+                    align_corners=False)
+                msk *= logits > otherlogits
     
         image_list = []
         img = img[:, :, ::-1]

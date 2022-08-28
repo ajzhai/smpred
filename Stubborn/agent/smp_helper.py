@@ -259,7 +259,7 @@ class Agent_Helper:
         if self.last_action == 1:
             x1, y1, t1 = self.last_loc
             x2, y2, _ = self.curr_loc
-            buf = 4
+            buf = 1
             length = 2
 
             if abs(x1 - x2) < 0.05 and abs(y1 - y2) < 0.05:
@@ -386,7 +386,7 @@ class Agent_Helper:
             grid[x1:x2, y1:y2],
             self.selem) != True
 
-        #self.use_small_num = 1
+        self.use_small_num = 1
         if self.use_small_num > 0:
             self.use_small_num -= 1
             traversible[self.collision_map[gx1:gx2, gy1:gy2]
@@ -438,7 +438,7 @@ class Agent_Helper:
             if self.args.small_collision_map_for_goal == 1:
                 self.use_small_num = 20
         
-        if self.found_goal == 1 or replan:
+        if self.found_goal == 1 and replan:
             # Try again with eroded obstacle map
             grid = skimage.morphology.binary_erosion(grid.astype(bool)).astype(int)
             traversible = skimage.morphology.binary_dilation(
@@ -476,43 +476,7 @@ class Agent_Helper:
             # assume replan true suggests failure in planning
             stg_x, stg_y, distance, stop, replan = planner.get_short_term_goal(state)
             
-            if replan:
-                # Try again with eroded obstacle map
-                grid = skimage.morphology.binary_erosion(grid.astype(bool)).astype(int)
-                traversible = skimage.morphology.binary_dilation(
-                    grid[x1:x2, y1:y2],
-                    self.selem) != True
-
-                if self.use_small_num > 0:
-                    self.use_small_num -= 1
-                    traversible[self.collision_map[gx1:gx2, gy1:gy2]
-                                [x1:x2, y1:y2] == 1] = 0
-                    if surrounded_by_obstacle(self.collision_map[gx1:gx2, gy1:gy2], start[0], start[1]) or \
-                        surrounded_by_obstacle(grid,start[0],start[1]):
-                        traversible[
-                            self.visited_vis[gx1:gx2, gy1:gy2][x1:x2,
-                            y1:y2] == 1] = 1
-                else:
-                    traversible[self.collision_map_big[gx1:gx2, gy1:gy2]
-                                [x1:x2, y1:y2] == 1] = 0
-                    if surrounded_by_obstacle(self.collision_map_big[gx1:gx2, gy1:gy2], start[0], start[1]) or \
-                        surrounded_by_obstacle(grid,start[0],start[1]):
-                        traversible[
-                            self.visited_vis[gx1:gx2, gy1:gy2][x1:x2,
-                            y1:y2] == 1] = 1
-
-
-                traversible[int(start[0] - x1) - 1:int(start[0] - x1) + 2,
-                            int(start[1] - y1) - 1:int(start[1] - y1) + 2] = 1
-
-                traversible = add_boundary(traversible)
-
-                planner = FMMPlanner(traversible)
-                planner.set_multi_goal(goal)
-
-                state = [start[0] - x1 + 1, start[1] - y1 + 1]
-                # assume replan true suggests failure in planning
-                stg_x, stg_y, distance, stop, replan = planner.get_short_term_goal(state)
+        
             
 
         #If we are already using the optimistic collision map, but still fail to plan a path to the goal, make goal larger
