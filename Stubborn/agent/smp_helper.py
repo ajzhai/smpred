@@ -259,7 +259,7 @@ class Agent_Helper:
         if self.last_action == 1:
             x1, y1, t1 = self.last_loc
             x2, y2, _ = self.curr_loc
-            buf = 1
+            buf = 4
             length = 2
 
             if abs(x1 - x2) < 0.05 and abs(y1 - y2) < 0.05:
@@ -345,7 +345,7 @@ class Agent_Helper:
             relative_angle = (angle_agent - angle_st_goal) % 360.0
             if relative_angle > 180:
                 relative_angle -= 360
-
+                
             if relative_angle > self.args.turn_angle / 2.:
                 action = 3  # Right
             elif relative_angle < -self.args.turn_angle / 2.:
@@ -414,7 +414,7 @@ class Agent_Helper:
 
         planner = FMMPlanner(traversible)
 
-        selem = skimage.morphology.disk(10)
+        selem = skimage.morphology.disk(8 if self.found_goal == 1 else 2)
         goal = skimage.morphology.binary_dilation(
             goal, selem) != True
 
@@ -497,8 +497,6 @@ class Agent_Helper:
                     # assume replan true suggests failure in planning
                     stg_x, stg_y, distance, stop, replan = planner.get_short_term_goal(
                         state)
-        
-
 
         stg_x, stg_y = stg_x + x1 - 1, stg_y + y1 - 1
         self.stg = (stg_x, stg_y)

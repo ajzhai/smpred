@@ -19,8 +19,8 @@ def get_args():
     parser.add_argument('--end_ep', type=int, default=-1,
                         help='end episode for data collection')
 
-    parser.add_argument('-d', '--dump_location', type=str, default="./tmp/",
-                        help='path to dump models and log (default: ./tmp/)')
+    parser.add_argument('-d', '--dump_location', type=str, default="./data/tmp/",
+                        help='path to dump models and log (default: ./data/tmp/)')
     parser.add_argument('--checkpt', type=str, default="./Stubborn/rednet_semmap_mp3d_tuned.pth",
                         help='path to rednet models')
 

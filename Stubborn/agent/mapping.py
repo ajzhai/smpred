@@ -5,7 +5,7 @@ import numpy as np
 
 from agent.utils.model import get_grid, ChannelPool, Flatten, NNBase
 import agent.utils.depth_utils as du
-
+import matplotlib.pyplot as plt
 
 class Semantic_Mapping(nn.Module):
 
@@ -93,6 +93,12 @@ class Semantic_Mapping(nn.Module):
                                      XYZ_cm_std.shape[1],
                                      XYZ_cm_std.shape[2] * XYZ_cm_std.shape[3])
 
+        my_zs = XYZ_cm_std[0, 2, :]
+        my_zs = my_zs[(my_zs > -1) & (my_zs < 1)] * 2 + 1.6
+        if torch.quantile(my_zs, 0.03) > 0.2 and torch.sum((my_zs > 0.2) & (my_zs < 0.7)) > 0.2 * len(my_zs):
+            below_floor = XYZ_cm_std[0, 2, :] * 2 + 1.6 < 0.7
+            XYZ_cm_std[:, :, below_floor] = 99999
+        
         voxels = du.splat_feat_nd(
             self.init_grid * 0., self.feat, XYZ_cm_std).transpose(2, 3)
 
