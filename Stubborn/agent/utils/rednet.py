@@ -469,7 +469,7 @@ class SemanticPredRedNet():
         self.gt_mask = None
         self.goal_cat = None
 
-    def get_prediction(self, img,depth):
+    def get_prediction(self, img,depth,goal_cat=None):
         args = self.args
         #image_list = []
         img = img[np.newaxis, :, :, :]
