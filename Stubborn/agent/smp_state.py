@@ -14,7 +14,7 @@ from numpy import ma
 
 from agent.mapping import Semantic_Mapping
 from agent.prediction import SemOccPred
-from constants import habitat_goal_label_to_similar_coco
+from constants import habitat_goal_label_to_similar_coco, twentyone_to_hm3d
 from arguments import get_args
 import pickle
 
@@ -566,7 +566,11 @@ class Agent_State:
                     self.local_map
             # Extract the prediction in the local map bounds
             so_pred = self.sem_occ_pred.get_prediction(self.full_map.cpu().numpy())
-            so_pred = so_pred[self.goal_cat,
+            if args.num_sem_categories == 23:
+                target = twentyone_to_hm3d[self.goal_cat]
+            else:
+                target = self.goal_cat
+            so_pred = so_pred[target,
                               self.lmb[0]:self.lmb[1],
                               self.lmb[2]:self.lmb[3]]
 

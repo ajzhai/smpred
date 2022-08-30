@@ -32,6 +32,8 @@ hm3d_to_21 = {
     4: 14,
     5: 6
 }
+twentyone_to_hm3d = {v : k for k, v in hm3d_to_21.items()}
+
 hm3d_to_ade = {
     0:19, 
     1:7, 
