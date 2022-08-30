@@ -45,6 +45,20 @@ class UnTrapHelper:
             else:
                 return 2
 
+# For bathroom
+class SmallRoomHelper:
+    def __init__(self):
+        self.total_id = 0
+        self.pattern = [1, 2, 1, 3, 1, 3, 1, 2]
+        self.epi_id = 0
+
+    def reset(self):
+        self.total_id += 1
+        self.epi_id = 0
+
+    def get_action(self):
+        self.epi_id += 1
+        return self.pattern[(self.epi_id - 1) % len(self.pattern)]
 
 
 class Agent_Helper:
@@ -95,6 +109,8 @@ class Agent_Helper:
         self.stg = None
         self.goal_cat = -1
         self.untrap = UnTrapHelper()
+        self.srh = SmallRoomHelper()
+        self.use_srh = False
         self.use_small_num = 0
         self.agent_states = agent_states
 
@@ -139,6 +155,8 @@ class Agent_Helper:
         self._previous_action = -1
         self.block_threshold = 4
         self.untrap.reset()
+        self.srh.reset()
+        self.use_srh = False
         #self.untrap = UnTrapHelper() #TODO is this needed?
         self.forward_after_stop = self.forward_after_stop_preset
 
@@ -327,6 +345,10 @@ class Agent_Helper:
         stg, stop = self._get_stg(map_pred, start_exact, np.copy(goal),
                                   planning_window)
 
+        if self.use_srh:
+            action = self.srh.get_action()
+            self._previous_action = action
+            return action
         # Deterministic Local Policy
         if self.forward_after_stop < 0:
             self.forward_after_stop = self.forward_after_stop_preset
@@ -500,15 +522,18 @@ class Agent_Helper:
             
         
             
-
+        is_toilet = (self.goal_cat == 4 and self.args.num_sem_categories == 16) or \
+                    (self.goal_cat == 4 and self.args.num_sem_categories == 23)
+        
         #If we are already using the optimistic collision map, but still fail to plan a path to the goal, make goal larger
         if self.args.small_collision_map_for_goal == 0 or (self.args.small_collision_map_for_goal == 1 and self.use_small_num > 0):
             if self.found_goal == 1 and distance > self.args.magnify_goal_when_hard:
                 radius = 2
                 step = 0
+                
                 while distance > 100:
                     step += 1
-                    if step > 8:
+                    if step > 8 or (is_toilet and step > 2):
                         break
                     selem = skimage.morphology.disk(radius)
                     goal = skimage.morphology.binary_dilation(
@@ -520,6 +545,10 @@ class Agent_Helper:
                     stg_x, stg_y, distance, stop, replan = planner.get_short_term_goal(
                         state)
 
+        # if self.found_goal == 1 and replan and is_toilet:
+        #     self.use_srh = True
+        # else:
+        #     self.use_srh = False
         stg_x, stg_y = stg_x + x1 - 1, stg_y + y1 - 1
         self.stg = (stg_x, stg_y)
         return (stg_x, stg_y), stop

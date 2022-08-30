@@ -680,11 +680,18 @@ class Agent_State:
                 cat_semantic_scores = cat_semantic_map
                 cat_semantic_scores[cat_semantic_scores > 0] = 1.
                 temp_goal = cat_semantic_scores
-                if (self.goal_cat != 5 and not self.oventime) or args.num_sem_categories == 23:  # don't erode TV
+                if (self.goal_cat != 5 and not self.oventime) and args.num_sem_categories == 16:  # don't erode TV
                     toilet_reduction = 1 if self.goal_cat == 4 else 0
                     for _ in range(self.args.goal_erode - toilet_reduction):
                         temp_goal = skimage.morphology.binary_erosion(temp_goal.astype(bool)).astype(float)
                     temp_goal = skimage.morphology.binary_dilation(temp_goal.astype(bool)).astype(float)
+                    
+                if (self.goal_cat != 14) and args.num_sem_categories == 23:  # don't erode TV
+                    toilet_reduction = 1 if self.goal_cat == 11 else 0
+                    for _ in range(self.args.goal_erode - toilet_reduction):
+                        temp_goal = skimage.morphology.binary_erosion(temp_goal.astype(bool)).astype(float)
+                    temp_goal = skimage.morphology.binary_dilation(temp_goal.astype(bool)).astype(float)
+                    
                 if temp_goal.sum() == 0.:
                     temp_goal = cat_semantic_scores
                 if args.num_sem_categories != 23:
@@ -692,6 +699,9 @@ class Agent_State:
                         temp_goal *= self.local_map[4 + 1, :, :].cpu().numpy() < 1
                     if self.goal_cat == 1:  # sofa vs chair
                         temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() < 1
+                else:
+                    if self.goal_cat == 7:  # bed vs sofa
+                        temp_goal *= self.local_map[4 + 6, :, :].cpu().numpy() < 1
                 if temp_goal.sum() != 0.:
                     goal_maps = temp_goal
                     found_goal = 1
@@ -700,6 +710,10 @@ class Agent_State:
             if self.step > 400 and self.goal_cat == 5 and found_goal == 0:  # bring in the ovens for TV
                 self.local_map[self.goal_cat + 4, :, :] += self.local_map[7 + 4, :, :]
                 self.oventime = True
+        # else:
+        #     if self.step > 400 and self.goal_cat == 14 and found_goal == 0:  # bring in the ovens for TV
+        #         self.local_map[self.goal_cat + 4, :, :] += self.local_map[18 + 4, :, :]
+        #         self.oventime = True
         # ------------------------------------------------------------------
 
         # ------------------------------------------------------------------

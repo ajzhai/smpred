@@ -41,7 +41,7 @@ def main():
     
     print(len(hab_env.episodes), 'episodes in dataset')
     
-    num_episodes = 500
+    num_episodes = 10
     start = args_2.start_ep
     end = args_2.end_ep if args_2.end_ep > 0 else num_episodes
     
@@ -91,7 +91,7 @@ def main():
                 epls.append(step_i)
                 stats = np.array([succs, spls, dtgs, epls])
                 # np.save('data/tmp/logged_metrics_smp_a%04d.npy' % args_2.alpha, stats)
-                np.save('data/tmp/logged_metrics_smp_' + args_2.exp_name + '_500.npy', stats)
+                np.save('data/tmp/logged_metrics_smp_' + args_2.exp_name + '.npy', stats)
                 print(metrics)
                 # np.save('data/tmp/end%03d.npy' % count_episodes, observations['rgb'])
                 # if args_2.print_images:
