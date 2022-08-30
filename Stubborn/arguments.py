@@ -107,6 +107,8 @@ def get_args():
     parser.add_argument('--escape', type = int, default = 0) 
     parser.add_argument('--segformer', type = int, default = 0) 
     parser.add_argument('--use_big_col', type = int, default = 0) 
+    parser.add_argument('--dd_erode', type = int, default = 0) 
+    parser.add_argument('--oventrick', type = int, default = 1) 
                         
     # for data collection purposes. Use 0 to turn off
     # use 1 to turn on

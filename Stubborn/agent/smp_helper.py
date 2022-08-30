@@ -295,7 +295,7 @@ class Agent_Helper:
                 if self.col_width == 7:
                     length = 4
                     buf = 3
-                self.col_width = min(self.col_width, 3)
+                self.col_width = min(self.col_width, 1)
             else:
                 self.col_width = 1
                 # after fix
@@ -436,19 +436,12 @@ class Agent_Helper:
             self.use_small_num -= 1
             traversible[self.collision_map[gx1:gx2, gy1:gy2]
                         [x1:x2, y1:y2] == 1] = 0
-            if surrounded_by_obstacle(self.collision_map[gx1:gx2, gy1:gy2], start[0], start[1]) or \
-                surrounded_by_obstacle(grid,start[0],start[1]):
-                traversible[
-                    self.visited_vis[gx1:gx2, gy1:gy2][x1:x2,
-                    y1:y2] == 1] = 1
         else:
             traversible[self.collision_map_big[gx1:gx2, gy1:gy2]
                         [x1:x2, y1:y2] == 1] = 0
-            if surrounded_by_obstacle(self.collision_map_big[gx1:gx2, gy1:gy2], start[0], start[1]) or \
-                surrounded_by_obstacle(grid,start[0],start[1]):
-                traversible[
-                    self.visited_vis[gx1:gx2, gy1:gy2][x1:x2,
-                    y1:y2] == 1] = 1
+            # if surrounded_by_obstacle(self.collision_map_big[gx1:gx2, gy1:gy2], start[0], start[1]) or \
+            #     surrounded_by_obstacle(grid,start[0],start[1]):
+        traversible[self.visited_vis[gx1:gx2, gy1:gy2][x1:x2, y1:y2] == 1] = 1
 
 
         traversible[int(start[0] - x1) - 1:int(start[0] - x1) + 2,
@@ -582,7 +575,7 @@ class Agent_Helper:
         depth = depth[:, :, 0] * 1
 
         for i in range(depth.shape[1]):
-            depth[:, i][depth[:, i] == 0.] = depth[:, i].max()
+            depth[:, i][depth[:, i] == 0.] = 100.0 #depth[:, i].max()
 
         mask2 = depth > 0.99
         depth[mask2] = 0.

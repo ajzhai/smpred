@@ -115,7 +115,7 @@ class Agent_State:
 
         # Semantic Occupancy Prediction
         self.sem_occ_pred = SemOccPred(args)
-        self.selem = skimage.morphology.disk(args.col_rad)
+        self.selem = skimage.morphology.disk(args.col_rad - args.dd_erode)
         self.selem4idx = np.where(skimage.morphology.disk(args.col_rad + 1) > 0)
         self.so_pred = None
         self.value = None
@@ -716,7 +716,7 @@ class Agent_State:
                     goal_maps = temp_goal
                     found_goal = 1
                     
-        if args.num_sem_categories != 23:
+        if args.num_sem_categories != 23 and args.oventrick:
             if self.step > 400 and self.goal_cat == 5 and found_goal == 0:  # bring in the ovens for TV
                 self.local_map[self.goal_cat + 4, :, :] += self.local_map[7 + 4, :, :]
                 self.oventime = True
