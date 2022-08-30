@@ -565,7 +565,15 @@ class Agent_State:
             self.full_map[:, self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]] = \
                     self.local_map
             # Extract the prediction in the local map bounds
-            so_pred = self.sem_occ_pred.get_prediction(self.full_map.cpu().numpy())
+            if args.num_sem_categories == 16 and self.full_w == 960:
+                so_pred = self.sem_occ_pred.get_prediction(self.full_map[:, 120:840, 120:840].cpu().numpy())
+                blank = np.zeros((6, 960, 960))
+                blank[:, 120:840, 120:840] = so_pred
+                so_pred = blank
+            else:
+                so_pred = self.sem_occ_pred.get_prediction(self.full_map.cpu().numpy())
+                
+            
             if args.num_sem_categories == 23:
                 target = twentyone_to_hm3d[self.goal_cat]
             else:
@@ -628,10 +636,12 @@ class Agent_State:
         
         blind = False
         if args.escape and self.dd_wt1 is not None:
-            if (self.step > 250 and self.step < 400 and self.local_map[1, :, :].sum() < 4000) or \
-               np.sum(self.dd_wt1 > 0) < 1600: # trapped in stairs?
-                self.global_goals = [[20, 20]]
-                blind = True
+            if self.step >= 250 and self.step % 50 == 0 and np.sum(self.dd_wt1 > 0) < 1600: # and self.local_map[1, :, :].sum() < 4000
+                # trapped in stairs?
+                self.local_map[0] = 0
+                self.full_map[0] = 0
+                # self.global_goals = [[20, 20]]
+                # blind = True
             
             
         # Update long-term goal if target object is found

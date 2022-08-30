@@ -430,7 +430,8 @@ class Agent_Helper:
             grid[x1:x2, y1:y2],
             self.selem) != True
 
-        self.use_small_num = 1
+        if not self.args.use_big_col:
+            self.use_small_num = 1
         if self.use_small_num > 0:
             self.use_small_num -= 1
             traversible[self.collision_map[gx1:gx2, gy1:gy2]
