@@ -105,6 +105,7 @@ def get_args():
     parser.add_argument('--sf_thr', type = str, default = '-2') 
     parser.add_argument('--goal_erode', type = int, default = 3) 
     parser.add_argument('--escape', type = int, default = 0) 
+    parser.add_argument('--segformer', type = int, default = 0) 
                         
     # for data collection purposes. Use 0 to turn off
     # use 1 to turn on

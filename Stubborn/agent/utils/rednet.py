@@ -589,42 +589,44 @@ class SemanticPredMaskRCNN():
 
     def __init__(self, args):
         self.segmentation_model = ImageSegmentation(args)
-#         self.device = torch.device("cuda:" + str(args.sem_gpu_id))
+        if args.segformer:
+            self.device = torch.device("cuda:" + str(args.sem_gpu_id))
 
-#         model_path = "Stubborn/agent/utils/segformer-b4-finetuned-ade-512-512"
-#         self.feature_extractor = SegformerFeatureExtractor.from_pretrained(model_path)
-#         self.segformer = SegformerForSemanticSegmentation.from_pretrained(model_path)
-#         self.segformer.to(self.device)
-#         self.segformer.eval()
+            model_path = "Stubborn/agent/utils/segformer-b4-finetuned-ade-512-512"
+            self.feature_extractor = SegformerFeatureExtractor.from_pretrained(model_path)
+            self.segformer = SegformerForSemanticSegmentation.from_pretrained(model_path)
+            self.segformer.to(self.device)
+            self.segformer.eval()
         self.args = args
 
     def get_prediction(self, img, depth=None, goal_cat=None):
         args = self.args
         
-        # with torch.no_grad():
-        #     pixel_values = self.feature_extractor(img, return_tensors="pt").pixel_values.to(self.device)
-        #     outputs = self.segformer(pixel_values)
-        #     gc = hm3d_to_ade[coco_to_hm3d[goal_cat]]
-        #     smx = outputs.logits.softmax(dim=1)[0, gc]
-        #     logits = nn.functional.interpolate(outputs.logits.detach().cpu()[:, gc:gc+1],
-        #         size=(480, 640), # (height, width)
-        #         mode='bilinear',
-        #         align_corners=False)
-        #     msk = logits > float(args.sf_thr)
-        #     if goal_cat == 3:  # bed vs sofa
-        #         oc = hm3d_to_ade[coco_to_hm3d[1]]
-        #         otherlogits = nn.functional.interpolate(outputs.logits.detach().cpu()[:, oc:oc+1],
-        #             size=(480, 640), # (height, width)
-        #             mode='bilinear',
-        #             align_corners=False)
-        #         msk *= logits > otherlogits
-        #     if goal_cat == 1:  # sofa vs chair
-        #         oc = hm3d_to_ade[coco_to_hm3d[0]]
-        #         otherlogits = nn.functional.interpolate(outputs.logits.detach().cpu()[:, oc:oc+1],
-        #             size=(480, 640), # (height, width)
-        #             mode='bilinear',
-        #             align_corners=False)
-        #         msk *= logits > otherlogits
+        if args.segformer:
+            with torch.no_grad():
+                pixel_values = self.feature_extractor(img, return_tensors="pt").pixel_values.to(self.device)
+                outputs = self.segformer(pixel_values)
+                gc = hm3d_to_ade[coco_to_hm3d[goal_cat]]
+                smx = outputs.logits.softmax(dim=1)[0, gc]
+                logits = nn.functional.interpolate(outputs.logits.detach().cpu()[:, gc:gc+1],
+                    size=(480, 640), # (height, width)
+                    mode='bilinear',
+                    align_corners=False)
+                msk = logits > float(args.sf_thr)
+                if goal_cat == 3:  # bed vs sofa
+                    oc = hm3d_to_ade[coco_to_hm3d[1]]
+                    otherlogits = nn.functional.interpolate(outputs.logits.detach().cpu()[:, oc:oc+1],
+                        size=(480, 640), # (height, width)
+                        mode='bilinear',
+                        align_corners=False)
+                    msk *= logits > otherlogits
+                if goal_cat == 1:  # sofa vs chair
+                    oc = hm3d_to_ade[coco_to_hm3d[0]]
+                    otherlogits = nn.functional.interpolate(outputs.logits.detach().cpu()[:, oc:oc+1],
+                        size=(480, 640), # (height, width)
+                        mode='bilinear',
+                        align_corners=False)
+                    msk *= logits > otherlogits
     
         image_list = []
         img = img[:, :, ::-1]
@@ -652,7 +654,9 @@ class SemanticPredMaskRCNN():
 
         
         semantic_input[:, :, 3] *= semantic_input[:, :, 1] < 0.9
-        #semantic_input[:, :, goal_cat] = msk
+        
+        if args.segformer:
+            semantic_input[:, :, goal_cat] = msk
         return semantic_input, img
 
 
