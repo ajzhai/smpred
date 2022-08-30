@@ -91,8 +91,10 @@ class FMMPlanner():
         assert subset.shape[0] == 2 * self.du + 1 and \
             subset.shape[1] == 2 * self.du + 1, \
             "Planning error: unexpected subset shape {}".format(subset.shape)
-        #np.save('./data/tmp/fmmd78.npy', dist)
-        #np.save('./data/tmp/presubset77.npy', subset)
+        
+        #np.save('./data/tmp/fmmd304.npy', dist)
+        #np.save('./data/tmp/presubset304.npy', subset)
+        
         subset *= mask
         subset += (1 - mask) * self.fmm_dist.shape[0] ** 2
         distance = subset[self.du,self.du]
@@ -105,7 +107,7 @@ class FMMPlanner():
         ratio1 = subset / dist_mask
         subset[ratio1 < -1.5] = 1
         
-        #np.save('./data/tmp/ratio77.npy', ratio1)
+        #np.save('./data/tmp/ratio304.npy', ratio1)
 
         (stg_x, stg_y) = np.unravel_index(np.argmin(subset), subset.shape)
         #print(subset[stg_x,stg_y])
@@ -114,9 +116,9 @@ class FMMPlanner():
         else:
             replan = False
             
-        #np.save('./data/tmp/mask77.npy', mask)
-        #np.save('./data/tmp/dmask77.npy', dist_mask)
-        #np.save('./data/tmp/subset77.npy', subset)
+#         np.save('./data/tmp/mask304.npy', mask)
+#         np.save('./data/tmp/dmask304.npy', dist_mask)
+#         np.save('./data/tmp/subset304.npy', subset)
         
 
         return (stg_x + state[0] - self.du) * scale, \

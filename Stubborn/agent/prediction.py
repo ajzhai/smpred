@@ -145,6 +145,10 @@ class SemOccPred():
         ckpt = osp.join('./Stubborn/smp_wts.pth')
     
         cfg = Config.fromfile('./Stubborn/agent/utils/smp_cfg.py')
+        if args.num_sem_categories == 23:
+            ckpt = osp.join('./Stubborn/smprn_wts.pth')
+    
+            cfg = Config.fromfile('./Stubborn/agent/utils/smprn_cfg.py')
 
         # build the model from a config file and a checkpoint file
         self.model = init_segmentor(cfg, checkpoint=ckpt, device=('cuda:'+ str(args.sem_gpu_id)) if args else 'cuda:0')

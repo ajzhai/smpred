@@ -646,9 +646,12 @@ class SemanticPredMaskRCNN():
                 idx = coco_categories_mapping[class_idx]
                 if (idx not in [5]) and seg_predictions[0]['instances'].scores[j] < 0.9:
                     continue
-                obj_mask = seg_predictions[0]['instances'].pred_masks[j] * 1.
-                semantic_input[:, :, idx] += obj_mask.cpu().numpy()
+                else:
+                    obj_mask = seg_predictions[0]['instances'].pred_masks[j] * 1.
+                    semantic_input[:, :, idx] += obj_mask.cpu().numpy()
 
+        
+        semantic_input[:, :, 3] *= semantic_input[:, :, 1] < 0.9
         #semantic_input[:, :, goal_cat] = msk
         return semantic_input, img
 

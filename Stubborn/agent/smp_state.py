@@ -120,6 +120,10 @@ class Agent_State:
         self.so_pred = None
         self.value = None
         self.dd_wt = None
+        self.dd_wt1 = None
+        self.last_global_goal = None
+        
+        self.oventime = False
 
     def reset(self):
         self.l_step = 0
@@ -140,6 +144,9 @@ class Agent_State:
         self.so_pred = None
         self.value = None
         self.dd_wt = None
+        self.dd_wt1 = None
+        self.oventime = False
+        self.last_global_goal = None
         if self.args.detect_stuck == 1:
             self.pos_record = []
 
@@ -472,12 +479,14 @@ class Agent_State:
         self.local_map[2:4, loc_r - 2:loc_r + 3, loc_c - 2:loc_c + 3] = 1.
         
         # Explored under the agent
-        to_fill = (self.selem4idx[0] - 4 + loc_r, self.selem4idx[1] - 4 + loc_c)
+        to_fill = (self.selem4idx[0] - (args.col_rad+1) + loc_r, self.selem4idx[1] - (args.col_rad+1) + loc_c)
         self.local_map[1][to_fill] = 1.
         
         dist_to_goal = np.sqrt((loc_r - (self.global_goals[0][0]))**2 + (loc_c - (self.global_goals[0][1]))**2)
-        if dist_to_goal < 16:
-            self.local_map[1][self.global_goals[0][0], self.global_goals[0][1]] = 1
+        if dist_to_goal < 15:
+            to_fill = (self.selem4idx[0] - (args.col_rad+1) + self.global_goals[0][0], 
+                       self.selem4idx[1] - (args.col_rad+1) + self.global_goals[0][1])
+            self.local_map[1][to_fill] = 1.
                 
         if self.args.detect_stuck == 1:
             glo_r, glo_c = self.lmb[0] + loc_r, self.lmb[2] + loc_c
@@ -540,18 +549,18 @@ class Agent_State:
                 # ang = np.random.uniform(low=-np.pi, high=np.pi)
                 # self.global_goal_preset = [np.cos(ang) * 0.25 + 0.5, np.sin(ang) * 0.25 + 0.5]
 
-                self.global_goals = [[int(self.global_goal_preset[0] * self.local_w),
-                                 int(self.global_goal_preset[1] * self.local_h)]
-                                ]
-                self.global_goals = [[min(x, int(self.local_w - 1)),
-                                 min(y, int(self.local_h - 1))]
-                                for x, y in self.global_goals]
+#                 self.global_goals = [[int(self.global_goal_preset[0] * self.local_w),
+#                                  int(self.global_goal_preset[1] * self.local_h)]
+#                                 ]
+#                 self.global_goals = [[min(x, int(self.local_w - 1)),
+#                                  min(y, int(self.local_h - 1))]
+#                                 for x, y in self.global_goals]
 
 
         
         # ------------------------------------------------------------------
         
-        if self.step % args.smp_step == args.smp_step - 1 or dist_to_goal < 16 and self.step >= args.switch_step:
+        if self.step % args.smp_step == args.smp_step - 1 or dist_to_goal < 15 and self.step >= args.switch_step:
             
             self.full_map[:, self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]] = \
                     self.local_map
@@ -566,6 +575,18 @@ class Agent_State:
             gx1, gx2, gy1, gy2 = int(self.lmb[0]), int(self.lmb[1]), int(self.lmb[2]), int(self.lmb[3])
             
             trav[self.helper.collision_map == 1] = 0
+            
+            if args.escape:
+                traversible_ma = ma.masked_values(trav * 1, 0)
+                traversible_ma[np.clip(loc_r + self.lmb[0], a_min=0, a_max=self.full_w-1), 
+                               np.clip(loc_c + self.lmb[2], a_min=0, a_max=self.full_h-1)] = 0
+                dd = skfmm.distance(traversible_ma, dx=1)
+                dd = ma.filled(dd, np.max(dd) + 1)
+                dd[np.where(dd == np.max(dd))] = np.inf
+                #dd[np.where(dd < 100)] = np.inf
+                #dd_wt = 20./ (np.clip(dd, a_min=20, a_max=None)) 
+                self.dd_wt1 = np.exp(-dd / args.alpha)[self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]]
+            
             trav[self.helper.visited_vis == 1] = 1
             
 #             trav[0] = 1
@@ -595,10 +616,20 @@ class Agent_State:
             #     np.save('data/tmp/dd%03d.npy' % self.step, dd)
             #     np.save('data/tmp/ddwt%03d.npy' % self.step, 1/ dd_wt)
             #     np.save('data/tmp/value%03d.npy' % self.step, value)
-            self.global_goals = [np.unravel_index(value.argmax(), value.shape)]
+            new_gg = [np.unravel_index(value.argmax(), value.shape)]
+            if new_gg != self.last_global_goal:
+                self.last_global_goal = self.global_goals
+                self.global_goals = new_gg
         # ------------------------------------------------------------------
         
-        
+        blind = False
+        if args.escape and self.dd_wt1 is not None:
+            if (self.step > 250 and self.step < 400 and self.local_map[1, :, :].sum() < 4000) or \
+               np.sum(self.dd_wt1 > 0) < 1600: # trapped in stairs?
+                self.global_goals = [[20, 20]]
+                blind = True
+            
+            
         # Update long-term goal if target object is found
         found_goal = 0
         goal_maps = np.zeros((self.local_w, self.local_h))
@@ -637,6 +668,7 @@ class Agent_State:
 #                         cat_semantic_scores < self.score_threshold - 0.01] = 0.
 #                     goal_maps = cat_semantic_scores
 
+        
         if self.args.only_explore == 0:
             cn = self.goal_cat + 4
             if self.local_map[cn, :, :].sum() != 0.:
@@ -644,14 +676,26 @@ class Agent_State:
                 cat_semantic_scores = cat_semantic_map
                 cat_semantic_scores[cat_semantic_scores > 0] = 1.
                 temp_goal = cat_semantic_scores
-                if self.goal_cat != 5:  # don't erode TV
-                    for _ in range(self.args.goal_erode):
+                if (self.goal_cat != 5 and not self.oventime) or args.num_sem_categories == 23:  # don't erode TV
+                    toilet_reduction = 1 if self.goal_cat == 4 else 0
+                    for _ in range(self.args.goal_erode - toilet_reduction):
                         temp_goal = skimage.morphology.binary_erosion(temp_goal.astype(bool)).astype(float)
                     temp_goal = skimage.morphology.binary_dilation(temp_goal.astype(bool)).astype(float)
+                if temp_goal.sum() == 0.:
+                    temp_goal = cat_semantic_scores
+                if args.num_sem_categories != 23:
+                    if self.goal_cat == 3:  # bed vs sofa
+                        temp_goal *= self.local_map[4 + 1, :, :].cpu().numpy() < 1
+                    if self.goal_cat == 1:  # sofa vs chair
+                        temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() < 1
                 if temp_goal.sum() != 0.:
                     goal_maps = temp_goal
                     found_goal = 1
-
+                    
+        if args.num_sem_categories != 23:
+            if self.step > 400 and self.goal_cat == 5 and found_goal == 0:  # bring in the ovens for TV
+                self.local_map[self.goal_cat + 4, :, :] += self.local_map[7 + 4, :, :]
+                self.oventime = True
         # ------------------------------------------------------------------
 
         # ------------------------------------------------------------------
@@ -659,6 +703,8 @@ class Agent_State:
         p_input = {}
 
         p_input['map_pred'] = self.local_map[0, :, :].cpu().numpy()
+        if blind:
+            p_input['map_pred'][:] = 0
         p_input['exp_pred'] = self.local_map[1, :, :].cpu().numpy()
         p_input['pose_pred'] = self.planner_pose_inputs
         p_input['goal'] = goal_maps  # global_goals[e]

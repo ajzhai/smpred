@@ -69,7 +69,7 @@ def get_args():
     # Mapping
     parser.add_argument('--num_sem_categories', type=int, default=16)
     parser.add_argument('--sem_pred_prob_thr', type=float, default=0.5)
-    parser.add_argument('--global_downscaling', type=int, default=3) # originally 6 (don't forget the change goal threshold)
+    parser.add_argument('--global_downscaling', type=int, default=2) # originally 6 (don't forget the change goal threshold)
     parser.add_argument('--vision_range', type=int, default=100)
     parser.add_argument('--map_resolution', type=int, default=5)
     parser.add_argument('--du_scale', type=int, default=1)
@@ -104,6 +104,7 @@ def get_args():
     parser.add_argument('--col_rad', type = float, default = 4.5) 
     parser.add_argument('--sf_thr', type = str, default = '-2') 
     parser.add_argument('--goal_erode', type = int, default = 3) 
+    parser.add_argument('--escape', type = int, default = 0) 
                         
     # for data collection purposes. Use 0 to turn off
     # use 1 to turn on

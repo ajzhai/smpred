@@ -27,7 +27,14 @@ class UnTrapHelper:
 
     def get_action(self):
         self.epi_id += 1
-        if self.epi_id == 1:
+        if self.epi_id > 30:
+            return np.random.randint(2, 4)
+        if self.epi_id > 18:
+            if self.total_id % 2 == 0:
+                return 2
+            else:
+                return 3
+        if self.epi_id  < 3:
             if self.total_id % 2 == 0:
                 return 2
             else:
@@ -130,7 +137,8 @@ class Agent_Helper:
         self.plan_step = -100
         self.prev_blocked = 0
         self._previous_action = -1
-        self.block_threshold = 10
+        self.block_threshold = 4
+        self.untrap.reset()
         #self.untrap = UnTrapHelper() #TODO is this needed?
         self.forward_after_stop = self.forward_after_stop_preset
 
@@ -240,6 +248,8 @@ class Agent_Helper:
         # Get curr loc
         self.curr_loc = [start_x, start_y, start_o]
         r, c = start_y, start_x
+        start_exact = [r * 100.0 / args.map_resolution - gx1,
+                       c * 100.0 / args.map_resolution - gy1]
         start = [int(r * 100.0 / args.map_resolution - gx1),
                  int(c * 100.0 / args.map_resolution - gy1)]
         start = pu.threshold_poses(start, map_pred.shape)
@@ -259,7 +269,7 @@ class Agent_Helper:
         if self.last_action == 1:
             x1, y1, t1 = self.last_loc
             x2, y2, _ = self.curr_loc
-            buf = 4
+            buf = 4 if self.prev_blocked < self.block_threshold else 2
             length = 2
 
             if abs(x1 - x2) < 0.05 and abs(y1 - y2) < 0.05:
@@ -267,7 +277,7 @@ class Agent_Helper:
                 if self.col_width == 7:
                     length = 4
                     buf = 3
-                self.col_width = min(self.col_width, 1)
+                self.col_width = min(self.col_width, 3)
             else:
                 self.col_width = 1
                 # after fix
@@ -314,7 +324,7 @@ class Agent_Helper:
                     self.untrap.reset()
                 self.prev_blocked = 0
 
-        stg, stop = self._get_stg(map_pred, start, np.copy(goal),
+        stg, stop = self._get_stg(map_pred, start_exact, np.copy(goal),
                                   planning_window)
 
         # Deterministic Local Policy
@@ -368,6 +378,16 @@ class Agent_Helper:
         x1, y1, = 0, 0
         x2, y2 = grid.shape
 
+        if gx2 == self.full_w:
+            grid[x2 - 1] = 1
+        if gy2 == self.full_h:
+            grid[:, y2 - 1] = 1
+            
+        if gx1 == 0:
+            grid[x1] = 1
+        if gy1 == 0:
+            grid[y1] = 1
+            
         def add_boundary(mat, value=1):
             h, w = mat.shape
             new_mat = np.zeros((h + 2, w + 2)) + value
@@ -375,6 +395,8 @@ class Agent_Helper:
             return new_mat
 
         def surrounded_by_obstacle(mat,i,j):
+            i = int(i)
+            j = int(j)
             i1 = max(0,i-3)
             i2 = min(mat.shape[0],i+2)
             j1 = max(0,j-3)
@@ -486,7 +508,7 @@ class Agent_Helper:
                 step = 0
                 while distance > 100:
                     step += 1
-                    if step > 5:
+                    if step > 8:
                         break
                     selem = skimage.morphology.disk(radius)
                     goal = skimage.morphology.binary_dilation(
@@ -590,7 +612,7 @@ class Agent_Helper:
 
         sem_map += 5
         sem_map[self.collision_map[gx1:gx2, gy1:gy2] == 1] = 14
-        if int(self.stg[0]) < 240 and int(self.stg[1]) < 240:
+        if int(self.stg[0]) < self.local_w and int(self.stg[1]) < self.local_h:
             sem_map[int(self.stg[0]),int(self.stg[1])] = 15
         #print(sem_map.shape,self.collision_map[gx1:gx2, gy1:gy2].shape)
         #exit(0)
@@ -646,15 +668,20 @@ class Agent_Helper:
                                  interpolation=cv2.INTER_NEAREST)
             self.vis_image[50:530, 670:1150][white_idx] = mapped_data_vis[white_idx]
 
+
             data = self.agent_states.value
             normed_data = (data - np.min(data)) / (np.max(data) - np.min(data))
-            mapped_data = my_cm(normed_data)
-            right_panel[300:540, :240] = mapped_data[::-1, :, [2, 1, 0]] * 255
-            
+            mapped_data = my_cm(normed_data)[::-1, :, [2, 1, 0]] * 255
+            mapped_data_vis = cv2.resize(mapped_data, (240, 240),
+                             interpolation=cv2.INTER_NEAREST)
+            right_panel[300:540, :240] = mapped_data_vis
+
             data = self.agent_states.dd_wt
             normed_data = (data - np.min(data)) / (np.max(data) - np.min(data))
-            mapped_data = my_cm(normed_data)
-            right_panel[50:290, :240] = mapped_data[::-1, :, [2, 1, 0]] * 255
+            mapped_data = my_cm(normed_data)[::-1, :, [2, 1, 0]] * 255
+            mapped_data_vis = cv2.resize(mapped_data, (240, 240),
+                             interpolation=cv2.INTER_NEAREST)
+            right_panel[50:290, :240] = mapped_data_vis
                                    
         self.vis_image = np.append(self.vis_image, right_panel, axis=1)
         

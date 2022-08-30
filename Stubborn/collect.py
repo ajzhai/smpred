@@ -31,7 +31,7 @@ def main():
     config.SEED = 100
     # config.ENVIRONMENT.ITERATOR_OPTIONS.SHUFFLE = False
     config.SIMULATOR.HABITAT_SIM_V0.GPU_DEVICE_ID = args_2.sem_gpu_id
-    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 5
+    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 1
     config.DATASET.SPLIT = 'val'
     config.freeze()
     print(config.DATASET.SPLIT)
@@ -91,7 +91,7 @@ def main():
                 epls.append(step_i)
                 stats = np.array([succs, spls, dtgs, epls])
                 # np.save('data/tmp/logged_metrics_smp_a%04d.npy' % args_2.alpha, stats)
-                np.save('data/tmp/logged_metrics_smp_' + args_2.exp_name + '.npy', stats)
+                np.save('data/tmp/logged_metrics_smp_' + args_2.exp_name + '100.npy', stats)
                 print(metrics)
                 # np.save('data/tmp/end%03d.npy' % count_episodes, observations['rgb'])
                 # if args_2.print_images:

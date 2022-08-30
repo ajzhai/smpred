@@ -98,6 +98,15 @@ class Semantic_Mapping(nn.Module):
         if torch.quantile(my_zs, 0.03) > 0.2 and torch.sum((my_zs > 0.2) & (my_zs < 0.7)) > 0.2 * len(my_zs):
             below_floor = XYZ_cm_std[0, 2, :] * 2 + 1.6 < 0.7
             XYZ_cm_std[:, :, below_floor] = 99999
+            
+#         highoven = (self.feat[0, 8, :]  > 0.5) & (XYZ_cm_std[0, 2, :] * 2 + 1.6 > 2)
+#         if (self.feat[0, 8, :]  > 0.5).sum() > 3:
+#             print((self.feat[0, 8, :]  > 0.5).sum())
+#             print((highoven).sum())
+#             if highoven.sum() > 1: print('wow')
+#             print((XYZ_cm_std[0, 2, :] * 2 + 1.6)[self.feat[0, 8, :]  > 0.5].median())
+
+#         self.feat[0, 6, highoven] = 1
         
         voxels = du.splat_feat_nd(
             self.init_grid * 0., self.feat, XYZ_cm_std).transpose(2, 3)
