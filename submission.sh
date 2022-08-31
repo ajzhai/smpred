@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 # Switch step: explore -> smp
-python Stubborn/eval.py -v 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 400 --col_rad 4 --global_downscaling 3 --map_size_cm 4800  --evaluation remote $@
+python Stubborn/eval.py -v 0 --escape 1 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 300 --global_downscaling 2 --map_size_cm 4800 --segformer 0 --num_sem_categories 16 --evaluation remote $@
