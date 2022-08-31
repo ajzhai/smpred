@@ -588,16 +588,16 @@ class Agent_State:
             
             trav[self.helper.collision_map == 1] = 0
             
-            if args.escape:
-                traversible_ma = ma.masked_values(trav * 1, 0)
-                traversible_ma[np.clip(loc_r + self.lmb[0], a_min=0, a_max=self.full_w-1), 
-                               np.clip(loc_c + self.lmb[2], a_min=0, a_max=self.full_h-1)] = 0
-                dd = skfmm.distance(traversible_ma, dx=1)
-                dd = ma.filled(dd, np.max(dd) + 1)
-                dd[np.where(dd == np.max(dd))] = np.inf
-                #dd[np.where(dd < 100)] = np.inf
-                #dd_wt = 20./ (np.clip(dd, a_min=20, a_max=None)) 
-                self.dd_wt1 = np.exp(-dd / args.alpha)[self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]]
+            # if args.escape:
+            #     traversible_ma = ma.masked_values(trav * 1, 0)
+            #     traversible_ma[np.clip(loc_r + self.lmb[0], a_min=0, a_max=self.full_w-1), 
+            #                    np.clip(loc_c + self.lmb[2], a_min=0, a_max=self.full_h-1)] = 0
+            #     dd = skfmm.distance(traversible_ma, dx=1)
+            #     dd = ma.filled(dd, np.max(dd) + 1)
+            #     dd[np.where(dd == np.max(dd))] = np.inf
+            #     #dd[np.where(dd < 100)] = np.inf
+            #     #dd_wt = 20./ (np.clip(dd, a_min=20, a_max=None)) 
+            #     self.dd_wt1 = np.exp(-dd / args.alpha)[self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]]
             
             trav[self.helper.visited_vis == 1] = 1
             
@@ -635,8 +635,8 @@ class Agent_State:
         # ------------------------------------------------------------------
         
         blind = False
-        if args.escape and self.dd_wt1 is not None:
-            if self.step >= 250 and self.step % 50 == 0 and np.sum(self.dd_wt1 > 0) < 1600: # and self.local_map[1, :, :].sum() < 4000
+        if args.escape and self.dd_wt is not None:
+            if self.step >= 250 and self.step % 50 == 0 and np.sum(self.dd_wt > 0) < 800: # and self.local_map[1, :, :].sum() < 4000
                 # trapped in stairs?
                 self.local_map[0] = 0
                 self.full_map[0] = 0

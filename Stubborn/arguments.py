@@ -69,7 +69,7 @@ def get_args():
     # Mapping
     parser.add_argument('--num_sem_categories', type=int, default=16)
     parser.add_argument('--sem_pred_prob_thr', type=float, default=0.5)
-    parser.add_argument('--global_downscaling', type=int, default=3) # originally 6 (don't forget the change goal threshold)
+    parser.add_argument('--global_downscaling', type=int, default=2) # originally 6 (don't forget the change goal threshold)
     parser.add_argument('--vision_range', type=int, default=100)
     parser.add_argument('--map_resolution', type=int, default=5)
     parser.add_argument('--du_scale', type=int, default=1)
@@ -108,7 +108,8 @@ def get_args():
     parser.add_argument('--segformer', type = int, default = 0) 
     parser.add_argument('--use_big_col', type = int, default = 0) 
     parser.add_argument('--dd_erode', type = int, default = 0) 
-    parser.add_argument('--oventrick', type = int, default = 1) 
+    parser.add_argument('--oventrick', type = int, default = 0)
+    parser.add_argument('--toiletgrow', type = int, default = 1)
                         
     # for data collection purposes. Use 0 to turn off
     # use 1 to turn on

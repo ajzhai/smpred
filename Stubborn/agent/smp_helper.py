@@ -527,7 +527,7 @@ class Agent_Helper:
                 
                 while distance > 100:
                     step += 1
-                    if step > 8 or (is_toilet and step > 2):
+                    if step > 8 or (is_toilet and step > 2 and not self.args.toiletgrow):
                         break
                     selem = skimage.morphology.disk(radius)
                     goal = skimage.morphology.binary_dilation(
