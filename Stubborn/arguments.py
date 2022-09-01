@@ -83,7 +83,7 @@ def get_args():
     )
     parser.add_argument('--exp_name', type=str, default="exp1",
                         help='experiment name (default: exp1)')
-    parser.add_argument('--timestep_limit', type=int, default=500)
+    parser.add_argument('--timestep_limit', type=int, default=499)
     parser.add_argument('--log_path', type=str,
                         default="./log.pickle",
                         help="directory to store log"
@@ -98,13 +98,13 @@ def get_args():
     parser.add_argument("--move_forward_after_stop",type = int, default = 1) #originally 1
     parser.add_argument("--small_collision_map_for_goal",type = int, default = 0)
 
-    parser.add_argument('--alpha', type = float, default = 400)
-    parser.add_argument('--smp_step', type = float, default = 25)
-    parser.add_argument('--switch_step', type = float, default = 501)
-    parser.add_argument('--col_rad', type = float, default = 4.5) 
+    parser.add_argument('--alpha', type = float, default = 250)
+    parser.add_argument('--smp_step', type = float, default = 10)
+    parser.add_argument('--switch_step', type = float, default = 19)
+    parser.add_argument('--col_rad', type = float, default = 4) 
     parser.add_argument('--sf_thr', type = str, default = '-2') 
     parser.add_argument('--goal_erode', type = int, default = 3) 
-    parser.add_argument('--escape', type = int, default = 0) 
+    parser.add_argument('--escape', type = int, default = 1) 
     parser.add_argument('--segformer', type = int, default = 0) 
     parser.add_argument('--use_big_col', type = int, default = 0) 
     parser.add_argument('--dd_erode', type = int, default = 0) 
