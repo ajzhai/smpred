@@ -674,15 +674,15 @@ def compress_sem_map(sem_map):
 class ImageSegmentation():
     def __init__(self, args):
         string_args = """
-            --config-file Stubborn/agent/utils/COCO-InstSeg/mask_rcnn_R_101_FPN_3x.yaml
+            --config-file Stubborn/agent/utils/COCO-InstSeg/mask_rcnn_R_50_FPN_3x.yaml
             --input input1.jpeg
             --confidence-threshold {}
             --opts MODEL.WEIGHTS
-            detectron2://COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x/138205316/model_final_a3ec72.pkl
+            detectron2://COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x/137849600/model_final_f10217.pkl
             
             """.format(args.sem_pred_prob_thr)
             # detectron2://new_baselines/mask_rcnn_R_101_FPN_400ep_LSJ/42073830/model_final_f96b26.pkl
-            # COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x/137849600/model_final_f10217.pkl
+            # COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x/138205316/model_final_a3ec72.pkl
             
         if args.sem_gpu_id == -2:
             string_args += """ MODEL.DEVICE cpu"""
