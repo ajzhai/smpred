@@ -1,25 +1,15 @@
 #!/usr/bin/env bash
 
-#python Stubborn/collect.py -v 0 --dump_location ./data/tmp --exp_name debug --print_images 1 --escape 1 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 300 --global_downscaling 2 --map_size_cm 4800 --segformer 0 --num_sem_categories 16 --evaluation $AGENT_EVALUATION_TYPE $@ 
+#python Stubborn/collect.py -v 0 --dump_location ./data/tmp --exp_name vis5 --print_images 1 --escape 1 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 250 --global_downscaling 2 --map_size_cm 4800 --segformer 0 --num_sem_categories 16 --evaluation $AGENT_EVALUATION_TYPE $@ 
 #python Stubborn/collect.py --dump_location ./data/tmp --exp_name debug --print_images 1 --switch_step 501 --map_resolution 2 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
 
-# python Stubborn/collect.py --sem_gpu_id 0 --exp_name escape --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --escape 1 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 0 --exp_name r101 --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 250 --col_rad 4 --start_ep 0 --escape 1 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 0 --exp_name cr45 --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 400 --col_rad 4.5 --start_ep 0  --evaluation $AGENT_EVALUATION_TYPE $@ &
 
 # python Stubborn/collect.py --sem_gpu_id 2 --exp_name a500_new --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 500 --col_rad 4 --start_ep 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 2 --exp_name a400_new --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 2 --exp_name a300_new --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 300 --col_rad 4 --start_ep 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
-
-python Stubborn/collect.py --sem_gpu_id 1 --exp_name a300_large_ne --escape 1 --toiletgrow 1 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 300 --global_downscaling 2 --map_size_cm 4800 --segformer 0 --num_sem_categories 16 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 1 --exp_name a250_large_ne --escape 1 --toiletgrow 1 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 250 --global_downscaling 2 --map_size_cm 4800 --segformer 0 --num_sem_categories 16 --evaluation $AGENT_EVALUATION_TYPE $@ &
-
-python Stubborn/collect.py --sem_gpu_id 2 --exp_name a200_large_ne --escape 1 --toiletgrow 1 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 200 --global_downscaling 2 --map_size_cm 4800 --segformer 0 --num_sem_categories 16 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 2 --exp_name a150_large_ne --escape 1 --toiletgrow 1 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 150 --global_downscaling 2 --map_size_cm 4800 --segformer 0 --num_sem_categories 16 --evaluation $AGENT_EVALUATION_TYPE $@ &
-
-
-python Stubborn/collect.py --sem_gpu_id 3 --exp_name tg_ne --escape 1 --toiletgrow 1 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 300 --global_downscaling 2 --map_size_cm 4800 --segformer 0 --num_sem_categories 16 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 3 --exp_name ne --toiletgrow 0 --escape 1 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 300 --global_downscaling 2 --map_size_cm 4800 --segformer 0 --num_sem_categories 16 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
 # python Stubborn/collect.py --sem_gpu_id 0 --exp_name a400_sms10_conf80 --print_images 0 --sem_pred_prob_thr 0.8 --smp_step 10 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --escape 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 1 --exp_name a400_sms10_escape --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --escape 1 --evaluation $AGENT_EVALUATION_TYPE $@ &

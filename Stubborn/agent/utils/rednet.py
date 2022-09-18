@@ -21,7 +21,9 @@ import time
 import torch
 import numpy as np
 
-from detectron2.config import get_cfg
+from detectron2.config import get_cfg, LazyConfig, instantiate
+from detectron2.engine.defaults import create_ddp_model
+from detectron2.model_zoo import get_config
 from detectron2.utils.logger import setup_logger
 from detectron2.data.catalog import MetadataCatalog
 from detectron2.modeling import build_model
@@ -641,19 +643,21 @@ class SemanticPredMaskRCNN():
             img = vis_output.get_image()
 
         semantic_input = np.zeros((img.shape[0], img.shape[1], 15 + 1))
-
+        high_thr = 0.9
         for j, class_idx in enumerate(
                 seg_predictions[0]['instances'].pred_classes.cpu().numpy()):
             if class_idx in list(coco_categories_mapping.keys()):
                 idx = coco_categories_mapping[class_idx]
-                if (idx not in [5]) and seg_predictions[0]['instances'].scores[j] < 0.9:
+                confscore = seg_predictions[0]['instances'].scores[j]
+                if (confscore < high_thr and (idx not in [5])) or (confscore < args.sem_pred_prob_thr and (idx in [5])):
                     continue
                 else:
                     obj_mask = seg_predictions[0]['instances'].pred_masks[j] * 1.
                     semantic_input[:, :, idx] += obj_mask.cpu().numpy()
 
         
-        semantic_input[:, :, 3] *= semantic_input[:, :, 1] < 0.9
+        semantic_input[:, :, 3] *= semantic_input[:, :, 1] < high_thr
+        semantic_input[:, :, 1] *= semantic_input[:, :, 0] < high_thr
         
         if args.segformer:
             semantic_input[:, :, goal_cat] = msk
@@ -670,13 +674,16 @@ def compress_sem_map(sem_map):
 class ImageSegmentation():
     def __init__(self, args):
         string_args = """
-            --config-file Stubborn/agent/utils/COCO-InstSeg/mask_rcnn_R_50_FPN_3x.yaml
+            --config-file Stubborn/agent/utils/COCO-InstSeg/mask_rcnn_R_101_FPN_3x.yaml
             --input input1.jpeg
             --confidence-threshold {}
             --opts MODEL.WEIGHTS
-            detectron2://COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x/137849600/model_final_f10217.pkl
+            detectron2://COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x/138205316/model_final_a3ec72.pkl
+            
             """.format(args.sem_pred_prob_thr)
-
+            # detectron2://new_baselines/mask_rcnn_R_101_FPN_400ep_LSJ/42073830/model_final_f96b26.pkl
+            # COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x/137849600/model_final_f10217.pkl
+            
         if args.sem_gpu_id == -2:
             string_args += """ MODEL.DEVICE cpu"""
         else:
@@ -700,12 +707,18 @@ def setup_cfg(args):
     cfg = get_cfg()
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
-    # Set score_threshold for builtin models
+    # # Set score_threshold for builtin models
     cfg.MODEL.RETINANET.SCORE_THRESH_TEST = args.confidence_threshold
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = args.confidence_threshold
     cfg.MODEL.PANOPTIC_FPN.COMBINE.INSTANCES_CONFIDENCE_THRESH = \
         args.confidence_threshold
     cfg.freeze()
+    
+    # cfg = get_config("new_baselines/mask_rcnn_R_50_FPN_400ep_LSJ.py")
+    # print(LazyConfig.to_py(cfg))
+    # cfg.train.init_checkpoint = "detectron2://new_baselines/mask_rcnn_R_50_FPN_400ep_LSJ/42019571/model_final_14d201.pkl"
+
+    
     return cfg
 
 
@@ -755,9 +768,10 @@ class VisualizationDemo(object):
             cfg (CfgNode):
             instance_mode (ColorMode):
         """
-        self.metadata = MetadataCatalog.get(
-            cfg.DATASETS.TEST[0] if len(cfg.DATASETS.TEST) else "__unused"
-        )
+        # self.metadata = MetadataCatalog.get(
+        #     cfg.DATASETS.TEST[0] if len(cfg.DATASETS.TEST) else "__unused"
+        # )
+        self.metadata = MetadataCatalog.get("coco_2017_val")
         self.cpu_device = torch.device("cpu")
         self.instance_mode = instance_mode
 
@@ -818,14 +832,21 @@ class BatchPredictor:
 
     def __init__(self, cfg):
         self.cfg = cfg.clone()  # cfg can be modified by model
+        # self.cfg = cfg
+        
         self.model = build_model(self.cfg)
-        self.model.eval()
+        # self.model = instantiate(cfg.model)
+        # self.model.to(cfg.train.device)
+        # self.model = create_ddp_model(self.model)
+        
         self.metadata = MetadataCatalog.get(cfg.DATASETS.TEST[0])
 
         checkpointer = DetectionCheckpointer(self.model)
         checkpointer.load(cfg.MODEL.WEIGHTS)
-
-        self.input_format = cfg.INPUT.FORMAT
+        #checkpointer.load(cfg.train.init_checkpoint)
+        self.model.eval()
+        
+        self.input_format = 'BGR' #cfg.INPUT.FORMAT
         assert self.input_format in ["RGB", "BGR"], self.input_format
 
     def __call__(self, image_list):

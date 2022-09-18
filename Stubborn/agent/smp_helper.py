@@ -575,7 +575,11 @@ class Agent_Helper:
         depth = depth[:, :, 0] * 1
 
         for i in range(depth.shape[1]):
-            depth[:, i][depth[:, i] == 0.] = 100.0 #depth[:, i].max()
+            invalid = depth[:, i] == 0.
+            if np.mean(invalid) > 0.5:
+                depth[:, i][invalid] = depth[:, i].max()
+            else:
+                depth[:, i][depth[:, i] == 0.] = 100.0 #depth[:, i].max()
 
         mask2 = depth > 0.99
         depth[mask2] = 0.
@@ -592,7 +596,8 @@ class Agent_Helper:
         if self.args.print_images == 1:
             self.rgb_vis = rgb[:, :, ::-1]
 
-        semantic_pred_rednet = self.sem_pred_rednet.get_prediction(rgb,depth,goal_cat=self.goal_cat)[0]
+        semantic_pred_rednet, sem_vis = self.sem_pred_rednet.get_prediction(rgb,depth,goal_cat=self.goal_cat)
+        #cv2.imwrite('data/tmp/sem/sem%03d.png' % self.timestep, sem_vis)
         return semantic_pred_rednet.astype(np.float32)
 
     def save_semantic(self, img,fn):

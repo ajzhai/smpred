@@ -706,12 +706,12 @@ class Agent_State:
                     temp_goal = cat_semantic_scores
                 if args.num_sem_categories != 23:
                     if self.goal_cat == 3:  # bed vs sofa
-                        temp_goal *= self.local_map[4 + 1, :, :].cpu().numpy() < 1
+                        temp_goal *= self.local_map[4 + 1, :, :].cpu().numpy() == 0
                     if self.goal_cat == 1:  # sofa vs chair
-                        temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() < 1
+                        temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() == 0
                 else:
                     if self.goal_cat == 7:  # bed vs sofa
-                        temp_goal *= self.local_map[4 + 6, :, :].cpu().numpy() < 1
+                        temp_goal *= self.local_map[4 + 6, :, :].cpu().numpy() == 0
                 if temp_goal.sum() != 0.:
                     goal_maps = temp_goal
                     found_goal = 1

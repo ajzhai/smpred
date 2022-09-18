@@ -4,6 +4,7 @@ import random
 import habitat
 import torch
 import sys
+import cv2
 from arguments import get_args
 from habitat.core.env import Env
 from constants import hm3d_names
@@ -64,6 +65,7 @@ def main():
                 sys.stdout.flush()
                 action = nav_agent.act(observations)
                 observations = hab_env.step(action)
+                # cv2.imwrite('./data/tmp/rgb/rgb%d.png' % step_i, observations['rgb'][:, :, ::-1])
                 # if step_i in range(21, 32):
                 #     #print(step_i, observations['gps'], observations['compass'])
                 #     np.save('data/tmp/rgb%03d.npy' % step_i, observations['rgb'])
@@ -95,9 +97,7 @@ def main():
                 print(metrics)
                 # np.save('data/tmp/end%03d.npy' % count_episodes, observations['rgb'])
                 # if args_2.print_images:
-                #     plt.imshow(observations['rgb'])
-                #     plt.savefig('./data/tmp/end%d.png' % count_episodes)
-                #     plt.close()
+                #     cv2.imwrite('./data/tmp/rgb/rgb%d.png' % count_episodes, observations['rgb'])
                 
             # np.savez_compressed('./data/saved_maps/train_rn/f%05d.npz' % count_episodes, maps=full_map_seq)
 
