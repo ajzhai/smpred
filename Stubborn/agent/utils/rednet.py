@@ -27,6 +27,7 @@ from detectron2.model_zoo import get_config
 from detectron2.utils.logger import setup_logger
 from detectron2.data.catalog import MetadataCatalog
 from detectron2.modeling import build_model
+from detectron2.modeling.test_time_augmentation import GeneralizedRCNNWithTTA
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.utils.visualizer import ColorMode, Visualizer
 import detectron2.data.transforms as T
