@@ -4,8 +4,8 @@
 #python Stubborn/collect.py --dump_location ./data/tmp --exp_name debug --print_images 1 --switch_step 501 --map_resolution 2 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
 
-python Stubborn/collect.py --sem_gpu_id 5 --exp_name r101_lsj95 --print_images 0 --sem_pred_prob_thr 0.95 --tv_thr 0.95 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 5 --exp_name r101_lsj90 --print_images 0 --sem_pred_prob_thr 0.9 --tv_thr 0.9 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 4 --exp_name r101_lsj95 --print_images 0 --sem_pred_prob_thr 0.95 --tv_thr 0.95 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 4 --exp_name r101_lsj90 --print_images 0 --sem_pred_prob_thr 0.9 --tv_thr 0.9 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
 python Stubborn/collect.py --sem_gpu_id 5 --exp_name r101_lsj85 --print_images 0 --sem_pred_prob_thr 0.85 --tv_thr 0.85 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 0 --exp_name cr45 --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 400 --col_rad 4.5 --start_ep 0  --evaluation $AGENT_EVALUATION_TYPE $@ &
 
