@@ -691,8 +691,8 @@ class Agent_State:
                 cat_semantic_scores[cat_semantic_scores > 0] = 1.
                 temp_goal = cat_semantic_scores
                 if (self.goal_cat != 5 and not self.oventime) and args.num_sem_categories == 16:  # don't erode TV
-                    toilet_reduction = 1 if self.goal_cat == 4 else 0
-                    for _ in range(self.args.goal_erode - toilet_reduction):
+                    toilet_plant_reduction = 1 if self.goal_cat == 4 or self.goal_cat == 2 else 0
+                    for _ in range(self.args.goal_erode - toilet_plant_reduction):
                         temp_goal = skimage.morphology.binary_erosion(temp_goal.astype(bool)).astype(float)
                     temp_goal = skimage.morphology.binary_dilation(temp_goal.astype(bool)).astype(float)
                     
@@ -705,10 +705,14 @@ class Agent_State:
                 if temp_goal.sum() == 0.:
                     temp_goal = cat_semantic_scores
                 if args.num_sem_categories != 23:
-                    if self.goal_cat == 3:  # bed vs sofa
+                    if self.goal_cat == 3:  # bed vs sofa, chair, table
                         temp_goal *= self.local_map[4 + 1, :, :].cpu().numpy() == 0
+                        temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() == 0
+                        temp_goal *= self.local_map[4 + 6, :, :].cpu().numpy() == 0
                     if self.goal_cat == 1:  # sofa vs chair
                         temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() == 0
+                    # if self.goal_cat == 5:  # TV vs oven
+                    #     temp_goal *= self.local_map[4 + 7, :, :].cpu().numpy() == 0
                 else:
                     if self.goal_cat == 7:  # bed vs sofa
                         temp_goal *= self.local_map[4 + 6, :, :].cpu().numpy() == 0

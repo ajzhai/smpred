@@ -643,13 +643,13 @@ class SemanticPredMaskRCNN():
             img = vis_output.get_image()
 
         semantic_input = np.zeros((img.shape[0], img.shape[1], 15 + 1))
-        high_thr = 0.9
+        high_thr = args.sem_pred_prob_thr
         for j, class_idx in enumerate(
                 seg_predictions[0]['instances'].pred_classes.cpu().numpy()):
             if class_idx in list(coco_categories_mapping.keys()):
                 idx = coco_categories_mapping[class_idx]
                 confscore = seg_predictions[0]['instances'].scores[j]
-                if (confscore < high_thr and (idx not in [5])) or (confscore < args.sem_pred_prob_thr and (idx in [5])):
+                if (confscore < high_thr and (idx not in [5])) or (confscore < args.tv_thr and (idx in [5])):
                     continue
                 else:
                     obj_mask = seg_predictions[0]['instances'].pred_masks[j] * 1.
@@ -680,7 +680,7 @@ class ImageSegmentation():
             --opts MODEL.WEIGHTS
             detectron2://COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x/137849600/model_final_f10217.pkl
             
-            """.format(args.sem_pred_prob_thr)
+            """.format(min(args.sem_pred_prob_thr, args.tv_thr))
             # detectron2://new_baselines/mask_rcnn_R_101_FPN_400ep_LSJ/42073830/model_final_f96b26.pkl
             # COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x/138205316/model_final_a3ec72.pkl
             
