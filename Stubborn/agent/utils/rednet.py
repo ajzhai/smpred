@@ -703,20 +703,21 @@ class ImageSegmentation():
 
 def setup_cfg(args, gpu_id=0):
     # load config from file and command-line arguments
-    # cfg = get_cfg()
-    # cfg.merge_from_file(args.config_file)
-    # cfg.merge_from_list(args.opts)
-    # # Set score_threshold for builtin models
-    # cfg.MODEL.RETINANET.SCORE_THRESH_TEST = args.confidence_threshold
-    # cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = args.confidence_threshold
-    # cfg.MODEL.PANOPTIC_FPN.COMBINE.INSTANCES_CONFIDENCE_THRESH = \
-    #     args.confidence_threshold
-    # cfg.freeze()
+    cfg = get_cfg()
+    cfg.merge_from_file(args.config_file)
+    cfg.merge_from_list(args.opts)
+    # Set score_threshold for builtin models
+    cfg.MODEL.RETINANET.SCORE_THRESH_TEST = args.confidence_threshold
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = args.confidence_threshold
+    cfg.MODEL.PANOPTIC_FPN.COMBINE.INSTANCES_CONFIDENCE_THRESH = \
+        args.confidence_threshold
+    cfg.TEST.AUG.ENABLED = True
+    cfg.freeze()
     
-    cfg = get_config("new_baselines/mask_rcnn_R_101_FPN_400ep_LSJ.py")
-    print(LazyConfig.to_py(cfg))
-    cfg.train.init_checkpoint = "detectron2://new_baselines/mask_rcnn_R_101_FPN_400ep_LSJ/42073830/model_final_f96b26.pkl" 
-    cfg.train.device = torch.device('cuda:' + str(gpu_id))
+    # cfg = get_config("new_baselines/mask_rcnn_R_101_FPN_400ep_LSJ.py")
+    # print(LazyConfig.to_py(cfg))
+    # cfg.train.init_checkpoint = "detectron2://new_baselines/mask_rcnn_R_101_FPN_400ep_LSJ/42073830/model_final_f96b26.pkl" 
+    # cfg.train.device = torch.device('cuda:' + str(gpu_id))
     # detectron2://new_baselines/mask_rcnn_R_50_FPN_400ep_LSJ/42019571/model_final_14d201.pkl"
 
     
@@ -832,19 +833,19 @@ class BatchPredictor:
     """
 
     def __init__(self, cfg):
-        # self.cfg = cfg.clone()  # cfg can be modified by model
-        self.cfg = cfg
+        self.cfg = cfg.clone()  # cfg can be modified by model
+        # self.cfg = cfg
         
-        # self.model = build_model(self.cfg)
-        self.model = instantiate(cfg.model)
-        self.model.to(cfg.train.device)
-        self.model = create_ddp_model(self.model)
+        self.model = build_model(self.cfg)
+        # self.model = instantiate(cfg.model)
+        # self.model.to(cfg.train.device)
+        # self.model = create_ddp_model(self.model)
         
         self.metadata = MetadataCatalog.get("coco_2017_val")
 
         checkpointer = DetectionCheckpointer(self.model)
-        #checkpointer.load(cfg.MODEL.WEIGHTS)
-        checkpointer.load(cfg.train.init_checkpoint)
+        checkpointer.load(cfg.MODEL.WEIGHTS)
+        #checkpointer.load(cfg.train.init_checkpoint)
         self.model.eval()
         
         self.input_format = 'BGR' #cfg.INPUT.FORMAT
