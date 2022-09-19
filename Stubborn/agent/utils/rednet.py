@@ -679,7 +679,6 @@ class ImageSegmentation():
             --confidence-threshold {}
             --opts MODEL.WEIGHTS
             detectron2://COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x/137849600/model_final_f10217.pkl
-            
             """.format(min(args.sem_pred_prob_thr, args.tv_thr))
             # detectron2://new_baselines/mask_rcnn_R_101_FPN_400ep_LSJ/42073830/model_final_f96b26.pkl
             # COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x/138205316/model_final_a3ec72.pkl
@@ -688,21 +687,21 @@ class ImageSegmentation():
             string_args += """ MODEL.DEVICE cpu"""
         else:
             string_args += """ MODEL.DEVICE cuda:{}""".format(args.sem_gpu_id)
-
+        gpu_id = args.sem_gpu_id
         string_args = string_args.split()
 
         args = get_seg_parser().parse_args(string_args)
         logger = setup_logger()
         logger.info("Arguments: " + str(args))
 
-        cfg = setup_cfg(args)
+        cfg = setup_cfg(args, gpu_id=gpu_id)
         self.demo = VisualizationDemo(cfg)
 
     def get_predictions(self, img, visualize=0):
         return self.demo.run_on_image(img, visualize=visualize)
 
 
-def setup_cfg(args):
+def setup_cfg(args, gpu_id=0):
     # load config from file and command-line arguments
     # cfg = get_cfg()
     # cfg.merge_from_file(args.config_file)
@@ -717,7 +716,7 @@ def setup_cfg(args):
     cfg = get_config("new_baselines/mask_rcnn_R_101_FPN_400ep_LSJ.py")
     print(LazyConfig.to_py(cfg))
     cfg.train.init_checkpoint = "detectron2://new_baselines/mask_rcnn_R_101_FPN_400ep_LSJ/42073830/model_final_f96b26.pkl" 
-    cfg.train.device = torch.device('cuda:' + str(args.sem_gpu_id))
+    cfg.train.device = torch.device('cuda:' + str(gpu_id))
     # detectron2://new_baselines/mask_rcnn_R_50_FPN_400ep_LSJ/42019571/model_final_14d201.pkl"
 
     
