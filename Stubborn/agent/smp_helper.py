@@ -480,7 +480,7 @@ class Agent_Helper:
 
         selem = skimage.morphology.disk(8 if self.found_goal == 1 else 2)
         if is_toilet:
-            selem = skimage.morphology.disk(5 if self.found_goal == 1 else 2)
+            selem = skimage.morphology.disk(6 if self.found_goal == 1 else 2)
         goal = skimage.morphology.binary_dilation(
             goal, selem) != True
 
