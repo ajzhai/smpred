@@ -111,6 +111,7 @@ class Agent_Helper:
         self.untrap = UnTrapHelper()
         self.srh = SmallRoomHelper()
         self.use_srh = False
+        self.tunred = False
         self.use_small_num = 0
         self.agent_states = agent_states
 
@@ -157,6 +158,7 @@ class Agent_Helper:
         self.untrap.reset()
         self.srh.reset()
         self.use_srh = False
+        self.turned = False
         #self.untrap = UnTrapHelper() #TODO is this needed?
         self.forward_after_stop = self.forward_after_stop_preset
 
@@ -218,6 +220,7 @@ class Agent_Helper:
     def preprocess_inputs(self,rgb,depth,info,rew = 0):
         # preprocess obs
         obs = self._preprocess_obs(rgb,depth,info)
+
         self.obs = obs
         self.info = info
         if 'g_reward' not in info.keys():
@@ -345,8 +348,29 @@ class Agent_Helper:
         stg, stop = self._get_stg(map_pred, start_exact, np.copy(goal),
                                   planning_window)
 
-        if self.use_srh:
-            action = self.srh.get_action()
+        if self.use_srh and not stop:
+            if not self.turned:
+                stg = np.where(goal == 1)
+                (stg_x, stg_y) = stg[0][0], stg[1][0]
+                angle_st_goal = math.degrees(math.atan2(stg_x - start[0],
+                                                        stg_y - start[1]))
+                angle_agent = (start_o) % 360.0
+                if angle_agent > 180:
+                    angle_agent -= 360
+
+                relative_angle = (angle_agent - angle_st_goal) % 360.0
+                if relative_angle > 180:
+                    relative_angle -= 360
+
+                if relative_angle > self.args.turn_angle / 2.:
+                    action = 3  # Right
+                elif relative_angle < -self.args.turn_angle / 2.:
+                    action = 2  # Left
+                else:
+                    print('turning complete')
+                    self.turned = True
+            if self.turned:
+                action = self.srh.get_action()
             self._previous_action = action
             return action
         # Deterministic Local Policy
@@ -424,7 +448,9 @@ class Agent_Helper:
             j1 = max(0,j-3)
             j2 = min(mat.shape[1],j+2)
             return np.sum(mat[i1:i2,j1:j2]) > 0
-
+        
+        is_toilet = (self.goal_cat == 4 and self.args.num_sem_categories == 16) or \
+                    (self.goal_cat == 11 and self.args.num_sem_categories == 23)
 
         traversible = skimage.morphology.binary_dilation(
             grid[x1:x2, y1:y2],
@@ -453,6 +479,8 @@ class Agent_Helper:
         planner = FMMPlanner(traversible)
 
         selem = skimage.morphology.disk(8 if self.found_goal == 1 else 2)
+        if is_toilet:
+            selem = skimage.morphology.disk(5 if self.found_goal == 1 else 2)
         goal = skimage.morphology.binary_dilation(
             goal, selem) != True
 
@@ -464,7 +492,7 @@ class Agent_Helper:
         stg_x, stg_y, distance, stop, replan = planner.get_short_term_goal(state)
         if self.found_goal == 0 and replan:
             self.use_small_num = 20
-            
+        
         # Failed to plan a path
         if self.agent_states.step < self.args.switch_step and self.found_goal == 0 and distance > self.args.change_goal_threshold:
             self.use_small_num = 20
@@ -475,8 +503,14 @@ class Agent_Helper:
         if self.found_goal == 1:
             if self.args.small_collision_map_for_goal == 1:
                 self.use_small_num = 20
+                
         
-        if self.found_goal == 1 and replan:
+        if self.found_goal == 1 and is_toilet and replan:
+            self.use_srh = True
+        else:
+            self.use_srh = False
+            
+        if self.found_goal == 1 and replan and not is_toilet:
             # Try again with eroded obstacle map
             grid = skimage.morphology.binary_erosion(grid.astype(bool)).astype(int)
             traversible = skimage.morphology.binary_dilation(
@@ -514,10 +548,8 @@ class Agent_Helper:
             # assume replan true suggests failure in planning
             stg_x, stg_y, distance, stop, replan = planner.get_short_term_goal(state)
             
-        
             
-        is_toilet = (self.goal_cat == 4 and self.args.num_sem_categories == 16) or \
-                    (self.goal_cat == 4 and self.args.num_sem_categories == 23)
+        
         
         #If we are already using the optimistic collision map, but still fail to plan a path to the goal, make goal larger
         if self.args.small_collision_map_for_goal == 0 or (self.args.small_collision_map_for_goal == 1 and self.use_small_num > 0):
@@ -539,10 +571,7 @@ class Agent_Helper:
                     stg_x, stg_y, distance, stop, replan = planner.get_short_term_goal(
                         state)
 
-        # if self.found_goal == 1 and replan and is_toilet:
-        #     self.use_srh = True
-        # else:
-        #     self.use_srh = False
+        
         stg_x, stg_y = stg_x + x1 - 1, stg_y + y1 - 1
         self.stg = (stg_x, stg_y)
         return (stg_x, stg_y), stop
@@ -579,7 +608,7 @@ class Agent_Helper:
             if np.mean(invalid) > 0.5:
                 depth[:, i][invalid] = depth[:, i].max()
             else:
-                depth[:, i][depth[:, i] == 0.] = 100.0 #depth[:, i].max()
+                depth[:, i][invalid] = 100.0 #depth[:, i].max()
 
         mask2 = depth > 0.99
         depth[mask2] = 0.
@@ -627,13 +656,13 @@ class Agent_Helper:
         sem_map = inputs['sem_map_pred']
         #exit(0)
 
-        if 'itself' in inputs.keys():
-            my_score = inputs['itself']
-            opp_cat = inputs['opp_cat']
-            opp_score = inputs['opp_score']
-            str = '{} {} {} {}'.format(self.goal_name, my_score, opp_cat,
-                                       opp_score)
-            self.vis_image = vu.init_vis_image(str, self.legend)
+        # if 'itself' in inputs.keys():
+        #     my_score = inputs['itself']
+        #     opp_cat = inputs['opp_cat']
+        #     opp_score = inputs['opp_score']
+        #     str = '{} {} {} {}'.format(self.goal_name, my_score, opp_cat,
+        #                                opp_score)
+        self.vis_image = vu.init_vis_image(self.goal_name, self.legend)
 
 
         gx1, gx2, gy1, gy2 = int(gx1), int(gx2), int(gy1), int(gy2)
@@ -682,7 +711,7 @@ class Agent_Helper:
         self.vis_image[50:530, 670:1150] = sem_map_vis
         
                         
-        right_panel = np.ones((655, 250, 3)).astype(np.uint8) * 255
+        right_panel = self.vis_image[:, -250:] # np.ones((655, 250, 3)).astype(np.uint8) * 255
                                    
         my_cm = matplotlib.cm.get_cmap('inferno')
         data = self.agent_states.so_pred
@@ -711,7 +740,7 @@ class Agent_Helper:
                              interpolation=cv2.INTER_NEAREST)
             right_panel[50:290, :240] = mapped_data_vis
                                    
-        self.vis_image = np.append(self.vis_image, right_panel, axis=1)
+        #self.vis_image = np.append(self.vis_image, right_panel, axis=1)
         
         pos = (
             (start_x * 100. / args.map_resolution - gy1)

@@ -25,7 +25,7 @@ def draw_line(start, end, mat, steps=25, w=1):
 
 
 def init_vis_image(goal_name, legend):
-    vis_image = np.ones((655, 1165, 3)).astype(np.uint8) * 255
+    vis_image = np.ones((655, 1165 + 250, 3)).astype(np.uint8) * 255
     font = cv2.FONT_HERSHEY_SIMPLEX
     fontScale = 1
     color = (20, 20, 20)  # BGR
@@ -43,6 +43,22 @@ def init_vis_image(goal_name, legend):
     textsize = cv2.getTextSize(text, font, fontScale, thickness)[0]
     textX = 640 + (480 - textsize[0]) // 2 + 30
     textY = (50 + textsize[1]) // 2
+    vis_image = cv2.putText(vis_image, text, (textX, textY),
+                            font, fontScale, color, thickness,
+                            cv2.LINE_AA)
+    
+    text = "GD Weight"
+    textsize = cv2.getTextSize(text, font, fontScale, thickness)[0]
+    textX = 640 + 480 + (240 - textsize[0]) // 2 + 45
+    textY = (50 + textsize[1]) // 2
+    vis_image = cv2.putText(vis_image, text, (textX, textY),
+                            font, fontScale, color, thickness,
+                            cv2.LINE_AA)
+    
+    text = "Final Value"
+    textsize = cv2.getTextSize(text, font, fontScale, thickness)[0]
+    textX = 640 + 480 + (240 - textsize[0]) // 2 + 45
+    textY = 540 + (50 + textsize[1]) // 2
     vis_image = cv2.putText(vis_image, text, (textX, textY),
                             font, fontScale, color, thickness,
                             cv2.LINE_AA)
