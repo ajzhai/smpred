@@ -111,7 +111,8 @@ def get_args():
     parser.add_argument('--dd_erode', type = int, default = 0) 
     parser.add_argument('--oventrick', type = int, default = 0)
     parser.add_argument('--toiletgrow', type = int, default = 0)
-                        
+    parser.add_argument('--toiletrad', type = int, default = 8)
+                            
     # for data collection purposes. Use 0 to turn off
     # use 1 to turn on
     parser.add_argument("--no_stop",type = int, default = 0)
