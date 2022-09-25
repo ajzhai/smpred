@@ -636,7 +636,7 @@ class Agent_State:
         
         blind = False
         if args.escape and self.dd_wt is not None:
-            if self.step >= 250 and self.step % 25 == 0 and np.sum(self.dd_wt > 0) < 800: # and self.local_map[1, :, :].sum() < 4000
+            if self.step >= 250 and self.step % 25 == 0 and np.sum(self.dd_wt > 0) < 1600: # and self.local_map[1, :, :].sum() < 4000
                 # trapped in stairs?
                 self.local_map[0] = 0
                 self.full_map[0] = 0

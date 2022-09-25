@@ -480,7 +480,7 @@ class Agent_Helper:
 
         selem = skimage.morphology.disk(8 if self.found_goal == 1 else 2)
         if is_toilet:
-            selem = skimage.morphology.disk(8 if self.found_goal == 1 else 2)
+            selem = skimage.morphology.disk(6 if self.found_goal == 1 else 2)
         goal = skimage.morphology.binary_dilation(
             goal, selem) != True
 
@@ -505,7 +505,7 @@ class Agent_Helper:
                 self.use_small_num = 20
                 
         
-        if self.found_goal == 1 and is_toilet and replan:
+        if self.found_goal == 1 and is_toilet and distance > 100:
             self.use_srh = True
         else:
             self.use_srh = False
@@ -559,7 +559,7 @@ class Agent_Helper:
                 
                 while distance > 100:
                     step += 1
-                    if step > 8 or (is_toilet and step > 2 and not self.args.toiletgrow):
+                    if step > 8 or (is_toilet and step > 0 and not self.args.toiletgrow):
                         break
                     selem = skimage.morphology.disk(radius)
                     goal = skimage.morphology.binary_dilation(
