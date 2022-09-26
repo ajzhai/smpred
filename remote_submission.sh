@@ -4,7 +4,7 @@
 #python Stubborn/collect.py --dump_location ./data/tmp --exp_name debug --print_images 1 --switch_step 501 --map_resolution 2 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
 
-python Stubborn/collect.py --sem_gpu_id 0 --exp_name tf_gr6_tg2_stair15 --print_images 0 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 0 --exp_name tf_gr6_tg2_stair15 --print_images 0 --alpha 250 --toiletrad 6--evaluation $AGENT_EVALUATION_TYPE $@ &
 python Stubborn/collect.py --sem_gpu_id 0 --exp_name tf_gr8_tg2_stair15 --print_images 0 --alpha 250 --toiletrad 8 --evaluation $AGENT_EVALUATION_TYPE $@ &
 #python Stubborn/collect.py --sem_gpu_id 4 --exp_name r101_lsj90 --print_images 0 --sem_pred_prob_thr 0.9 --tv_thr 0.9 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
 #python Stubborn/collect.py --sem_gpu_id 5 --exp_name r50_bi_tta --print_images 0 --sem_pred_prob_thr 0.9 --tv_thr 0.9 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
