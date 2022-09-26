@@ -61,7 +61,7 @@ def main():
             step_i = 0
             seq_i = 0
             full_map_seq = np.zeros((len(save_steps), 4 + args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h), dtype=np.uint8)
-            while step_i < 335 and not hab_env.episode_over:
+            while not hab_env.episode_over:
                 sys.stdout.flush()
                 action = nav_agent.act(observations)
                 observations = hab_env.step(action)
