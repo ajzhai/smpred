@@ -505,7 +505,7 @@ class Agent_Helper:
                 self.use_small_num = 20
                 
         
-        if self.found_goal == 1 and is_toilet and distance > 100:
+        if self.found_goal == 1 and is_toilet and distance > 500:
             self.use_srh = True
         else:
             self.use_srh = False
