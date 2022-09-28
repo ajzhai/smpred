@@ -505,12 +505,12 @@ class Agent_Helper:
                 self.use_small_num = 20
                 
         
-        if self.found_goal == 1 and is_toilet and distance > 500:
+        if self.found_goal == 1 and is_toilet and replan:
             self.use_srh = True
         else:
             self.use_srh = False
             
-        if self.found_goal == 1 and replan and not is_toilet:
+        if self.found_goal == 1 and distance > 150: #replan: # and not is_toilet:
             # Try again with eroded obstacle map
             grid = skimage.morphology.binary_erosion(grid.astype(bool)).astype(int)
             traversible = skimage.morphology.binary_dilation(
