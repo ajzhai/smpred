@@ -521,19 +521,12 @@ class Agent_Helper:
                 self.use_small_num -= 1
                 traversible[self.collision_map[gx1:gx2, gy1:gy2]
                             [x1:x2, y1:y2] == 1] = 0
-                if surrounded_by_obstacle(self.collision_map[gx1:gx2, gy1:gy2], start[0], start[1]) or \
-                    surrounded_by_obstacle(grid,start[0],start[1]):
-                    traversible[
-                        self.visited_vis[gx1:gx2, gy1:gy2][x1:x2,
-                        y1:y2] == 1] = 1
             else:
                 traversible[self.collision_map_big[gx1:gx2, gy1:gy2]
                             [x1:x2, y1:y2] == 1] = 0
-                if surrounded_by_obstacle(self.collision_map_big[gx1:gx2, gy1:gy2], start[0], start[1]) or \
-                    surrounded_by_obstacle(grid,start[0],start[1]):
-                    traversible[
-                        self.visited_vis[gx1:gx2, gy1:gy2][x1:x2,
-                        y1:y2] == 1] = 1
+                # if surrounded_by_obstacle(self.collision_map_big[gx1:gx2, gy1:gy2], start[0], start[1]) or \
+                #     surrounded_by_obstacle(grid,start[0],start[1]):
+            traversible[self.visited_vis[gx1:gx2, gy1:gy2][x1:x2, y1:y2] == 1] = 1
 
 
             traversible[int(start[0] - x1) - 1:int(start[0] - x1) + 2,
