@@ -105,7 +105,7 @@ def get_args():
     parser.add_argument('--col_rad', type = float, default = 4) 
     parser.add_argument('--sf_thr', type = str, default = '-2') 
     parser.add_argument('--goal_erode', type = int, default = 3) 
-    parser.add_argument('--escape', type = int, default = 1) 
+    parser.add_argument('--escape', type = int, default = 800) 
     parser.add_argument('--segformer', type = int, default = 0) 
     parser.add_argument('--use_big_col', type = int, default = 0) 
     parser.add_argument('--dd_erode', type = int, default = 0) 
