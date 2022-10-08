@@ -40,7 +40,7 @@ def main():
     config.SIMULATOR.AGENT_0.SENSORS =  ['RGB_SENSOR', 'DEPTH_SENSOR', 'SEMANTIC_SENSOR']
     config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 10
     config.SIMULATOR.SCENE_DATASET = 'habitat-challenge-data/data/scene_datasets/hm3d/hm3d_annotated_basis.scene_dataset_config.json'
-    config.DATASET.SPLIT = 'train'
+    config.DATASET.SPLIT = 'val'
     config.freeze()
     print(config.DATASET.SPLIT)
     
@@ -49,7 +49,7 @@ def main():
     
     print(len(hab_env.episodes), 'episodes in dataset')
     
-    num_episodes = 800
+    num_episodes = 200
     start = args_2.start_ep
     end = args_2.end_ep if args_2.end_ep > 0 else num_episodes
 
