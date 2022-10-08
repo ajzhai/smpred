@@ -1,4 +1,6 @@
 import copy
+import numpy as np
+
 coco_categories = {
     "chair": 0,
     "couch": 1,
@@ -341,5 +343,8 @@ for i in range(len(mpcat40_labels)):
 
 fourty221 = copy.deepcopy(fourty221_ori)
 
-
+catmap = np.loadtxt('Stubborn/category_mapping.tsv', dtype=str,  delimiter='\t')
+raw_name_to_mpcat40 = {}
+for i in range(1, catmap.shape[0]):
+    raw_name_to_mpcat40[catmap[i][1]] = catmap[i][-1]
 

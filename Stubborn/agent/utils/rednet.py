@@ -718,7 +718,7 @@ def setup_cfg(args, gpu_id=0):
     
     # loading new detectron2 baselines
     cfg = get_config("new_baselines/mask_rcnn_R_101_FPN_400ep_LSJ.py")
-    print(LazyConfig.to_py(cfg))
+    #print(LazyConfig.to_py(cfg))
     cfg.train.init_checkpoint = "detectron2://new_baselines/mask_rcnn_R_101_FPN_400ep_LSJ/42073830/model_final_f96b26.pkl" 
     cfg.train.device = torch.device('cuda:' + str(gpu_id))
     #detectron2://new_baselines/mask_rcnn_R_50_FPN_400ep_LSJ/42019571/model_final_14d201.pkl"
