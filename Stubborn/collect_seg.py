@@ -27,7 +27,6 @@ def shuffle_episodes(env, shuffle_interval):
     env.episodes = new_episodes
     
 def main():
-
     args_2 = get_args()
     args_2.only_explore = 1  ########## whether to NOT go for goal detections 
     

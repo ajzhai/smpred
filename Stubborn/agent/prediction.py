@@ -127,7 +127,7 @@ def inference_smp(model, full_map):
     test_pipeline = Compose(test_pipeline)
     data = dict(full_map=full_map)
     data = test_pipeline(data)
-    data = collate([data], samples_per_gpu=1)
+    data = collate([data], samples_per_gpu=1) 
     if next(model.parameters()).is_cuda:
         # scatter to specified GPU
         data = scatter(data, [device])[0]
