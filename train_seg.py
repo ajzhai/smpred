@@ -40,53 +40,53 @@ from detectron2.modeling import GeneralizedRCNNWithTTA
 from detectron2.structures import BoxMode
 
 
-categories = ['chair', 'sofa', 'plant', 'bed', 'toilet', 'tv_monitor', 'sink', 
-              'fireplace', 'cabinet', 'bathtub', 'mirror', 'cushion', 'chest_of_drawers']
+categories = ['chair', 'sofa', 'plant', 'bed', 'toilet', 'tv_monitor',  
+              'fireplace', 'bathtub', 'mirror'] #'cabinet', 'sink', 'cushion', 'chest_of_drawers']
+ASPECT_RATIO_THRESH = 10
+MASK_AREA_THRESH = 1000
+
+
+def hm3d_seg_dataset_fn(base_dir):
+    out = []
+    for img_file in os.listdir(osp.join(base_dir, 'rgb')):
+        d = {}
+        d['file_name'] = osp.join(base_dir, 'rgb', img_file)
+        d['height'] = 480
+        d['width'] = 640
+        d['image_id'] = img_file[:-4]
+        annots = pickle.load(open(osp.join(base_dir, 'sem', d['image_id'] + '.pkl'), 'rb'))
+        for i in range(len(annots) - 1, -1, -1):
+            an = annots[i]
+            if an['cat'] not in categories:
+                annots.pop(i)
+                continue
+                
+            yy, xx = an['idxs']
+            if len(xx) < MASK_AREA_THRESH:
+                annots.pop(i)
+                continue
+            bbox = [np.min(xx), np.min(yy), np.max(xx), np.max(yy)]
+            bbh, bbw = bbox[3] - bbox[1] + 1, bbox[2] - bbox[0] + 1
+            if max(bbh/bbw, bbw/bbh) > ASPECT_RATIO_THRESH:
+                annots.pop(i)
+                continue
+                
+            an['bbox'] = bbox
+            an['bbox_mode'] = BoxMode.XYXY_ABS
+            an['category_id'] = categories.index(an['cat'])
+            msk = np.zeros((480, 640), dtype=np.uint8)
+            msk[an['idxs']] = 1
+            an['segmentation'] = pycocotools.mask.encode(np.asarray(msk, order="F"))
+        d['annotations'] = annots
+        out.append(d)
+    return out
+
 
 def hm3dseg_val_dataset_fn():
-    base_dir = 'data/seg/val'
-    out = []
-    for img_file in os.listdir(osp.join(base_dir, 'rgb')):
-        d = {}
-        d['file_name'] = osp.join(base_dir, 'rgb', img_file)
-        d['height'] = 480
-        d['width'] = 640
-        d['image_id'] = img_file[:-4]
-        annots = pickle.load(open(osp.join(base_dir, 'sem', d['image_id'] + '.pkl'), 'rb'))
-        for an in annots:
-            yy, xx = an['idxs']
-            an['bbox'] = [np.min(xx), np.min(yy), np.max(xx), np.max(yy)]
-            an['bbox_mode'] = BoxMode.XYXY_ABS
-            an['category_id'] = categories.index(an['cat'])
-            msk = np.zeros((480, 640), dtype=np.uint8)
-            msk[an['idxs']] = 1
-            an['segmentation'] = pycocotools.mask.encode(np.asarray(msk, order="F"))
-        d['annotations'] = annots
-        out.append(d)
-    return out
-
+    return hm3d_seg_dataset_fn('data/seg/val')
 
 def hm3dseg_train_dataset_fn():
-    base_dir = 'data/seg/train'
-    out = []
-    for img_file in os.listdir(osp.join(base_dir, 'rgb')):
-        d = {}
-        d['file_name'] = osp.join(base_dir, 'rgb', img_file)
-        d['height'] = 480
-        d['width'] = 640
-        d['image_id'] = img_file[:-4]
-        annots = pickle.load(open(osp.join(base_dir, 'sem', d['image_id'] + '.pkl'), 'rb'))
-        for an in annots:
-            yy, xx = an['idxs']
-            an['bbox'] = [np.min(xx), np.min(yy), np.max(xx), np.max(yy)]
-            an['bbox_mode'] = BoxMode.XYXY_ABS
-            an['category_id'] = categories.index(an['cat'])
-            msk = np.zeros((480, 640), dtype=np.uint8)
-            msk[an['idxs']] = 1
-            an['segmentation'] = pycocotools.mask.encode(np.asarray(msk, order="F"))
-        d['annotations'] = annots
-        out.append(d)
-    return out
+    return hm3d_seg_dataset_fn('data/seg/train')
 
 
 def build_evaluator(cfg, dataset_name, output_folder=None):
