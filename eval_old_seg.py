@@ -39,9 +39,28 @@ from detectron2.evaluation import (
 from detectron2.modeling import GeneralizedRCNNWithTTA
 from detectron2.structures import BoxMode
 
+coco_categories_mapping = {
+    56: 0,  # chair
+    57: 1,  # couch
+    58: 2,  # potted plant
+    59: 3,  # bed
+    61: 4,  # toilet
+    62: 5,  # tv
+    60: 6,  # dining-table
+    69: 7,  # oven
+    71: 8,  # sink
+    72: 9,  # refrigerator
+    73: 10,  # book
+    74: 11,  # clock
+    75: 12,  # vase
+    41: 13,  # cup
+    39: 14,  # bottle
+}
 
-categories = ['chair', 'sofa', 'plant', 'bed', 'toilet', 'tv_monitor',  
-              'fireplace', 'bathtub', 'mirror'] #'cabinet', 'sink', 'cushion', 'chest_of_drawers']
+hm3d_to_80 = {v : k for k, v in coco_categories_mapping.items()}
+
+categories = ['chair', 'sofa', 'plant', 'bed', 'toilet', 'tv_monitor']  
+              #'fireplace', 'bathtub', 'mirror'] #'cabinet', 'sink', 'cushion', 'chest_of_drawers']
 ASPECT_RATIO_THRESH = 10
 MASK_AREA_THRESH = 1000
 
@@ -73,7 +92,7 @@ def hm3d_seg_dataset_fn(base_dir):
                 
             an['bbox'] = bbox
             an['bbox_mode'] = BoxMode.XYXY_ABS
-            an['category_id'] = categories.index(an['cat'])
+            an['category_id'] = hm3d_to_80[categories.index(an['cat'])]
             msk = np.zeros((480, 640), dtype=np.uint8)
             msk[an['idxs']] = 1
             an['segmentation'] = pycocotools.mask.encode(np.asarray(msk, order="F"))
@@ -167,8 +186,8 @@ def setup(args):
     cfg.merge_from_file(args.config_file)
     cfg.MODEL.WEIGHTS = "detectron2://COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x/137849600/model_final_f10217.pkl"
     #"detectron2://new_baselines/mask_rcnn_R_101_FPN_400ep_LSJ/42073830/model_final_f96b26.pkl" 
-    cfg.MODEL.ROI_HEADS.NUM_CLASSES = len(categories)
-    cfg.MODEL.RETINANET.NUM_CLASSES = len(categories)
+    # cfg.MODEL.ROI_HEADS.NUM_CLASSES = len(categories)
+    # cfg.MODEL.RETINANET.NUM_CLASSES = len(categories)
     #cfg.MODEL.BACKBONE.FREEZE_AT = 5
     cfg.SOLVER.IMS_PER_BATCH = 16
     cfg.SOLVER.CHECKPOINT_PERIOD = 5000
@@ -187,10 +206,9 @@ def setup(args):
 def main(args):
     DatasetCatalog.register('hm3dseg_train', hm3dseg_train_dataset_fn)
     DatasetCatalog.register('hm3dseg_val', hm3dseg_val_dataset_fn)
-    MetadataCatalog.get("hm3dseg_train").thing_classes = categories
-    MetadataCatalog.get("hm3dseg_train").evaluator_type = 'coco'
-    MetadataCatalog.get("hm3dseg_val").thing_classes = categories
-    MetadataCatalog.get("hm3dseg_val").evaluator_type = 'coco'
+    MetadataCatalog.get("hm3dseg_train").thing_classes = MetadataCatalog.get("coco_2017_train").thing_classes
+    MetadataCatalog.get("hm3dseg_val").thing_classes = MetadataCatalog.get("coco_2017_val").thing_classes
+    MetadataCatalog.get("hm3dseg_val").evaluator_type = MetadataCatalog.get("coco_2017_val").evaluator_type
     
     cfg = setup(args)
 
