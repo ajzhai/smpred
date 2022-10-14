@@ -165,7 +165,8 @@ def setup(args):
     """
     cfg = get_cfg()
     cfg.merge_from_file(args.config_file)
-    cfg.MODEL.WEIGHTS = "detectron2://COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x/137849600/model_final_f10217.pkl"
+    #cfg.MODEL.WEIGHTS = "detectron2://COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x/137849600/model_final_f10217.pkl"
+    cfg.MODEL.WEIGHTS = "detectron2://COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x/138205316/model_final_a3ec72.pkl"
     #"detectron2://new_baselines/mask_rcnn_R_101_FPN_400ep_LSJ/42073830/model_final_f96b26.pkl" 
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = len(categories)
     cfg.MODEL.RETINANET.NUM_CLASSES = len(categories)
