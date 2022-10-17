@@ -26,6 +26,7 @@ def main():
     args_2 = get_args()
     args_2.only_explore = 1  ########## whether to NOT go for goal detections 
     args_2.switch_step = 501
+    args_2.global_downscaling = 4
     
     config_paths = "Stubborn/collect_config.yaml" #os.environ["CHALLENGE_CONFIG_FILE"]
     config = habitat.get_config(config_paths)

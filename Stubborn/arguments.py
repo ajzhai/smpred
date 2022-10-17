@@ -89,7 +89,7 @@ def get_args():
                         default="./log.pickle",
                         help="directory to store log"
                         )
-    parser.add_argument('--change_goal_threshold', type = float, default = 480) # originally 240
+    parser.add_argument('--change_goal_threshold', type = float, default = 240) # originally 240
 
     parser.add_argument('--record_frames', type = int, default = 2)
     parser.add_argument('--record_angle',type = int, default = 2)
