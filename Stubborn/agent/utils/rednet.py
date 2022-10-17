@@ -58,6 +58,7 @@ class SemanticPredMaskRCNN():
         cfg.merge_from_file('Stubborn/agent/utils/COCO-InstSeg/mask_rcnn_R_101_cat9.yaml')
         cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = args.sem_pred_prob_thr
         cfg.MODEL.WEIGHTS = 'Stubborn/agent/utils/mask_rcnn_R_101_cat9.pth'
+        cfg.MODEL.DEVICE = args.sem_gpu_id
         self.n_cats = cfg.MODEL.ROI_HEADS.NUM_CLASSES
         self.predictor = DefaultPredictor(cfg)
         self.args = args
