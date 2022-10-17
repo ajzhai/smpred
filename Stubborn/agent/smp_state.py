@@ -114,7 +114,7 @@ class Agent_State:
             self.pos_record = []
 
         # Semantic Occupancy Prediction
-        self.sem_occ_pred = SemOccPred(args)
+        self.sem_occ_pred = SemOccPred(args) if args.only_explore == 0 else None 
         self.selem = skimage.morphology.disk(args.col_rad - args.dd_erode)
         self.selem4idx = np.where(skimage.morphology.disk(args.col_rad + 1) > 0)
         self.so_pred = None
@@ -228,7 +228,7 @@ class Agent_State:
         p_input['wait'] = 0  # does it matter?
         if self.args.visualize or self.args.print_images:
             vlm = torch.clone(self.local_map[4:, :, :])
-            vlm[15] = 1e-5
+            vlm[-1] = 1e-5
             p_input['sem_map_pred'] = vlm.argmax(0).cpu().numpy()
 
 
@@ -549,18 +549,19 @@ class Agent_State:
                 # ang = np.random.uniform(low=-np.pi, high=np.pi)
                 # self.global_goal_preset = [np.cos(ang) * 0.25 + 0.5, np.sin(ang) * 0.25 + 0.5]
 
-#                 self.global_goals = [[int(self.global_goal_preset[0] * self.local_w),
-#                                  int(self.global_goal_preset[1] * self.local_h)]
-#                                 ]
-#                 self.global_goals = [[min(x, int(self.local_w - 1)),
-#                                  min(y, int(self.local_h - 1))]
-#                                 for x, y in self.global_goals]
+                self.global_goals = [[int(self.global_goal_preset[0] * self.local_w),
+                                 int(self.global_goal_preset[1] * self.local_h)]
+                                ]
+                self.global_goals = [[min(x, int(self.local_w - 1)),
+                                 min(y, int(self.local_h - 1))]
+                                for x, y in self.global_goals]
 
 
         
         # ------------------------------------------------------------------
         
-        if self.step % args.smp_step == args.smp_step - 1 or dist_to_goal < 15 and self.step >= args.switch_step:
+        # Activating prediction
+        if (self.step % args.smp_step == args.smp_step - 1 or dist_to_goal < 15) and self.step >= args.switch_step:
             
             self.full_map[:, self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]] = \
                     self.local_map
@@ -690,7 +691,7 @@ class Agent_State:
                 cat_semantic_scores = cat_semantic_map
                 cat_semantic_scores[cat_semantic_scores > 0] = 1.
                 temp_goal = cat_semantic_scores
-                if (self.goal_cat != 5 and not self.oventime) and args.num_sem_categories == 16:  # don't erode TV
+                if (self.goal_cat != 5 and not self.oventime) and args.num_sem_categories <= 16:  # don't erode TV
                     toilet_plant_reduction = 1 if self.goal_cat == 4 or self.goal_cat == 2 else 0
                     for _ in range(self.args.goal_erode - toilet_plant_reduction):
                         temp_goal = skimage.morphology.binary_erosion(temp_goal.astype(bool)).astype(float)
@@ -746,7 +747,7 @@ class Agent_State:
         p_input['goal_name'] = infos['goal_name']
         if args.visualize or args.print_images:
             vlm = torch.clone(self.local_map[4:, :, :])
-            vlm[15] = 1e-5
+            vlm[-1] = 1e-5
             p_input['sem_map_pred'] = vlm.argmax(0).cpu().numpy()
             p_input['opp_score'] = maxi
             p_input['opp_cat'] = maxc

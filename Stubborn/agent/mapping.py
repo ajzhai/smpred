@@ -95,6 +95,8 @@ class Semantic_Mapping(nn.Module):
 
         my_zs = XYZ_cm_std[0, 2, :]
         my_zs = my_zs[(my_zs > -1) & (my_zs < 1)] * 2 + 1.6
+        # plt.hist(my_zs.cpu().numpy())
+        # plt.savefig('data/tmp/zhist96.png')
 
         if torch.quantile(my_zs, 0.03) > self.args.stair_thr and torch.sum((my_zs > 0.2) & (my_zs < 0.7)) > 0.2 * len(my_zs):
             below_floor = XYZ_cm_std[0, 2, :] * 2 + 1.6 < 0.7

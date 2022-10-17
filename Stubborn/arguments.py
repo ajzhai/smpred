@@ -67,8 +67,8 @@ def get_args():
                                 between each global step""")
 
     # Mapping
-    parser.add_argument('--num_sem_categories', type=int, default=16)
-    parser.add_argument('--sem_pred_prob_thr', type=float, default=0.9)
+    parser.add_argument('--num_sem_categories', type=int, default=10)
+    parser.add_argument('--sem_pred_prob_thr', type=float, default=0.95)
     parser.add_argument('--tv_thr', type=float, default=0.9)
     parser.add_argument('--global_downscaling', type=int, default=2) # originally 6 (don't forget the change goal threshold)
     parser.add_argument('--vision_range', type=int, default=100)
@@ -89,7 +89,7 @@ def get_args():
                         default="./log.pickle",
                         help="directory to store log"
                         )
-    parser.add_argument('--change_goal_threshold', type = float, default = 240) # originally 240
+    parser.add_argument('--change_goal_threshold', type = float, default = 480) # originally 240
 
     parser.add_argument('--record_frames', type = int, default = 2)
     parser.add_argument('--record_angle',type = int, default = 2)

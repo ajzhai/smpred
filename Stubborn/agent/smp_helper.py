@@ -82,7 +82,7 @@ class Agent_Helper:
         if args.sem_gpu_id == -1:
             args.sem_gpu_id = 1
 
-        if args.num_sem_categories == 16:
+        if args.num_sem_categories <= 16:
             self.sem_pred_rednet = SemanticPredMaskRCNN(args)
         else:
             self.sem_pred_rednet = SemanticPredRedNet(args)
@@ -449,7 +449,7 @@ class Agent_Helper:
             j2 = min(mat.shape[1],j+2)
             return np.sum(mat[i1:i2,j1:j2]) > 0
         
-        is_toilet = (self.goal_cat == 4 and self.args.num_sem_categories == 16) or \
+        is_toilet = (self.goal_cat == 4 and self.args.num_sem_categories <= 16) or \
                     (self.goal_cat == 11 and self.args.num_sem_categories == 23)
 
         traversible = skimage.morphology.binary_dilation(
@@ -510,7 +510,8 @@ class Agent_Helper:
         else:
             self.use_srh = False
             
-        if self.found_goal == 1 and replan and not is_toilet:
+        #if self.found_goal == 1 and replan and not is_toilet:
+        if replan:
             # Try again with eroded obstacle map
             grid = skimage.morphology.binary_erosion(grid.astype(bool)).astype(int)
             traversible = skimage.morphology.binary_dilation(
@@ -598,7 +599,7 @@ class Agent_Helper:
 
         for i in range(depth.shape[1]):
             invalid = depth[:, i] == 0.
-            if np.mean(invalid) > 0.5:
+            if np.mean(invalid) > 0.9:
                 depth[:, i][invalid] = depth[:, i].max()
             else:
                 depth[:, i][invalid] = 100.0 #depth[:, i].max()
@@ -666,7 +667,7 @@ class Agent_Helper:
             sem_map[int(self.stg[0]),int(self.stg[1])] = 15
         #print(sem_map.shape,self.collision_map[gx1:gx2, gy1:gy2].shape)
         #exit(0)
-        no_cat_mask = sem_map == 20
+        no_cat_mask = sem_map == args.num_sem_categories + 4
         map_mask = np.rint(map_pred) == 1
         exp_mask = np.rint(exp_pred) == 1
         vis_mask = self.visited_vis[gx1:gx2, gy1:gy2] == 1#1 TODO: change back

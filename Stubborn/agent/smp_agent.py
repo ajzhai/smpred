@@ -59,7 +59,7 @@ class SMPAgent(habitat.Agent):
             
         # get second preprocess
         info['goal_name'] = hm3d_names[goal]
-        if self.args.num_sem_categories == 16:
+        if self.args.num_sem_categories <= 16:
             goal = hm3d_to_coco[goal]
         elif self.args.num_sem_categories == 23:
             goal = hm3d_to_21[goal]
