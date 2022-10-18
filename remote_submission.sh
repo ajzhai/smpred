@@ -24,22 +24,10 @@ python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 0 --end_ep 500 --evalu
 python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 500 --end_ep 1000 --evaluation $AGENT_EVALUATION_TYPE $@ &
 python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 1000 --end_ep 1500 --evaluation $AGENT_EVALUATION_TYPE $@ &
 python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 1500 --end_ep 2000 --evaluation $AGENT_EVALUATION_TYPE $@ &
-
-python Stubborn/collect_maps.py --sem_gpu_id 1 --start_ep 2000 --end_ep 2500 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 1 --start_ep 2500 --end_ep 3000 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 1 --start_ep 3000 --end_ep 3500 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 1 --start_ep 3500 --end_ep 4000 --evaluation $AGENT_EVALUATION_TYPE $@ &
-
-python Stubborn/collect_maps.py --sem_gpu_id 2 --start_ep 4000 --end_ep 4500 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 2 --start_ep 4500 --end_ep 5000 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 2 --start_ep 5000 --end_ep 5500 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 2 --start_ep 5500 --end_ep 6000 --evaluation $AGENT_EVALUATION_TYPE $@ &
-
-python Stubborn/collect_maps.py --sem_gpu_id 3 --start_ep 6000 --end_ep 6500 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 3 --start_ep 6500 --end_ep 7000 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 3 --start_ep 7000 --end_ep 7500 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 3 --start_ep 7500 --end_ep 8000 --evaluation $AGENT_EVALUATION_TYPE $@ &
-
+python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 2000 --end_ep 2500 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 2500 --end_ep 3000 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 3000 --end_ep 3500 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 3500 --end_ep 4000 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect_maps.py --sem_gpu_id 4 --start_ep 8000 --end_ep 9000 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect_maps.py --sem_gpu_id 4 --start_ep 9000 --end_ep 10000 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect_maps.py --sem_gpu_id 5 --start_ep 10000 --end_ep 11000 --evaluation $AGENT_EVALUATION_TYPE $@ &

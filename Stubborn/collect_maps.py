@@ -28,13 +28,13 @@ def main():
     args_2.switch_step = 501
     args_2.global_downscaling = 4
     
-    config_paths = "Stubborn/collect_config.yaml" #os.environ["CHALLENGE_CONFIG_FILE"]
+    config_paths = os.environ["CHALLENGE_CONFIG_FILE"]
     config = habitat.get_config(config_paths)
     config.defrost()
     config.SEED = 100
     # config.ENVIRONMENT.ITERATOR_OPTIONS.SHUFFLE = False
     config.SIMULATOR.HABITAT_SIM_V0.GPU_DEVICE_ID = args_2.sem_gpu_id
-    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 20
+    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 50
     config.DATASET.SPLIT = 'train'
     config.freeze()
     print(config.DATASET.SPLIT)
@@ -44,7 +44,7 @@ def main():
     
     print(len(hab_env.episodes), 'episodes in dataset')
     
-    num_episodes = 800 * 20
+    num_episodes = 80 * 50
     start = args_2.start_ep
     end = args_2.end_ep if args_2.end_ep > 0 else num_episodes
     
@@ -52,11 +52,12 @@ def main():
     succs, spls, dtgs, epls = [], [], [], []
     
     count_episodes = 0
-    while count_episodes < num_episodes:
+    while count_episodes < end:
         observations = hab_env.reset()
         observations['objectgoal'] = [0]
         nav_agent.reset()
-        print(hab_env._current_episode.scene_id)
+        print(count_episodes, hab_env._current_episode.scene_id)
+        sys.stdout.flush()
         
         if count_episodes >= start and count_episodes < end:
 
@@ -86,7 +87,7 @@ def main():
                     
                 
             if np.sum(full_map_seq[:, 4:]) > 0 and np.sum(full_map_seq[:, 1]) > 4000:
-                np.savez_compressed('./data/saved_maps/train_full/f%05d.npz' % count_episodes, maps=full_map_seq)
+                np.savez_compressed('./data/saved_maps/train_80/f%05d.npz' % count_episodes, maps=full_map_seq)
 
         count_episodes += 1
         

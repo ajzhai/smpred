@@ -234,7 +234,6 @@ class Agent_State:
 
         self.planner_inputs = p_input
 
-
         torch.set_grad_enabled(False)
 
 
