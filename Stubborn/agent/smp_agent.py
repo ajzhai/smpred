@@ -58,11 +58,12 @@ class SMPAgent(habitat.Agent):
             info['sem'] = observations['semantic']
             
         # get second preprocess
-        info['goal_name'] = hm3d_names[goal]
         if self.args.num_sem_categories <= 16:
+            info['goal_name'] = hm3d_names[goal]
             goal = hm3d_to_coco[goal]
         elif self.args.num_sem_categories == 23:
-            goal = hm3d_to_21[goal]
+            goal += 1
+            info['goal_name'] = habitat_labels_r[goal]
         else:
             assert False
             
