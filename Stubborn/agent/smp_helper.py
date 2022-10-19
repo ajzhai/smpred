@@ -126,6 +126,7 @@ class Agent_Helper:
         self.local_h = int(self.full_h / args.global_downscaling)
         self.found_goal = None
 
+        self.edge_buffer = 10
 
         if args.visualize or args.print_images:
             self.legend = cv2.imread('Stubborn/sem_legend.png')[:118]
@@ -392,6 +393,11 @@ class Agent_Helper:
             #action = 0
         else:
             (stg_x, stg_y) = stg
+            
+            # Stay within global map
+            stg_x = np.clip(stg_x, self.edge_buffer, self.full_w - self.edge_buffer - 1)
+            stg_y = np.clip(stg_y, self.edge_buffer, self.full_h - self.edge_buffer - 1)
+            
             angle_st_goal = math.degrees(math.atan2(stg_x - start[0],
                                                     stg_y - start[1]))
             angle_agent = (start_o) % 360.0
