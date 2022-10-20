@@ -395,8 +395,8 @@ class Agent_Helper:
             (stg_x, stg_y) = stg
             
             # Stay within global map
-            stg_x = np.clip(stg_x, self.edge_buffer, self.full_w - self.edge_buffer - 1)
-            stg_y = np.clip(stg_y, self.edge_buffer, self.full_h - self.edge_buffer - 1)
+            stg_x = np.clip(stg_x, self.edge_buffer, self.local_w - self.edge_buffer - 1)
+            stg_y = np.clip(stg_y, self.edge_buffer, self.local_h - self.edge_buffer - 1)
             
             angle_st_goal = math.degrees(math.atan2(stg_x - start[0],
                                                     stg_y - start[1]))
@@ -548,9 +548,7 @@ class Agent_Helper:
             # assume replan true suggests failure in planning
             stg_x, stg_y, distance, stop, replan = planner.get_short_term_goal(state)
             
-            
-        
-        
+
         #If we are already using the optimistic collision map, but still fail to plan a path to the goal, make goal larger
         if self.args.small_collision_map_for_goal == 0 or (self.args.small_collision_map_for_goal == 1 and self.use_small_num > 0):
             if self.found_goal == 1 and distance > self.args.magnify_goal_when_hard:

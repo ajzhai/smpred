@@ -34,7 +34,8 @@ def main():
     config.SEED = 100
     # config.ENVIRONMENT.ITERATOR_OPTIONS.SHUFFLE = False
     config.SIMULATOR.HABITAT_SIM_V0.GPU_DEVICE_ID = args_2.sem_gpu_id
-    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 1
+    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_STEPS = -1
+    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 9
     config.DATASET.SPLIT = 'val'
     config.freeze()
     print(config.DATASET.SPLIT)
@@ -44,7 +45,7 @@ def main():
     
     print(len(hab_env.episodes), 'episodes in dataset')
     
-    num_episodes = 5
+    num_episodes = 100
     start = args_2.start_ep
     end = args_2.end_ep if args_2.end_ep > 0 else num_episodes
     
@@ -53,7 +54,7 @@ def main():
     count_episodes = 0
     while count_episodes < num_episodes:
         observations = hab_env.reset()
-        print(habitat_labels_r[observations['objectgoal'][0]], '############' * 5)
+        print(habitat_labels_r[observations['objectgoal'][0] + 1], '############' * 5)
         nav_agent.reset()
         print(hab_env._current_episode.scene_id)
         
@@ -88,7 +89,7 @@ def main():
                 epls.append(step_i)
                 stats = np.array([succs, spls, dtgs, epls])
                 # np.save('data/tmp/logged_metrics_smp_a%04d.npy' % args_2.alpha, stats)
-                np.save('data/tmp/logged_metrics_smp_' + args_2.exp_name + '_500mp3d.npy', stats)
+                np.save('data/tmp/logged_metrics_smp_' + args_2.exp_name + '_100mp3d.npy', stats)
                 print(metrics)
                 # np.save('data/tmp/end%03d.npy' % count_episodes, observations['rgb'])
                 # if args_2.print_images:

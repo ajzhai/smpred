@@ -35,6 +35,7 @@ def main():
     config.SEED = 100
     # config.ENVIRONMENT.ITERATOR_OPTIONS.SHUFFLE = False
     config.SIMULATOR.HABITAT_SIM_V0.GPU_DEVICE_ID = args_2.sem_gpu_id
+    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_STEPS = -1
     config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 50
     config.DATASET.SPLIT = 'train'
     config.freeze()
@@ -53,7 +54,7 @@ def main():
     succs, spls, dtgs, epls = [], [], [], []
     
     count_episodes = 0
-    while count_episodes < end:
+    while count_episodes < min(num_episodes, end):
         observations = hab_env.reset()
         observations['objectgoal'] = [0]
         nav_agent.reset()
