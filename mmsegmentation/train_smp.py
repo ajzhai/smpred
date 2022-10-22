@@ -25,7 +25,7 @@ from mmseg.apis import train_segmentor
 
 
 rn_goals = range(4, 26) #[(gi + 4) for gi in [1, 7, 9, 11, 14, 6]]
-use_rn = 1
+use_rn = 0
 
 @PIPELINES.register_module()
 class LoadMapFromFile(object):
@@ -271,19 +271,19 @@ if __name__ == '__main__':
 
     cfg.data.train.type = cfg.dataset_type
     cfg.data.train.data_root = cfg.data_root
-    cfg.data.train.img_dir = 'train_80' if use_rn else 'train'
+    cfg.data.train.img_dir = 'train_56' if use_rn else 'train_80'
     cfg.data.train.ann_dir = None
     cfg.data.train.pipeline = cfg.train_pipeline
 
     cfg.data.val.type = cfg.dataset_type
     cfg.data.val.data_root = cfg.data_root
-    cfg.data.val.img_dir = 'val_80' if use_rn else 'val'
+    cfg.data.val.img_dir = 'val_56' if use_rn else 'val_80'
     cfg.data.train.ann_dir = None
     cfg.data.val.pipeline = cfg.test_pipeline
 
     cfg.data.test.type = cfg.dataset_type
     cfg.data.test.data_root = cfg.data_root
-    cfg.data.test.img_dir = 'val_80' if use_rn else 'val'
+    cfg.data.test.img_dir = 'val_56' if use_rn else 'val_80'
     cfg.data.train.ann_dir = None
     cfg.data.test.pipeline = cfg.test_pipeline
 
