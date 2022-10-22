@@ -20,22 +20,20 @@
 # python Stubborn/collect.py --sem_gpu_id 1 --exp_name a400_sms10_escape --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --escape 1 --evaluation $AGENT_EVALUATION_TYPE $@ &
 #python Stubborn/collect.py --sem_gpu_id 0 --exp_name rn_a400_sms10 --print_images 1 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 400 --col_rad 3.5 --start_ep 0 --escape 0 --num_sem_categories 23 --global_downscaling 3 --map_size_cm 4800 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
-# python Stubborn/collect_maps_mp3d.py --sem_gpu_id 1 --start_ep 0 --end_ep 400 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect_maps_mp3d.py --sem_gpu_id 1 --start_ep 400 --end_ep 800 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect_maps_mp3d.py --sem_gpu_id 1 --start_ep 800 --end_ep 1200 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect_maps_mp3d.py --sem_gpu_id 1 --start_ep 1200 --end_ep 1600 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect_maps_mp3d.py --sem_gpu_id 1 --start_ep 1600 --end_ep 2000 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect_maps_mp3d.py --sem_gpu_id 1 --start_ep 2000 --end_ep 2400 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect_maps_mp3d.py --sem_gpu_id 1 --start_ep 2400 --end_ep 2800 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_maps_mp3d.py --sem_gpu_id 1 --start_ep 0 --end_ep 110 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_maps_mp3d.py --sem_gpu_id 1 --start_ep 110 --end_ep 220 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_maps_mp3d.py --sem_gpu_id 1 --start_ep 220 --end_ep 330 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_maps_mp3d.py --sem_gpu_id 1 --start_ep 330 --end_ep 440 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_maps_mp3d.py --sem_gpu_id 1 --start_ep 440 --end_ep 550 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
-python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 0 --end_ep 125 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 125 --end_ep 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 250 --end_ep 375 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 375 --end_ep 500 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 500 --end_ep 625 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 625 --end_ep 750 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 750 --end_ep 875 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 875 --end_ep 1000 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 0 --end_ep 125 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 125 --end_ep 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 250 --end_ep 375 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 375 --end_ep 500 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 500 --end_ep 625 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 625 --end_ep 750 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 750 --end_ep 875 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 875 --end_ep 1000 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
 # python Stubborn/collect_maps.py --sem_gpu_id 4 --start_ep 8000 --end_ep 9000 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect_maps.py --sem_gpu_id 4 --start_ep 9000 --end_ep 10000 --evaluation $AGENT_EVALUATION_TYPE $@ &
