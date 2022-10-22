@@ -24,7 +24,7 @@ from mmseg.models import build_segmentor
 from mmseg.apis import train_segmentor
 
 
-rn_goals = [(gi + 4) for gi in [1, 7, 9, 11, 14, 6]]
+rn_goals = range(4, 26) #[(gi + 4) for gi in [1, 7, 9, 11, 14, 6]]
 use_rn = 1
 
 @PIPELINES.register_module()
@@ -82,7 +82,7 @@ class LoadMapFromFile(object):
             to_rgb=False)
         
         mask = (img[:, :, 1] > 0)
-        goals = rn_goals if use_rn else range(4, 10)
+        goals = rn_goals if use_rn else range(4, 10)   #???????????????????????????????????????????????????????????????????????
         results['gt_semantic_seg'] = (maps[-1, goals] * (1 - mask)).transpose(1, 2, 0)
         results['seg_fields'].append('gt_semantic_seg')
         return results
@@ -148,7 +148,7 @@ class SemMapDataset(CustomDataset):
                 list_dir=False,
                 suffix=img_suffix,
                 recursive=True):
-            for t_idx in range(10):
+            for t_idx in range(10):   #???????????????????????????????????????????????????????????????????????
                 img_info = dict(filename=img)
                 img_info['t_idx'] = t_idx
                 # if ann_dir is not None:
@@ -220,11 +220,11 @@ if __name__ == '__main__':
     cfg.norm_cfg = dict(type='BN', requires_grad=True)
     cfg.model.backbone.norm_cfg = cfg.norm_cfg
     cfg.model.decode_head.norm_cfg = cfg.norm_cfg
-    cfg.model.backbone.in_channels = 27 if use_rn else 20
-    cfg.model.decode_head.num_classes = 6
+    cfg.model.backbone.in_channels = 27 if use_rn else 14  #???????????????????????????????????????????????????????????????????????
+    cfg.model.decode_head.num_classes = 22 if use_rn else 6
     cfg.model.decode_head.loss_decode = dict(type='MyLoss', loss_weight=1.0)
     
-    cfg.model.auxiliary_head.num_classes = 6
+    cfg.model.auxiliary_head.num_classes = 22 if use_rn else 6
     cfg.model.auxiliary_head.loss_decode = dict(type='MyLoss', loss_weight=0.4)
     cfg.model.auxiliary_head.norm_cfg = cfg.norm_cfg
     #cfg.model.auxiliary_head=None
@@ -239,7 +239,7 @@ if __name__ == '__main__':
     cfg.img_norm_cfg = dict(
         mean=[0, 0, 0], std=[1 ,1, 1], to_rgb=False)
 
-    orig_in_size = 960 if use_rn else 720
+    orig_in_size = 960   #???????????????????????????????????????????????????????????????????????
     in_size = orig_in_size
     cfg.crop_size = (in_size, in_size)
     cfg.train_pipeline = [
@@ -271,24 +271,24 @@ if __name__ == '__main__':
 
     cfg.data.train.type = cfg.dataset_type
     cfg.data.train.data_root = cfg.data_root
-    cfg.data.train.img_dir = 'train_rn' if use_rn else 'train'
+    cfg.data.train.img_dir = 'train_80' if use_rn else 'train'
     cfg.data.train.ann_dir = None
     cfg.data.train.pipeline = cfg.train_pipeline
 
     cfg.data.val.type = cfg.dataset_type
     cfg.data.val.data_root = cfg.data_root
-    cfg.data.val.img_dir = 'val_rn' if use_rn else 'val'
+    cfg.data.val.img_dir = 'val_80' if use_rn else 'val'
     cfg.data.train.ann_dir = None
     cfg.data.val.pipeline = cfg.test_pipeline
 
     cfg.data.test.type = cfg.dataset_type
     cfg.data.test.data_root = cfg.data_root
-    cfg.data.test.img_dir = 'val_rn' if use_rn else 'val'
+    cfg.data.test.img_dir = 'val_80' if use_rn else 'val'
     cfg.data.train.ann_dir = None
     cfg.data.test.pipeline = cfg.test_pipeline
 
-    # Set up working dir to save files and logs.
-    cfg.work_dir =  '/shared/perception/personals/albert/work_dirs/rn' #'../work_dirs/smp_weighted_t10'
+    # Set up working dir to save files and logs.  #???????????????????????????????????????????????????????????????????????
+    cfg.work_dir =  '/shared/perception/personals/albert/work_dirs/smp_80_t10' #'../work_dirs/smp_weighted_t10'
 
     cfg.runner.max_iters = 60000
     cfg.log_config.interval = 500

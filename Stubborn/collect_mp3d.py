@@ -32,7 +32,7 @@ def main():
     config = habitat.get_config(config_paths)
     config.defrost()
     config.SEED = 100
-    # config.ENVIRONMENT.ITERATOR_OPTIONS.SHUFFLE = False
+    config.ENVIRONMENT.ITERATOR_OPTIONS.SHUFFLE = True
     config.SIMULATOR.HABITAT_SIM_V0.GPU_DEVICE_ID = args_2.sem_gpu_id
     config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_STEPS = -1
     config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 9
@@ -42,7 +42,8 @@ def main():
     
     nav_agent = SMPAgent(args=args_2,task_config=config)
     hab_env = Env(config=config)
-    
+    # for epi in hab_env.episode_iterator.episodes:
+    #     print(epi.scene_id, epi.goals[0].object_category)
     print(len(hab_env.episodes), 'episodes in dataset')
     
     num_episodes = 100

@@ -36,7 +36,7 @@ def main():
     config.SIMULATOR.HABITAT_SIM_V0.GPU_DEVICE_ID = args_2.sem_gpu_id
     config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_STEPS = -1
     config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 50
-    config.DATASET.SPLIT = 'train'
+    config.DATASET.SPLIT = 'val'
     config.freeze()
     print(config.DATASET.SPLIT)
     
@@ -45,7 +45,7 @@ def main():
     print(hab_env.episode_iterator._max_rep_step)
     print(len(hab_env.episodes), 'episodes in dataset')
     
-    num_episodes = 80 * 50
+    num_episodes = 20 * 50
     start = args_2.start_ep
     end = args_2.end_ep if args_2.end_ep > 0 else num_episodes
     
@@ -64,7 +64,8 @@ def main():
 
             step_i = 0
             seq_i = 0
-            full_map_seq = np.zeros((len(save_steps), 4 + args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h), dtype=np.uint8)
+            full_map_seq = np.zeros((len(save_steps), 4 + args_2.num_sem_categories, 
+                                     nav_agent.agent_states.full_w, nav_agent.agent_states.full_h), dtype=np.uint8)
             while not hab_env.episode_over:
                 sys.stdout.flush()
                 action = nav_agent.act(observations)
@@ -88,7 +89,7 @@ def main():
                     
                 
             if np.sum(full_map_seq[:, 4:]) > 0 and np.sum(full_map_seq[:, 1]) > 4000:
-                np.savez_compressed('./data/saved_maps/train_80/f%05d.npz' % count_episodes, maps=full_map_seq)
+                np.savez_compressed('./data/saved_maps/%s_80/f%05d.npz' % (config.DATASET.SPLIT, count_episodes), maps=full_map_seq)
 
         count_episodes += 1
         
