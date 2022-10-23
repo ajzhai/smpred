@@ -48,3 +48,33 @@ id_color = np.array(
 
 common_cls = ['chair', 'couch', 'potted plant', 'bed', 'toilet', 'tv', 'dining-table', 'oven', 
               'sink', 'refrigerator', 'book', 'clock', 'vase', 'cup', 'bottle']
+
+categories9 = ['chair', 'sofa', 'plant', 'bed', 'toilet', 'tv_monitor',  
+               'fireplace', 'bathtub', 'mirror']
+
+habitat_labels = {
+            'background': 0,
+            'chair': 1, #g
+            'table': 2, #g
+            'picture':3, #b
+            'cabinet':4, # in resnet
+            'cushion':5, # in resnet
+            'sofa':6, #g
+            'bed':7, #g
+            'chest_of_drawers':8, #b in resnet
+            'plant':9, #g
+            'sink':10, #g
+            'toilet':11, #g
+            'stool':12, #b
+            'towel':13, #b in resnet
+            'tv_monitor':14, #g
+            'shower':15, #b
+            'bathtub':16, #b in resnet
+            'counter':17, #b isn't this table?
+            'fireplace':18,
+            'gym_equipment':19,
+            'seating':20,
+            'clothes':21 # in resnet
+}
+
+categories22 = list(habitat_labels.keys())
