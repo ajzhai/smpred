@@ -145,7 +145,7 @@ if __name__ == '__main__':
     use_rn = 0
     
     data_dir = '../data/saved_maps/val' + ('_56' if use_rn else '_80')
-    common_cls = categories22 if use_run else categories9
+    common_cls = categories22 if use_rn else categories9
     for train_i in range(4000, 18000, 4000):
         ckpt = osp.join(out_dir, 'iter_' + str(train_i) + '.pth')
 
