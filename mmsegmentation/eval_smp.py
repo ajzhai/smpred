@@ -181,16 +181,16 @@ if __name__ == '__main__':
         dists = [[] for c in range(6)]
         nlls = [[] for c in range(6)] 
         bces = [[] for c in range(6)] 
-        for i in range(len(os.listdir(data_dir))):
+        for i, n in enumerate(os.listdir(data_dir)):
             if i % 100 == 0:
                 print(i)
                 sys.stdout.flush()
-            mf =  np.load( osp.join(data_dir, 'f%05d.npz' % i))['maps']/ 255.
+            mf =  np.load( osp.join(data_dir, n))['maps']/ 255.
             z_map = mf[-1, 0]
             obj_map = mf[-1, rn_goals] if use_rn else mf[-1, 4:]
             for t_idx in range(4):
 
-                result = inference_smp(model,  osp.join(data_dir, 'f%05d.npz' % i), t_idx=t_idx)
+                result = inference_smp(model,  osp.join(data_dir, n), t_idx=t_idx)
                 for c in range(6):
                     pred = result[0][c]
                     gt = obj_map[c]
