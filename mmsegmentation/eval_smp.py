@@ -146,6 +146,7 @@ if __name__ == '__main__':
     
     data_dir = '../data/saved_maps/val' + ('_56' if use_rn else '_80')
     common_cls = categories22 if use_rn else categories9
+    quan = 0
     for train_i in range(4000, 18000, 4000):
         ckpt = osp.join(out_dir, 'iter_' + str(train_i) + '.pth')
 
@@ -164,50 +165,52 @@ if __name__ == '__main__':
         model.cfg = cfg
 
         # Save some qualitative results
-        # for i in [0, 1, 2, 3, 4, 5]:
-        #     for t_idx in range(4):
-        #         print(i, t_idx)
-        #         result = inference_smp(model, osp.join(data_dir, 'f%05d.npz' % i), t_idx=t_idx)
-        #         pred = result[0]
-        #         gt = np.load( osp.join(data_dir, 'f%05d.npz' % i))['maps'] / 255.
-        #         z_map = gt[-1, 0]
-        #         obj_map = gt[-1, 4:]
-        #         mask = gt[t_idx, 1] > 0
-        #         visualize_obj_preds(pred, [0, 1, 2, 3, 4, 5], z_map, obj_map, mask)
-        #         plt.savefig(osp.join(out_dir, 'i16000/qual%d_%d.png' % (i, t_idx)))
-        #         plt.close()
+        if not quan:
+            for i in [0, 1, 2, 3, 4, 5]:
+                for t_idx in range(0, 12, 2):
+                    print(i, t_idx)
+                    result = inference_smp(model, osp.join(data_dir, 'f%05d.npz' % i), t_idx=t_idx)
+                    pred = result[0]
+                    gt = np.load( osp.join(data_dir, 'f%05d.npz' % i))['maps'] / 255.
+                    z_map = gt[-1, 0]
+                    obj_map = gt[-1, 4:]
+                    mask = gt[t_idx, 1] > 0
+                    visualize_obj_preds(pred, [0, 1, 2, 3, 4, 5], z_map, obj_map, mask)
+                    plt.savefig(osp.join(out_dir, 'i4000/qual%d_%d.png' % (i, t_idx)))
+                    plt.close()
 
         # MSE and NLL evaluation 
-        dists = [[] for c in range(6)]
-        nlls = [[] for c in range(6)] 
-        bces = [[] for c in range(6)] 
-        for i, n in enumerate(os.listdir(data_dir)):
-            if i % 100 == 0:
-                print(i)
-                sys.stdout.flush()
-            mf =  np.load( osp.join(data_dir, n))['maps']/ 255.
-            z_map = mf[-1, 0]
-            obj_map = mf[-1, rn_goals] if use_rn else mf[-1, 4:]
-            for t_idx in range(4):
+        if quan:
+            dists = [[] for c in range(6)]
+            nlls = [[] for c in range(6)] 
+            bces = [[] for c in range(6)] 
+            for i, n in enumerate(os.listdir(data_dir)):
+                if i % 100 == 0:
+                    print(i)
+                    sys.stdout.flush()
+                mf =  np.load( osp.join(data_dir, n))['maps']/ 255.
+                z_map = mf[-1, 0]
+                obj_map = mf[-1, rn_goals] if use_rn else mf[-1, 4:]
+                for t_idx in range(4):
 
-                result = inference_smp(model,  osp.join(data_dir, n), t_idx=t_idx)
-                for c in range(6):
-                    pred = result[0][c]
-                    gt = obj_map[c]
-                    dist = nearest_dist(pred, gt)
-                    nll = neg_log_likelihood(pred, gt)
-                    bce = bce_loss(pred, gt)
-                    if dist >= 0:
-                        dists[c].append(dist)
-                        nlls[c].append(nll)
-                    bces[c].append(bce)
+                    result = inference_smp(model,  osp.join(data_dir, n), t_idx=t_idx)
+                    for c in range(6):
+                        pred = result[0][c]
+                        gt = obj_map[c]
+                        dist = nearest_dist(pred, gt)
+                        nll = neg_log_likelihood(pred, gt)
+                        bce = bce_loss(pred, gt)
+                        if dist >= 0:
+                            dists[c].append(dist)
+                            nlls[c].append(nll)
+                        bces[c].append(bce)
 
-        for c in range(6):
+            for c in range(6):
+                print('%12s: %.3f MSE, %.3f NLL, %.5f BCE, %d occurrences' % 
+                      (common_cls[c], np.mean(dists[c]), np.mean(nlls[c]), np.mean(bces[c]), len(dists[c])))
+            all_dists = sum(dists, [])
+            all_nlls = sum(nlls, [])
+            all_bces = sum(bces, [])
+            print('-' * 60)
             print('%12s: %.3f MSE, %.3f NLL, %.5f BCE, %d occurrences' % 
-                  (common_cls[c], np.mean(dists[c]), np.mean(nlls[c]), np.mean(bces[c]), len(dists[c])))
-        all_dists = sum(dists, [])
-        all_nlls = sum(nlls, [])
-        all_bces = sum(bces, [])
-        print('-' * 60)
-        print('%12s: %.3f MSE, %.3f NLL, %.5f BCE, %d occurrences' % 
-              ('ALL CLASSES', np.mean(all_dists), np.mean(all_nlls), np.mean(all_bces), len(all_dists)))
+                  ('ALL CLASSES', np.mean(all_dists), np.mean(all_nlls), np.mean(all_bces), len(all_dists)))
