@@ -7,6 +7,7 @@ import mmcv
 import os.path as osp
 import numpy as np
 
+from scipy.special import expit
 from mmcv import Config
 
 from mmseg.datasets.builder import PIPELINES
@@ -19,7 +20,7 @@ from mmcv.parallel import collate, scatter
 
 
 def sigmoid(x):
-    return 1/(1 + np.exp(-x))
+    return expit(x)
     
     
 @PIPELINES.register_module()

@@ -9,6 +9,7 @@ import os
 import sys
 import numpy as np
 from PIL import Image
+from scipy.special import expit
 import matplotlib.pyplot as plt
 
 from mmcv import Config
@@ -22,7 +23,7 @@ from constants import id_color, categories9, categories22
 
 
 def sigmoid(x):
-    return 1/(1 + np.exp(-x))
+    return expit(x)
     
     
 def inference_smp(model, imgfile, t_idx):
@@ -134,7 +135,7 @@ def bce_loss(pred, gt):
     """
     pred = torch.tensor(pred).unsqueeze(0)
     gt = torch.tensor(gt).unsqueeze(0)
-    wts = [36.64341412, 30.19407855, 106.23704066, 25.58503269, 100.4556983, 167.64383946]
+    #wts = [36.64341412, 30.19407855, 106.23704066, 25.58503269, 100.4556983, 167.64383946]
     pos_weight = torch.ones(pred.shape)  #torch.ones(6)
     return F.binary_cross_entropy_with_logits(pred, gt, reduction='mean') #, pos_weight=pos_weight)
     
@@ -146,8 +147,8 @@ if __name__ == '__main__':
     
     data_dir = '../data/saved_maps/val' + ('_56' if use_rn else '_80')
     common_cls = categories22 if use_rn else categories9
-    quan = 0
-    for train_i in range(4000, 18000, 4000):
+    quan = 1
+    for train_i in [20000, 24000, 28000, 32000, 36000, 40000]:
         ckpt = osp.join(out_dir, 'iter_' + str(train_i) + '.pth')
 
         cfg = Config.fromfile(osp.join(out_dir, 'cfg.py'))
@@ -166,7 +167,7 @@ if __name__ == '__main__':
 
         # Save some qualitative results
         if not quan:
-            for i in [0, 1, 2, 3, 4, 5]:
+            for i in [0, 1]:#, 2, 3, 4, 5]:
                 for t_idx in range(0, 12, 2):
                     print(i, t_idx)
                     result = inference_smp(model, osp.join(data_dir, 'f%05d.npz' % i), t_idx=t_idx)
@@ -176,7 +177,7 @@ if __name__ == '__main__':
                     obj_map = gt[-1, 4:]
                     mask = gt[t_idx, 1] > 0
                     visualize_obj_preds(pred, [0, 1, 2, 3, 4, 5], z_map, obj_map, mask)
-                    plt.savefig(osp.join(out_dir, 'i4000/qual%d_%d.png' % (i, t_idx)))
+                    plt.savefig(osp.join(out_dir, 'i28000/qual%d_%d.png' % (i, t_idx)))
                     plt.close()
 
         # MSE and NLL evaluation 
@@ -184,19 +185,20 @@ if __name__ == '__main__':
             dists = [[] for c in range(6)]
             nlls = [[] for c in range(6)] 
             bces = [[] for c in range(6)] 
-            for i, n in enumerate(os.listdir(data_dir)):
+            fnames = os.listdir(data_dir)
+            for i, n in enumerate(fnames):
                 if i % 100 == 0:
-                    print(i)
+                    print('val %d out of %d' % (i, len(fnames)))
                     sys.stdout.flush()
-                mf =  np.load( osp.join(data_dir, n))['maps']/ 255.
-                z_map = mf[-1, 0]
+                mf =  np.load( osp.join(data_dir, n))['maps']#/ 255.
                 obj_map = mf[-1, rn_goals] if use_rn else mf[-1, 4:]
-                for t_idx in range(4):
+                obj_map = obj_map / 255.
+                for t_idx in [0, 1, 3, 7]:
 
                     result = inference_smp(model,  osp.join(data_dir, n), t_idx=t_idx)
                     for c in range(6):
-                        pred = result[0][c]
-                        gt = obj_map[c]
+                        pred = result[0][c][::, ::]
+                        gt = obj_map[c][::, ::]
                         dist = nearest_dist(pred, gt)
                         nll = neg_log_likelihood(pred, gt)
                         bce = bce_loss(pred, gt)
