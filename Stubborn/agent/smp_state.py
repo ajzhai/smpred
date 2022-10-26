@@ -706,14 +706,15 @@ class Agent_State:
                 if temp_goal.sum() == 0.:
                     temp_goal = cat_semantic_scores
                 if args.num_sem_categories != 23:
-                    if self.goal_cat == 3:  # bed vs sofa, chair, table
-                        temp_goal *= self.local_map[4 + 1, :, :].cpu().numpy() == 0
-                        temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() == 0
-                        temp_goal *= self.local_map[4 + 6, :, :].cpu().numpy() == 0
-                    if self.goal_cat == 1:  # sofa vs chair
-                        temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() == 0
-                    # if self.goal_cat == 5:  # TV vs oven
-                    #     temp_goal *= self.local_map[4 + 7, :, :].cpu().numpy() == 0
+                    pass
+                    #temp_goal *= (torch.sum(self.local_map[4:10], dim=0) - self.local_map[cn]) == 0
+                    # if self.goal_cat == 3:  # bed vs sofa, chair, table
+                    #     temp_goal *= self.local_map[4 + 1, :, :].cpu().numpy() == 0
+                    #     temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() == 0
+                    # if self.goal_cat == 1:  # sofa vs chair
+                    #     temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() == 0
+                    # # if self.goal_cat == 5:  # TV vs oven
+                    # #     temp_goal *= self.local_map[4 + 7, :, :].cpu().numpy() == 0
                 else:
                     if self.goal_cat == 7:  # bed vs sofa
                         temp_goal *= self.local_map[4 + 6, :, :].cpu().numpy() == 0
@@ -721,14 +722,6 @@ class Agent_State:
                     goal_maps = temp_goal
                     found_goal = 1
                     
-        if args.num_sem_categories != 23 and args.oventrick:
-            if self.step > 400 and self.goal_cat == 5 and found_goal == 0:  # bring in the ovens for TV
-                self.local_map[self.goal_cat + 4, :, :] += self.local_map[7 + 4, :, :]
-                self.oventime = True
-        # else:
-        #     if self.step > 400 and self.goal_cat == 14 and found_goal == 0:  # bring in the ovens for TV
-        #         self.local_map[self.goal_cat + 4, :, :] += self.local_map[18 + 4, :, :]
-        #         self.oventime = True
         # ------------------------------------------------------------------
 
         # ------------------------------------------------------------------

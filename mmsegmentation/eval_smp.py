@@ -142,13 +142,13 @@ def bce_loss(pred, gt):
     
 if __name__ == '__main__':
     
-    out_dir = '/shared/perception/personals/albert/work_dirs/smp_80_t10' 
+    out_dir = '/shared/perception/personals/albert/work_dirs/w10_80_t10' 
     use_rn = 0
     
     data_dir = '../data/saved_maps/val' + ('_56' if use_rn else '_80')
     common_cls = categories22 if use_rn else categories9
     quan = 1
-    for train_i in [20000, 24000, 28000, 32000, 36000, 40000]:
+    for train_i in [16000,20000, 24000, 28000, 32000]:
         ckpt = osp.join(out_dir, 'iter_' + str(train_i) + '.pth')
 
         cfg = Config.fromfile(osp.join(out_dir, 'cfg.py'))
@@ -182,9 +182,10 @@ if __name__ == '__main__':
 
         # MSE and NLL evaluation 
         if quan:
-            dists = [[] for c in range(6)]
-            nlls = [[] for c in range(6)] 
-            bces = [[] for c in range(6)] 
+            n_c = 22 if use_rn else 6
+            dists = [[] for c in range(n_c)]
+            nlls = [[] for c in range(n_c)] 
+            bces = [[] for c in range(n_c)] 
             fnames = os.listdir(data_dir)
             for i, n in enumerate(fnames):
                 if i % 100 == 0:
@@ -196,7 +197,7 @@ if __name__ == '__main__':
                 for t_idx in [0, 1, 3, 7]:
 
                     result = inference_smp(model,  osp.join(data_dir, n), t_idx=t_idx)
-                    for c in range(6):
+                    for c in range(n_c):
                         pred = result[0][c][::, ::]
                         gt = obj_map[c][::, ::]
                         dist = nearest_dist(pred, gt)
@@ -207,7 +208,7 @@ if __name__ == '__main__':
                             nlls[c].append(nll)
                         bces[c].append(bce)
 
-            for c in range(6):
+            for c in range(n_c):
                 print('%12s: %.3f MSE, %.3f NLL, %.5f BCE, %d occurrences' % 
                       (common_cls[c], np.mean(dists[c]), np.mean(nlls[c]), np.mean(bces[c]), len(dists[c])))
             all_dists = sum(dists, [])

@@ -143,9 +143,9 @@ def inference_smp(model, full_map):
 class SemOccPred():
     def __init__(self, args):
         self.args = args
-        ckpt = osp.join('./Stubborn/smp_wts.pth')
+        ckpt = osp.join('./Stubborn/smp_wts_temp.pth')
     
-        cfg = Config.fromfile('./Stubborn/agent/utils/smp_cfg.py')
+        cfg = Config.fromfile('./Stubborn/agent/utils/smp_cfg_temp.py')
         if args.num_sem_categories == 23:
             ckpt = osp.join('./Stubborn/smprn_wts.pth')
     

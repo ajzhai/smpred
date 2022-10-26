@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
 
-#python Stubborn/collect_mp3d.py -v 0 --dump_location ./data/tmp --exp_name mp3d_transfer --print_images 1 --evaluation $AGENT_EVALUATION_TYPE $@ 
+#python Stubborn/collect.py -v 0 --dump_location ./data/tmp --exp_name debug --print_images 1 --evaluation $AGENT_EVALUATION_TYPE $@ 
 #python Stubborn/collect.py --dump_location ./data/tmp --exp_name debug --print_images 1 --switch_step 501 --map_resolution 2 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
 
-# python Stubborn/collect.py --sem_gpu_id 0 --exp_name tf_eoo_st20_es7 --print_images 0 --escape 700 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect.py --sem_gpu_id 0 --exp_name tf_eoo_st20_es9 --print_images 0 --escape 900 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect.py --sem_gpu_id 1 --exp_name tf_eoo_st15_es8 --print_images 0 --stair_thr 0.15 --escape 800 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect.py --sem_gpu_id 1 --exp_name tf_eoo_st15_es16 --print_images 0 --stair_thr 0.15 --escape 1600 --evaluation $AGENT_EVALUATION_TYPE $@ &
-#python Stubborn/collect.py --sem_gpu_id 4 --exp_name r101_lsj90 --print_images 0 --sem_pred_prob_thr 0.9 --tv_thr 0.9 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
-#python Stubborn/collect.py --sem_gpu_id 5 --exp_name r50_bi_tta --print_images 0 --sem_pred_prob_thr 0.9 --tv_thr 0.9 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect.py --sem_gpu_id 0 --exp_name cr45 --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 400 --col_rad 4.5 --start_ep 0  --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_95_95 --print_images 0 --tv_thr 0.95 --sem_pred_prob_thr 0.95 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_95 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.95 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_90 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.9 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_97 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.97 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_95_a200 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.95 --alpha 200 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_95_a300 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.95 --alpha 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
 # python Stubborn/collect.py --sem_gpu_id 2 --exp_name a500_new --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 500 --col_rad 4 --start_ep 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 2 --exp_name a400_new --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
@@ -35,13 +34,13 @@
 # python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 750 --end_ep 875 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect_maps.py --sem_gpu_id 0 --start_ep 875 --end_ep 1000 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
-python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 0000 --end_ep 1000 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 1000 --end_ep 2000 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 2000 --end_ep 3000 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 3000 --end_ep 4000 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 4000 --end_ep 5000 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 5000 --end_ep 6000 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 6000 --end_ep 7000 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 7000 --end_ep 8000 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 0000 --end_ep 1000 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 1000 --end_ep 2000 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 2000 --end_ep 3000 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 3000 --end_ep 4000 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 4000 --end_ep 5000 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 5000 --end_ep 6000 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 6000 --end_ep 7000 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_maps_800.py --sem_gpu_id 4 --start_ep 7000 --end_ep 8000 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
 wait

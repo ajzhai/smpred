@@ -54,7 +54,7 @@ class SemanticPredMaskRCNN():
     def __init__(self, args):
         cfg = get_cfg()
         cfg.merge_from_file('Stubborn/agent/utils/COCO-InstSeg/mask_rcnn_R_101_cat9.yaml')
-        cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = args.sem_pred_prob_thr
+        cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = min(args.sem_pred_prob_thr, args.tv_thr)
         cfg.MODEL.WEIGHTS = 'Stubborn/agent/utils/mask_rcnn_R_101_cat9.pth'
         cfg.MODEL.DEVICE = args.sem_gpu_id
         self.n_cats = cfg.MODEL.ROI_HEADS.NUM_CLASSES
@@ -72,16 +72,16 @@ class SemanticPredMaskRCNN():
             if class_idx in range(self.n_cats):
                 idx = class_idx
                 confscore = pred_instances.scores[j]
-                # if (confscore < high_thr and (idx not in [5])) or (confscore < args.tv_thr and (idx in [5])):
-                #     continue
+                if (confscore < args.sem_pred_prob_thr and (idx not in [5])) or (confscore < args.tv_thr and (idx in [5])):
+                    continue
                 # else:
                 obj_mask = pred_instances.pred_masks[j] * 1.
                 obj_mask = obj_mask.cpu().numpy()
                 semantic_input[:, :, idx] += obj_mask
 
         
-        semantic_input[:, :, 3] *= semantic_input[:, :, 1] < args.sem_pred_prob_thr
-        semantic_input[:, :, 1] *= semantic_input[:, :, 0] < args.sem_pred_prob_thr
+        # semantic_input[:, :, 3] *= semantic_input[:, :, 1] < args.sem_pred_prob_thr
+        # semantic_input[:, :, 1] *= semantic_input[:, :, 0] < args.sem_pred_prob_thr
         
         return semantic_input, img
 
