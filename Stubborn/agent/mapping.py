@@ -100,7 +100,10 @@ class Semantic_Mapping(nn.Module):
 
         if torch.quantile(my_zs, 0.03) > self.args.stair_thr and torch.sum((my_zs > 0.2) & (my_zs < 0.7)) > 0.2 * len(my_zs):
             below_floor = XYZ_cm_std[0, 2, :] * 2 + 1.6 < 0.7
-            no_toilet = self.feat[0, 1 + 4] == 0
+            if self.args.num_sem_categories <= 16:
+                no_toilet = self.feat[0, 1 + 4] == 0
+            else:
+                no_toilet = self.feat[0, 1 + 11] == 0
             XYZ_cm_std[:, :, below_floor & no_toilet] = 99999
             
 #         highoven = (self.feat[0, 8, :]  > 0.5) & (XYZ_cm_std[0, 2, :] * 2 + 1.6 > 2)
@@ -120,7 +123,13 @@ class Semantic_Mapping(nn.Module):
 
         agent_height_proj = voxels[..., min_z:max_z].sum(4)
         all_height_proj = voxels.sum(4)
-
+        if self.args.num_sem_categories <= 16:
+            agent_height_proj[:, 1 + 5] = all_height_proj[:, 1 + 5]
+            agent_height_proj[:, 1 + 2] = all_height_proj[:, 1 + 2]
+        else:
+            agent_height_proj[:, 1 + 3] = all_height_proj[:, 1 + 3]
+            agent_height_proj[:, 1 + 9] = all_height_proj[:, 1 + 9]
+            agent_height_proj[:, 1 + 14] = all_height_proj[:, 1 + 14]
         # suspect that it is in here we deal with mask and confidence scores
 
         fp_map_pred = agent_height_proj[:, 0:1, :, :]

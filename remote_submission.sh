@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
-#python Stubborn/collect.py -v 0 --dump_location ./data/tmp --exp_name debug --print_images 1 --evaluation $AGENT_EVALUATION_TYPE $@ 
+#python Stubborn/collect.py -v 0 --dump_location ./data/tmp --exp_name suppress --print_images 1 --evaluation $AGENT_EVALUATION_TYPE $@ 
 #python Stubborn/collect.py --dump_location ./data/tmp --exp_name debug --print_images 1 --switch_step 501 --map_resolution 2 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
 
-python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_95_95 --print_images 0 --tv_thr 0.95 --sem_pred_prob_thr 0.95 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_95 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.95 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_90 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.9 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_97 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.97 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_95_a200 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.95 --alpha 200 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_95_a300 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.95 --alpha 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 6 --exp_name gthr_980 --print_images 0 --goal_thr 0.980 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 6 --exp_name gthr_985 --print_images 0 --goal_thr 0.985 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 6 --exp_name gthr_990 --print_images 0 --goal_thr 0.990 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 6 --exp_name gthr_995 --print_images 0 --goal_thr 0.995 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_95_a200 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.95 --alpha 200 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_95_a300 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.95 --alpha 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
 # python Stubborn/collect.py --sem_gpu_id 2 --exp_name a500_new --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 500 --col_rad 4 --start_ep 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 2 --exp_name a400_new --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --evaluation $AGENT_EVALUATION_TYPE $@ &

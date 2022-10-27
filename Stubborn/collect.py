@@ -61,31 +61,32 @@ def main():
 
             step_i = 0
             seq_i = 0
-            full_map_seq = np.zeros((len(save_steps), 4 + args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h), dtype=np.uint8)
+            # full_map_seq = np.zeros((len(save_steps), 4 + args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h), dtype=np.uint8)
             while not hab_env.episode_over:
                 sys.stdout.flush()
                 action = nav_agent.act(observations)
                 observations = hab_env.step(action)
-                # cv2.imwrite('./data/tmp/rgb/rgb%d.png' % step_i, observations['rgb'][:, :, ::-1])
-                # if step_i in range(21, 32):
-                #     #print(step_i, observations['gps'], observations['compass'])
-                #     np.save('data/tmp/rgb%03d.npy' % step_i, observations['rgb'])
+                # if step_i in range(19, 22):
+                #     cv2.imwrite('./data/tmp/rgb/rgb%d.png' % step_i, observations['rgb'][:, :, ::-1])
+                # if step_i in range(234, 236):
+                #     print(step_i, observations['gps'], observations['compass'])
+                    #np.save('data/tmp/depth%03d.npy' % step_i, observations['depth'])
                           
                 if step_i % 100 == 0:
                     print('episode %d, step %d' % (count_episodes, step_i))
                     sys.stdout.flush()
 
                 step_i += 1
-                if step_i in save_steps:
-                    full_map = nav_agent.agent_states.full_map.cpu().numpy() * 255
-                    full_map_seq[seq_i] = full_map.astype(np.uint8)
-                    seq_i += 1
+                # if step_i in save_steps:
+                #     full_map = nav_agent.agent_states.full_map.cpu().numpy() * 255
+                #     full_map_seq[seq_i] = full_map.astype(np.uint8)
+                #     seq_i += 1
                     
         
             if args_2.only_explore == 0:
                 # Record final map, nav metrics, final front-view RGB
-                full_map = nav_agent.agent_states.full_map.cpu().numpy() * 255
-                full_map_seq[-1] = full_map.astype(np.uint8)
+                # full_map = nav_agent.agent_states.full_map.cpu().numpy() * 255
+                # full_map_seq[-1] = full_map.astype(np.uint8)
             
                 metrics = hab_env.get_metrics()
                 succs.append(metrics['success'])

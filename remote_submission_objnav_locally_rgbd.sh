@@ -22,6 +22,7 @@ done
 docker run -v $(pwd)/habitat-challenge-data:/habitat-challenge-data \
     -v $(realpath habitat-challenge-data/data/scene_datasets/hm3d):/habitat-challenge-data/data/scene_datasets/hm3d \
     -v $(pwd)/data:/data\
+    -v $(pwd)/Stubborn:/Stubborn\
     -v $(realpath habitat-challenge-data/data/scene_datasets/hm3d):/data/scene_datasets/hm3d \
     --gpus='all' \
     -e "AGENT_EVALUATION_TYPE=local" \

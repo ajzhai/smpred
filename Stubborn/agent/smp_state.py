@@ -582,6 +582,7 @@ class Agent_State:
             so_pred = so_pred[target,
                               self.lmb[0]:self.lmb[1],
                               self.lmb[2]:self.lmb[3]]
+            so_pred *= self.local_map[1].cpu().numpy() == 0
 
             # Weight value based on inverse geodesic distance
             trav = skimage.morphology.binary_dilation(np.rint(self.full_map[0].cpu().numpy()), self.selem) != True
@@ -682,7 +683,6 @@ class Agent_State:
 #                     cat_semantic_scores[
 #                         cat_semantic_scores < self.score_threshold - 0.01] = 0.
 #                     goal_maps = cat_semantic_scores
-
         
         if self.args.only_explore == 0:
             cn = self.goal_cat + 4
@@ -691,7 +691,7 @@ class Agent_State:
                 cat_semantic_scores = cat_semantic_map
                 cat_semantic_scores[cat_semantic_scores > 0] = 1.
                 temp_goal = cat_semantic_scores
-                if (self.goal_cat != 5 and not self.oventime) and args.num_sem_categories <= 16:  # don't erode TV
+                if (self.goal_cat != 5) and args.num_sem_categories <= 16:  # don't erode TV
                     toilet_plant_reduction = 1 if self.goal_cat == 4 or self.goal_cat == 2 else 0
                     for _ in range(self.args.goal_erode - toilet_plant_reduction):
                         temp_goal = skimage.morphology.binary_erosion(temp_goal.astype(bool)).astype(float)
@@ -703,16 +703,17 @@ class Agent_State:
                         temp_goal = skimage.morphology.binary_erosion(temp_goal.astype(bool)).astype(float)
                     temp_goal = skimage.morphology.binary_dilation(temp_goal.astype(bool)).astype(float)
                     
-                if temp_goal.sum() == 0.:
+                if temp_goal.sum() == 0. and self.goal_cat != 0:
                     temp_goal = cat_semantic_scores
                 if args.num_sem_categories != 23:
-                    pass
-                    #temp_goal *= (torch.sum(self.local_map[4:10], dim=0) - self.local_map[cn]) == 0
-                    # if self.goal_cat == 3:  # bed vs sofa, chair, table
-                    #     temp_goal *= self.local_map[4 + 1, :, :].cpu().numpy() == 0
-                    #     temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() == 0
+                    #temp_goal *= (torch.sum(self.local_map[4:10], dim=0) - self.local_map[cn]).cpu().numpy() == 0
+                    if self.goal_cat == 3:  # bed vs sofa, chair, table
+                        temp_goal *= self.local_map[4 + 1, :, :].cpu().numpy() == 0
+                        temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() == 0
                     # if self.goal_cat == 1:  # sofa vs chair
                     #     temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() == 0
+                    if self.goal_cat == 0:  # chair vs sofa
+                        temp_goal *= self.local_map[4 + 1, :, :].cpu().numpy() == 0
                     # # if self.goal_cat == 5:  # TV vs oven
                     # #     temp_goal *= self.local_map[4 + 7, :, :].cpu().numpy() == 0
                 else:

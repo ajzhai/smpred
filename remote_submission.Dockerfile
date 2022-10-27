@@ -30,7 +30,7 @@ ADD remote_submission.sh remote_submission.sh
 ADD configs/challenge_objectnav2021.local.rgbd.yaml /challenge_objectnav2021.local.rgbd.yaml
 ADD configs/challenge_objectnav2022.local.rgbd.yaml /challenge_objectnav2022.local.rgbd.yaml
 ENV AGENT_EVALUATION_TYPE remote
-ADD Stubborn Stubborn
+# ADD Stubborn Stubborn
 ENV PYTHONPATH "${PYTHONPATH}:/Stubborn"
 
 

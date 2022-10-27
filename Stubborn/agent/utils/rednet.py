@@ -72,8 +72,13 @@ class SemanticPredMaskRCNN():
             if class_idx in range(self.n_cats):
                 idx = class_idx
                 confscore = pred_instances.scores[j]
-                if (confscore < args.sem_pred_prob_thr and (idx not in [5])) or (confscore < args.tv_thr and (idx in [5])):
+                if (confscore < args.sem_pred_prob_thr): # and (idx not in [5])) or (confscore < args.tv_thr and (idx in [5])):
                     continue
+                if idx == goal_cat and goal_cat not in [1, 2]:
+                    if confscore < args.goal_thr:
+                        continue
+                    else:
+                        print(confscore, ' conf goal found')
                 # else:
                 obj_mask = pred_instances.pred_masks[j] * 1.
                 obj_mask = obj_mask.cpu().numpy()
