@@ -74,7 +74,7 @@ class SemanticPredMaskRCNN():
                 confscore = pred_instances.scores[j]
                 if (confscore < args.sem_pred_prob_thr): # and (idx not in [5])) or (confscore < args.tv_thr and (idx in [5])):
                     continue
-                if idx == goal_cat and goal_cat not in [1, 2]:
+                if idx == goal_cat and goal_cat not in [2]:
                     if confscore < args.goal_thr:
                         continue
                     else:

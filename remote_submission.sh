@@ -4,10 +4,10 @@
 #python Stubborn/collect.py --dump_location ./data/tmp --exp_name debug --print_images 1 --switch_step 501 --map_resolution 2 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
 
-python Stubborn/collect.py --sem_gpu_id 6 --exp_name gthr_980 --print_images 0 --goal_thr 0.980 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 6 --exp_name gthr_985 --print_images 0 --goal_thr 0.985 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 6 --exp_name gthr_990 --print_images 0 --goal_thr 0.990 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 6 --exp_name gthr_995 --print_images 0 --goal_thr 0.995 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 3 --exp_name gthr_980_highsofa --print_images 0 --goal_thr 0.980 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 3 --exp_name gthr_985_highsofa --print_images 0 --goal_thr 0.985 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 3 --exp_name gthr_990_highsofa --print_images 0 --goal_thr 0.990 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 3 --exp_name gthr_995_highsofa --print_images 0 --goal_thr 0.995 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_95_a200 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.95 --alpha 200 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_95_a300 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.95 --alpha 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
