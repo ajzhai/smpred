@@ -178,7 +178,7 @@ def my_loss(pred, target):
     target = torch.permute(target, (0, 3, 1, 2))
     assert pred.size() == target.size() and target.numel() > 0
     wts = [36.64341412, 30.19407855, 106.23704066, 25.58503269, 100.4556983, 167.64383946]
-    pos_weight = torch.ones(pred[0].shape).to(pred.device) #torch.ones(6)
+    pos_weight = 10 * torch.ones(pred[0].shape).to(pred.device) #torch.ones(6)
     for i, wt in enumerate(wts):
         pos_weight[i] = wts[i]
     loss = F.binary_cross_entropy_with_logits(pred, target / 255., reduction='none') #, pos_weight=pos_weight)
@@ -271,7 +271,7 @@ if __name__ == '__main__':
 
     cfg.data.train.type = cfg.dataset_type
     cfg.data.train.data_root = cfg.data_root
-    cfg.data.train.img_dir = 'train_56' if use_rn else 'train_80'
+    cfg.data.train.img_dir = 'train_56' if use_rn else 'train_full' #'train_80' 
     cfg.data.train.ann_dir = None
     cfg.data.train.pipeline = cfg.train_pipeline
 
@@ -288,7 +288,7 @@ if __name__ == '__main__':
     cfg.data.test.pipeline = cfg.test_pipeline
 
     # Set up working dir to save files and logs.  #???????????????????????????????????????????????????????????????????????
-    cfg.work_dir =  '/shared/perception/personals/albert/work_dirs/smp_80_t10' #'../work_dirs/smp_weighted_t10'
+    cfg.work_dir =  '/shared/perception/personals/albert/work_dirs/w10_800_t10' #'../work_dirs/smp_weighted_t10'
 
     cfg.runner.max_iters = 60000
     cfg.log_config.interval = 500
