@@ -3,9 +3,9 @@
 #python Stubborn/collect_mp3d.py -v 0 --dump_location ./data/tmp --exp_name mp3d_debug --print_images 1 --evaluation $AGENT_EVALUATION_TYPE $@ 
 #python Stubborn/collect.py --dump_location ./data/tmp --exp_name debug --print_images 1 --switch_step 501 --map_resolution 2 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a200 --print_images 0 --alpha 200 --evaluation $AGENT_EVALUATION_TYPE $@ 
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a250 --print_images 0 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ 
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a300 --print_images 0 --alpha 300 --evaluation $AGENT_EVALUATION_TYPE $@ 
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a200 --print_images 0 --alpha 200 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a250 --print_images 0 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a300 --print_images 0 --alpha 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 2 --exp_name gthr_9825_highsofa --print_images 0 --goal_thr 0.9825 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 2 --exp_name gthr_9875_highsofa --print_images 0 --goal_thr 0.9875 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 2 --exp_name gthr_985_e1200 --print_images 0 --goal_thr 0.985 --escape 1200 --evaluation $AGENT_EVALUATION_TYPE $@ &
