@@ -576,7 +576,7 @@ class Agent_State:
             
             if args.num_sem_categories == 23:
                 #target = twentyone_to_hm3d[self.goal_cat]
-                target = 0
+                target = self.goal_cat
             else:
                 target = self.goal_cat
             so_pred = so_pred[target,
