@@ -57,6 +57,7 @@ class SemanticPredMaskRCNN():
         cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = min(args.sem_pred_prob_thr, args.tv_thr)
         cfg.MODEL.WEIGHTS = 'Stubborn/agent/utils/mask_rcnn_R_101_cat9.pth'
         cfg.MODEL.DEVICE = args.sem_gpu_id
+        
         self.n_cats = cfg.MODEL.ROI_HEADS.NUM_CLASSES
         self.predictor = DefaultPredictor(cfg)
         self.args = args
@@ -66,8 +67,8 @@ class SemanticPredMaskRCNN():
     
         img = img[:, :, ::-1]
         pred_instances = self.predictor(img)["instances"]
-
-        semantic_input = np.zeros((img.shape[0], img.shape[1], self.n_cats + 1))
+        
+        semantic_input = torch.zeros(img.shape[0], img.shape[1], self.n_cats + 1, device=args.sem_gpu_id)
         for j, class_idx in enumerate(pred_instances.pred_classes.cpu().numpy()):
             if class_idx in range(self.n_cats):
                 idx = class_idx
@@ -77,18 +78,15 @@ class SemanticPredMaskRCNN():
                 if idx == goal_cat and goal_cat not in [2]:
                     if confscore < args.goal_thr:
                         continue
-                    else:
-                        print(confscore, ' conf goal found')
-                # else:
+                    # else:
+                    #     print(confscore, ' conf goal found')
                 obj_mask = pred_instances.pred_masks[j] * 1.
-                obj_mask = obj_mask.cpu().numpy()
                 semantic_input[:, :, idx] += obj_mask
-
-        
+               
         # semantic_input[:, :, 3] *= semantic_input[:, :, 1] < args.sem_pred_prob_thr
         # semantic_input[:, :, 1] *= semantic_input[:, :, 0] < args.sem_pred_prob_thr
         
-        return semantic_input, img
+        return semantic_input.cpu().numpy(), img
 
     
 class RedNet(nn.Module):

@@ -181,7 +181,7 @@ def my_loss(pred, target):
     pos_weight = 10 * torch.ones(pred[0].shape).to(pred.device) #torch.ones(6)
     for i, wt in enumerate(wts):
         pos_weight[i] = wts[i]
-    loss = F.binary_cross_entropy_with_logits(pred, target / 255., reduction='none') #, pos_weight=pos_weight)
+    loss = F.binary_cross_entropy_with_logits(pred, target / 255., reduction='none', pos_weight=pos_weight)
     return loss
 
 @LOSSES.register_module
