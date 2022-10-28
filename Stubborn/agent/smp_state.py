@@ -703,19 +703,20 @@ class Agent_State:
                         temp_goal = skimage.morphology.binary_erosion(temp_goal.astype(bool)).astype(float)
                     temp_goal = skimage.morphology.binary_dilation(temp_goal.astype(bool)).astype(float)
                     
-                if temp_goal.sum() == 0. and self.goal_cat != 0:
-                    temp_goal = cat_semantic_scores
+                if self.args.erode_recover:
+                    if temp_goal.sum() == 0. and self.goal_cat != 0:
+                        temp_goal = cat_semantic_scores
                 if args.num_sem_categories != 23:
-                    #temp_goal *= (torch.sum(self.local_map[4:10], dim=0) - self.local_map[cn]).cpu().numpy() == 0
-                    if self.goal_cat == 3:  # bed vs sofa, chair, table
-                        temp_goal *= self.local_map[4 + 1, :, :].cpu().numpy() == 0
-                        temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() == 0
-                    # if self.goal_cat == 1:  # sofa vs chair
-                    #     temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() == 0
-                    if self.goal_cat == 0:  # chair vs sofa
-                        temp_goal *= self.local_map[4 + 1, :, :].cpu().numpy() == 0
-                    # # if self.goal_cat == 5:  # TV vs oven
-                    # #     temp_goal *= self.local_map[4 + 7, :, :].cpu().numpy() == 0
+                    if self.args.inhib_mode == 2: # full
+                        temp_goal *= (torch.sum(self.local_map[4:10], dim=0) - self.local_map[cn]).cpu().numpy() == 0
+                    elif self.args.inhib_mode == 1: # partial
+                        if self.goal_cat == 3:  # bed vs sofa, chair, table
+                            temp_goal *= self.local_map[4 + 1, :, :].cpu().numpy() == 0
+                            temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() == 0
+                        # if self.goal_cat == 1:  # sofa vs chair
+                        #     temp_goal *= self.local_map[4 + 0, :, :].cpu().numpy() == 0
+                        if self.goal_cat == 0:  # chair vs sofa
+                            temp_goal *= self.local_map[4 + 1, :, :].cpu().numpy() == 0
                 else:
                     if self.goal_cat == 7:  # bed vs sofa
                         temp_goal *= self.local_map[4 + 6, :, :].cpu().numpy() == 0
