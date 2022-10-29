@@ -1,20 +1,21 @@
 #!/usr/bin/env bash
 
-#python Stubborn/collect_mp3d.py -v 0 --dump_location ./data/tmp --exp_name mp3d_debug --print_images 1 --evaluation $AGENT_EVALUATION_TYPE $@ 
+#python Stubborn/collect.py -v 0 --dump_location ./data/tmp --exp_name debug --print_images 1 --evaluation $AGENT_EVALUATION_TYPE $@ 
 #python Stubborn/collect.py --dump_location ./data/tmp --exp_name debug --print_images 1 --switch_step 501 --map_resolution 2 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_a150 --print_images 0 --alpha 150 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_a350 --print_images 0 --alpha 350 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a250 --print_images 0 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a300 --print_images 0 --alpha 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_a75 --print_images 0 --alpha 75 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_a100 --print_images 0 --alpha 100 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_a125 --print_images 0 --alpha 125 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# # python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a250 --print_images 0 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# # python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a300 --print_images 0 --alpha 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
-python Stubborn/collect.py --sem_gpu_id 2 --exp_name new_a150 --print_images 0 --alpha 150 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 2 --exp_name new_a200 --print_images 0 --alpha 200 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 2 --exp_name new_a300 --print_images 0 --alpha 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 2 --exp_name new_a350 --print_images 0 --alpha 350 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 7 --exp_name new_inh0 --print_images 0 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 7 --exp_name new_inh2 --print_images 0 --inhib_mode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 7 --exp_name new_norecover --print_images 0 --erode_recover 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect.py --sem_gpu_id 2 --exp_name new_a150 --print_images 0 --alpha 150 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect.py --sem_gpu_id 2 --exp_name new_a200 --print_images 0 --alpha 200 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect.py --sem_gpu_id 2 --exp_name new_a300 --print_images 0 --alpha 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect.py --sem_gpu_id 2 --exp_name new_a350 --print_images 0 --alpha 350 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 2 --exp_name new_nr_inh0 --print_images 0 --erode_recover 0 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 2 --exp_name new_nr_inh2 --print_images 0 --erode_recover 0 --inhib_mode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect.py --sem_gpu_id 7 --exp_name new_norecover --print_images 0 --erode_recover 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
 
 # python Stubborn/collect.py --sem_gpu_id 2 --exp_name gthr_9875_highsofa --print_images 0 --goal_thr 0.9875 --evaluation $AGENT_EVALUATION_TYPE $@ &

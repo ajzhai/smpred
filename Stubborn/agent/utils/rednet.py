@@ -57,9 +57,11 @@ class SemanticPredMaskRCNN():
         cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = min(args.sem_pred_prob_thr, args.tv_thr)
         cfg.MODEL.WEIGHTS = 'Stubborn/agent/utils/mask_rcnn_R_101_cat9.pth'
         cfg.MODEL.DEVICE = args.sem_gpu_id
+        #cfg.TEST.AUG.MIN_SIZES = [640, 800]
         
         self.n_cats = cfg.MODEL.ROI_HEADS.NUM_CLASSES
         self.predictor = DefaultPredictor(cfg)
+        #self.predictor.model = GeneralizedRCNNWithTTA(cfg, self.predictor.model)
         self.args = args
 
     def get_prediction(self, img, depth=None, goal_cat=None):
