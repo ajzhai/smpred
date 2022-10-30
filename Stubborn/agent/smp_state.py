@@ -692,13 +692,13 @@ class Agent_State:
                 cat_semantic_scores[cat_semantic_scores > 0] = 1.
                 temp_goal = cat_semantic_scores
                 if (self.goal_cat != 5) and args.num_sem_categories <= 16:  # don't erode TV
-                    toilet_plant_reduction = 1 if self.goal_cat == 4 or self.goal_cat == 2 else 0
+                    toilet_plant_reduction = 0 #1 if self.goal_cat == 4 or self.goal_cat == 2 else 0
                     for _ in range(self.args.goal_erode - toilet_plant_reduction):
                         temp_goal = skimage.morphology.binary_erosion(temp_goal.astype(bool)).astype(float)
                     temp_goal = skimage.morphology.binary_dilation(temp_goal.astype(bool)).astype(float)
                     
                 if (self.goal_cat != 14) and args.num_sem_categories == 23:  # don't erode TV
-                    toilet_reduction = 1 if self.goal_cat == 11 else 0
+                    toilet_reduction = 0 #1 if self.goal_cat == 11 else 0
                     for _ in range(self.args.goal_erode - toilet_reduction):
                         temp_goal = skimage.morphology.binary_erosion(temp_goal.astype(bool)).astype(float)
                     temp_goal = skimage.morphology.binary_dilation(temp_goal.astype(bool)).astype(float)
@@ -706,7 +706,7 @@ class Agent_State:
                 if self.args.erode_recover:
                     if temp_goal.sum() == 0. and self.goal_cat != 0:
                         temp_goal = cat_semantic_scores
-                if args.num_sem_categories != 23:
+                if args.num_sem_categories <= 16:
                     if self.args.inhib_mode == 2: # full
                         temp_goal *= (torch.sum(self.local_map[4:10], dim=0) - self.local_map[cn]).cpu().numpy() == 0
                     elif self.args.inhib_mode == 1: # partial
@@ -718,8 +718,8 @@ class Agent_State:
                         if self.goal_cat == 0:  # chair vs sofa
                             temp_goal *= self.local_map[4 + 1, :, :].cpu().numpy() == 0
                 else:
-                    if self.goal_cat == 7:  # bed vs sofa
-                        temp_goal *= self.local_map[4 + 6, :, :].cpu().numpy() == 0
+                    if self.args.inhib_mode == 2: # full
+                        temp_goal *= (torch.sum(self.local_map[4:-1], dim=0) - self.local_map[cn]).cpu().numpy() == 0
                 if temp_goal.sum() != 0.:
                     goal_maps = temp_goal
                     found_goal = 1
