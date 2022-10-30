@@ -21,12 +21,12 @@ def main():
         challenge = habitat.Challenge(eval_remote=False)
     else:
         challenge = habitat.Challenge(eval_remote=True)
-    # print(len(challenge._env.episodes))
-    # challenge.submit(nav_agent)
+    print(len(challenge._env.episodes))
+    challenge.submit(nav_agent)
     
-    metrics = challenge.evaluate(nav_agent, num_episodes=200)
-    for k, v in metrics.items():
-        logger.info("{}: {}".format(k, v))
+    # metrics = challenge.evaluate(nav_agent, num_episodes=200)
+    # for k, v in metrics.items():
+    #     logger.info("{}: {}".format(k, v))
 
 if __name__ == "__main__":
     main()
