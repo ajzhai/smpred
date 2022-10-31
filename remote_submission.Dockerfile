@@ -35,6 +35,6 @@ ADD Stubborn Stubborn
 ENV PYTHONPATH "${PYTHONPATH}:/Stubborn"
 
 
-ENV TRACK_CONFIG_FILE "/challenge_objectnav2021.remote.rgbd.yaml"
+ENV TRACK_CONFIG_FILE "/challenge_objectnav2022.local.rgbd.yaml"
 
 CMD ["/bin/bash", "-c", "source activate habitat && export PYTHONPATH=/evalai-remote-evaluation:$PYTHONPATH && export CHALLENGE_CONFIG_FILE=$TRACK_CONFIG_FILE && bash remote_submission.sh"]
