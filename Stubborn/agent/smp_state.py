@@ -588,25 +588,8 @@ class Agent_State:
             trav = skimage.morphology.binary_dilation(np.rint(self.full_map[0].cpu().numpy()), self.selem) != True
             gx1, gx2, gy1, gy2 = int(self.lmb[0]), int(self.lmb[1]), int(self.lmb[2]), int(self.lmb[3])
             
-            trav[self.helper.collision_map == 1] = 0
-            
-            # if args.escape:
-            #     traversible_ma = ma.masked_values(trav * 1, 0)
-            #     traversible_ma[np.clip(loc_r + self.lmb[0], a_min=0, a_max=self.full_w-1), 
-            #                    np.clip(loc_c + self.lmb[2], a_min=0, a_max=self.full_h-1)] = 0
-            #     dd = skfmm.distance(traversible_ma, dx=1)
-            #     dd = ma.filled(dd, np.max(dd) + 1)
-            #     dd[np.where(dd == np.max(dd))] = np.inf
-            #     #dd[np.where(dd < 100)] = np.inf
-            #     #dd_wt = 20./ (np.clip(dd, a_min=20, a_max=None)) 
-            #     self.dd_wt1 = np.exp(-dd / args.alpha)[self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]]
-            
+            trav[self.helper.collision_map == 1] = 0     
             trav[self.helper.visited_vis == 1] = 1
-            
-#             trav[0] = 1
-#             trav[-1] = 1
-#             trav[:, 0] = 1
-#             trav[:, -1] = 1
             
             traversible_ma = ma.masked_values(trav * 1, 0)
             traversible_ma[np.clip(loc_r + self.lmb[0], a_min=0, a_max=self.full_w-1), 

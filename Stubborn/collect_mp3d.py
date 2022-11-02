@@ -35,7 +35,7 @@ def main():
     config.ENVIRONMENT.ITERATOR_OPTIONS.SHUFFLE = True
     config.SIMULATOR.HABITAT_SIM_V0.GPU_DEVICE_ID = args_2.sem_gpu_id
     config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_STEPS = -1
-    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 30
+    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = -1
     config.DATASET.SPLIT = 'val'
     config.freeze()
     print(config.DATASET.SPLIT)
@@ -46,7 +46,7 @@ def main():
     #     print(epi.scene_id, epi.goals[0].object_category)
     print(len(hab_env.episodes), 'episodes in dataset')
     
-    num_episodes = 330
+    num_episodes = len(hab_env.episodes)
     start = args_2.start_ep
     end = args_2.end_ep if args_2.end_ep > 0 else num_episodes
     
@@ -90,7 +90,7 @@ def main():
                 epls.append(step_i)
                 stats = np.array([succs, spls, dtgs, epls])
                 # np.save('data/tmp/logged_metrics_smp_a%04d.npy' % args_2.alpha, stats)
-                np.save('data/tmp/logged_metrics_smp_' + args_2.exp_name + '_330mp3d.npy', stats)
+                np.save('data/tmp/logged_metrics_smp_' + args_2.exp_name + '_%dmp3d.npy' % num_episodes, stats)
                 print(metrics)
                 # np.save('data/tmp/end%03d.npy' % count_episodes, observations['rgb'])
                 # if args_2.print_images:

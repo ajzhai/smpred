@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 
-#python Stubborn/collect.py -v 0 --dump_location ./data/tmp --exp_name vis_hm3d --print_images 1 --erode_recover 0 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ 
+#python Stubborn/collect_mp3d.py -v 0 --dump_location ./data/tmp --exp_name debug --print_images 1 --erode_recover 0 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ 
 #python Stubborn/collect.py --dump_location ./data/tmp --exp_name debug --print_images 1 --switch_step 501 --map_resolution 2 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
-# python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_a75 --print_images 0 --alpha 75 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 5 --exp_name mp3d_a100_nr_inh0 --print_images 0 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 5 --exp_name mp3d_a100_nr_inh2 --print_images 0 --alpha 100 --erode_recover 1 --inhib_mode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 5 --exp_name mp3d_a150_nr_inh0 --print_images 0 --alpha 150 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 5 --exp_name mp3d_a150_nr_inh2 --print_images 0 --alpha 150 --erode_recover 1 --inhib_mode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_val0 --print_images 0 --start_ep 0 --end_ep 695 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_val1 --print_images 0 --start_ep 695 --end_ep 1195 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_val2 --print_images 0 --start_ep 1195 --end_ep 1695 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_val3 --print_images 0 --start_ep 1695 --end_ep 2195 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 3 --exp_name mp3d_val0_inh2 --print_images 0 --start_ep 0 --end_ep 695 --alpha 100 --erode_recover 1 --inhib_mode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 3 --exp_name mp3d_val1_inh2 --print_images 0 --start_ep 695 --end_ep 1195 --alpha 100 --erode_recover 1 --inhib_mode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 3 --exp_name mp3d_val2_inh2 --print_images 0 --start_ep 1195 --end_ep 1695 --alpha 100 --erode_recover 1 --inhib_mode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 3 --exp_name mp3d_val3_inh2 --print_images 0 --start_ep 1695 --end_ep 2195 --alpha 100 --erode_recover 1 --inhib_mode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_a125 --print_images 0 --alpha 125 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # # python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a250 --print_images 0 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # # python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a300 --print_images 0 --alpha 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
@@ -20,18 +24,6 @@ python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 5 --exp_name mp3d_a150_nr_inh2
 # python Stubborn/collect.py --sem_gpu_id 2 --exp_name test_dde1_inh2 --print_images 0 --dd_erode 1 --inhib_mode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 2 --exp_name new_nr_inh2_notpr --print_images 0 --inhib_mode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 7 --exp_name new_norecover --print_images 0 --erode_recover 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
-
-
-# python Stubborn/collect.py --sem_gpu_id 2 --exp_name gthr_9875_highsofa --print_images 0 --goal_thr 0.9875 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect.py --sem_gpu_id 0 --exp_name gthr_985_notoiletretry --print_images 0 --goal_thr 0.985 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect.py --sem_gpu_id 2 --exp_name gthr_985_ge2 --print_images 0 --goal_erode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect.py --sem_gpu_id 2 --exp_name gthr_985_ge4 --print_images 0 --goal_erode 4 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_95_a200 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.95 --alpha 200 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect.py --sem_gpu_id 4 --exp_name thr_90_95_a300 --print_images 0 --tv_thr 0.9 --sem_pred_prob_thr 0.95 --alpha 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
-
-# python Stubborn/collect.py --sem_gpu_id 2 --exp_name a500_new --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 500 --col_rad 4 --start_ep 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect.py --sem_gpu_id 2 --exp_name a400_new --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect.py --sem_gpu_id 2 --exp_name a300_new --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 300 --col_rad 4 --start_ep 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
 # python Stubborn/collect.py --sem_gpu_id 0 --exp_name a400_sms10_conf80 --print_images 0 --sem_pred_prob_thr 0.8 --smp_step 10 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --escape 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 1 --exp_name a400_sms10_escape --print_images 0 --sem_pred_prob_thr 0.9 --smp_step 10 --switch_step 19 --alpha 400 --col_rad 4 --start_ep 0 --escape 1 --evaluation $AGENT_EVALUATION_TYPE $@ &
