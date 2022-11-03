@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# python Stubborn/collect.py -v 0 --dump_location ./data/tmp --exp_name debug --print_images 1 --alpha -1 --evaluation $AGENT_EVALUATION_TYPE $@ 
+# python Stubborn/collect.py -v 0 --dump_location ./data/tmp --exp_name debug --print_images 1 --alpha 0 --end_ep 1 --evaluation $AGENT_EVALUATION_TYPE $@ 
 #python Stubborn/collect.py --dump_location ./data/tmp --exp_name debug --print_images 1 --switch_step 501 --map_resolution 2 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
 # python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_val0 --print_images 0 --start_ep 0 --end_ep 695 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
@@ -16,11 +16,12 @@
 # # python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a250 --print_images 0 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # # python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a300 --print_images 0 --alpha 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
-python Stubborn/collect.py --sem_gpu_id 0 --exp_name final_a1 --print_images 0 --alpha 1 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 0 --exp_name final_a10 --print_images 0 --alpha 10 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 0 --exp_name final_a3200 --print_images 0 --alpha 3200 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 0 --exp_name final_nopred --print_images 0 --alpha 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 0 --exp_name final_noddwt --print_images 0 --alpha -1 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect.py --sem_gpu_id 0 --exp_name final_a1 --print_images 0 --alpha 1 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect.py --sem_gpu_id 0 --exp_name final_a10 --print_images 0 --alpha 10 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect.py --sem_gpu_id 0 --exp_name final_a3200 --print_images 0 --alpha 3200 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect.py --sem_gpu_id 0 --exp_name final_nopred --print_images 0 --alpha 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect.py --sem_gpu_id 0 --exp_name final_noddwt --print_images 0 --alpha -1 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 2 --exp_name final_nopreds --print_images 0 --alpha 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
 
 # python Stubborn/collect.py --sem_gpu_id 2 --exp_name test_dde1_inh0 --print_images 0 --dd_erode 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &

@@ -604,11 +604,12 @@ class Agent_State:
             if np.sum(dd_wt) < 10 and self.dd_wt is not None:  # stuck inside obstacle
                 dd_wt = self.dd_wt
                 
-            print(args.alpha, type(args.alpha))
+            #print(args.alpha, type(args.alpha))
             if args.alpha == -1:
                 value = so_pred
             elif args.alpha == 0:
-                value = dd_wt
+                dd[np.where(dd < 60)] = np.inf
+                value = np.exp(-dd / 100.)[self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]]
             else:
                 value = so_pred * dd_wt
             self.dd_wt = dd_wt
