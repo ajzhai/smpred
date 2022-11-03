@@ -601,9 +601,16 @@ class Agent_State:
             #dd_wt = 20./ (np.clip(dd, a_min=20, a_max=None)) 
             dd_wt = np.exp(-dd / args.alpha)[self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]]
             
-            if np.sum(dd_wt) < 10 and self.dd_wt is not None:
+            if np.sum(dd_wt) < 10 and self.dd_wt is not None:  # stuck inside obstacle
                 dd_wt = self.dd_wt
-            value = so_pred * dd_wt
+                
+            print(args.alpha, type(args.alpha))
+            if args.alpha == -1:
+                value = so_pred
+            elif args.alpha == 0:
+                value = dd_wt
+            else:
+                value = so_pred * dd_wt
             self.dd_wt = dd_wt
             self.so_pred = so_pred
             self.value = value
