@@ -50,7 +50,7 @@ def main():
     start = args_2.start_ep
     end = args_2.end_ep if args_2.end_ep > 0 else num_episodes
     
-    succs, spls, dtgs, epls = [], [], [], []
+    succs, spls, dtgs, sspls, epls = [], [], [], [], []
     
     count_episodes = 0
     while count_episodes < num_episodes:
@@ -87,10 +87,11 @@ def main():
                 succs.append(metrics['success'])
                 spls.append(metrics['spl'])
                 dtgs.append(metrics['distance_to_goal'])
+                sspls.append(metrics['softspl'])
                 epls.append(step_i)
-                stats = np.array([succs, spls, dtgs, epls])
+                stats = np.array([succs, spls, dtgs, sspls, epls])
                 # np.save('data/tmp/logged_metrics_smp_a%04d.npy' % args_2.alpha, stats)
-                np.save('data/tmp/logged_metrics_smp_' + args_2.exp_name + '_%dmp3d.npy' % num_episodes, stats)
+                np.save('data/lm/logged_metrics_smp_' + args_2.exp_name + '_%dmp3d.npy' % num_episodes, stats)
                 print(metrics)
                 # np.save('data/tmp/end%03d.npy' % count_episodes, observations['rgb'])
                 # if args_2.print_images:

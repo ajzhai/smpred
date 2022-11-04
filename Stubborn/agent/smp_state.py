@@ -561,7 +561,7 @@ class Agent_State:
         
         # Activating prediction
         if (self.step % args.smp_step == args.smp_step - 1 or dist_to_goal < 15) and self.step >= args.switch_step:
-            
+            print(self.step)
             self.full_map[:, self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]] = \
                     self.local_map
             # Extract the prediction in the local map bounds
@@ -616,8 +616,8 @@ class Agent_State:
             self.so_pred = so_pred
             self.value = value
             
-            # if self.step % 50 == 49 and args.print_images:
-            #     np.save('data/tmp/so_pred%03d.npy' % self.step, so_pred)
+            # if self.step % 50 == 49:# and args.print_images:
+            #     np.save('data/so_pred%03d.npy' % self.step, so_pred)
             #     np.save('data/tmp/dd%03d.npy' % self.step, dd)
             #     np.save('data/tmp/ddwt%03d.npy' % self.step, 1/ dd_wt)
             #     np.save('data/tmp/value%03d.npy' % self.step, value)
