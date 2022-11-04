@@ -126,7 +126,7 @@ class Agent_Helper:
         self.local_h = int(self.full_h / args.global_downscaling)
         self.found_goal = None
 
-        self.edge_buffer = 10
+        self.edge_buffer = 10 if args.num_sem_categories <= 16 else 15
 
         if args.visualize or args.print_images:
             self.legend = cv2.imread('Stubborn/sem_legend.png')[:118]
