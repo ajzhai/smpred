@@ -561,7 +561,7 @@ class Agent_State:
         
         # Activating prediction
         if (self.step % args.smp_step == args.smp_step - 1 or dist_to_goal < 15) and self.step >= args.switch_step:
-            print(self.step)
+            
             self.full_map[:, self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]] = \
                     self.local_map
             # Extract the prediction in the local map bounds

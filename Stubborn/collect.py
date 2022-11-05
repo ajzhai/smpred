@@ -29,7 +29,7 @@ def main():
     config_paths = os.environ["CHALLENGE_CONFIG_FILE"]
     config = habitat.get_config(config_paths)
     config.defrost()
-    config.SEED = 100
+    config.SEED = 300
     # config.ENVIRONMENT.ITERATOR_OPTIONS.SHUFFLE = False
     config.SIMULATOR.HABITAT_SIM_V0.GPU_DEVICE_ID = args_2.sem_gpu_id
     config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_STEPS = -1
@@ -51,7 +51,7 @@ def main():
     succs, spls, dtgs, sspls, epls = [], [], [], [], []
     
     count_episodes = 0
-    while count_episodes < num_episodes:
+    while count_episodes < min(num_episodes, end):
         observations = hab_env.reset()
         print(hm3d_names[observations['objectgoal'][0]], '############' * 5)
         nav_agent.reset()
@@ -96,7 +96,8 @@ def main():
                 epls.append(step_i)
                 stats = np.array([succs, spls, dtgs, sspls, epls])
                 # np.save('data/tmp/logged_metrics_smp_a%04d.npy' % args_2.alpha, stats)
-                np.save('data/lm/logged_metrics_smp_' + args_2.exp_name + '_500.npy', stats)
+                if args_2.exp_name != 'debug':
+                    np.save('data/lm/logged_metrics_smp_' + args_2.exp_name + '_500.npy', stats)
                 print(metrics)
                 # np.save('data/tmp/end%03d.npy' % count_episodes, observations['rgb'])
                 # if args_2.print_images:
