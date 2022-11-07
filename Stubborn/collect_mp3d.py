@@ -64,7 +64,7 @@ def main():
             step_i = 0
             seq_i = 0
             
-            while not hab_env.episode_over:
+            while step_i < 50 and not hab_env.episode_over:
                 sys.stdout.flush()
                 action = nav_agent.act(observations)
                 observations = hab_env.step(action)

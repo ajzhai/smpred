@@ -126,7 +126,7 @@ class Agent_Helper:
         self.local_h = int(self.full_h / args.global_downscaling)
         self.found_goal = None
 
-        self.edge_buffer = 10 if args.num_sem_categories <= 16 else 20
+        self.edge_buffer = 10 #if args.num_sem_categories <= 16 else 20
 
         if args.visualize or args.print_images:
             self.legend = cv2.imread('Stubborn/sem_legend.png')[:118]
@@ -692,7 +692,7 @@ class Agent_Helper:
         #goal_mat = goal
         
         goal_mask = goal_mat == 1
-        # sem_map[goal_mask] = 4
+        sem_map[goal_mask] = 4
 
         color_pal = [int(x * 255.) for x in color_palette]
         sem_map_vis = Image.new("P", (sem_map.shape[1],
@@ -721,7 +721,7 @@ class Agent_Helper:
             white_idx = np.where(np.sum(sem_map_vis, axis=2) == 255 * 3) 
             mapped_data_vis = cv2.resize(mapped_data, (480, 480),
                                  interpolation=cv2.INTER_NEAREST)
-            #self.vis_image[50:530, 670:1150][white_idx] = mapped_data_vis[white_idx]
+            self.vis_image[50:530, 670:1150][white_idx] = mapped_data_vis[white_idx]
 
 
             data = self.agent_states.value

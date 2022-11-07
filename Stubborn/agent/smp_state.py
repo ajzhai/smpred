@@ -570,6 +570,13 @@ class Agent_State:
                 blank = np.zeros((6, 960, 960))
                 blank[:, 120:840, 120:840] = so_pred
                 so_pred = blank
+            elif args.num_sem_categories == 23 and self.full_w == 1440:
+                so_pred = self.sem_occ_pred.get_prediction(self.full_map[:, 240:-240, 240:-240].cpu().numpy())
+                blank = np.ones((22, 1440, 1440)) * np.min(so_pred)
+                blank[:, 240:-240, 240:-240] = so_pred
+                so_pred = blank
+                if self.step % 50 == 49:# and args.print_images:
+                    np.save('data/so_pred%03d.npy' % self.step, so_pred)
             else:
                 so_pred = self.sem_occ_pred.get_prediction(self.full_map.cpu().numpy())
                 
@@ -616,8 +623,7 @@ class Agent_State:
             self.so_pred = so_pred
             self.value = value
             
-            # if self.step % 50 == 49:# and args.print_images:
-            #     np.save('data/so_pred%03d.npy' % self.step, so_pred)
+            
             #     np.save('data/tmp/dd%03d.npy' % self.step, dd)
             #     np.save('data/tmp/ddwt%03d.npy' % self.step, 1/ dd_wt)
             #     np.save('data/tmp/value%03d.npy' % self.step, value)
