@@ -6,11 +6,11 @@
 #python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_val4 --print_images 0 --start_ep 2178 --end_ep 2195 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
 #python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_val4_inh2 --print_images 0 --start_ep 2178 --end_ep 2195 --alpha 100 --erode_recover 1 --inhib_mode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
-python Stubborn/collect_stubborn.py -v 0 --sem_gpu_id 3 --exp_name mp3d_val0 --print_images 0 --start_ep 0 --end_ep 695 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_stubborn.py -v 0 --sem_gpu_id 3 --exp_name mp3d_val1 --print_images 0 --start_ep 695 --end_ep 1195 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_stubborn.py -v 0 --sem_gpu_id 3 --exp_name mp3d_val2 --print_images 0 --start_ep 1195 --end_ep 1695 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_stubborn.py -v 0 --sem_gpu_id 3 --exp_name mp3d_val3 --print_images 0 --start_ep 1695 --end_ep 2195 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# python Stubborn/collect.py -v 0 --sem_gpu_id 3 --exp_name final_a250 --print_images 0 --alpha 250 --inhib_mode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_stubborn.py -v 0 --sem_gpu_id 1 --exp_name mp3d_val0 --print_images 0 --start_ep 0 --end_ep 695 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_stubborn.py -v 0 --sem_gpu_id 1 --exp_name mp3d_val1 --print_images 0 --start_ep 695 --end_ep 1195 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_stubborn.py -v 0 --sem_gpu_id 1 --exp_name mp3d_val2 --print_images 0 --start_ep 1195 --end_ep 1695 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_stubborn.py -v 0 --sem_gpu_id 1 --exp_name mp3d_val3 --print_images 0 --start_ep 1695 --end_ep 2195 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_withgt.py -v 0 --sem_gpu_id 1 --exp_name gt --print_images 0 --alpha 250 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
 # python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 3 --exp_name mp3d_val0_inh2 --print_images 0 --start_ep 0 --end_ep 695 --alpha 100 --erode_recover 1 --inhib_mode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 3 --exp_name mp3d_val1_inh2 --print_images 0 --start_ep 695 --end_ep 1195 --alpha 100 --erode_recover 1 --inhib_mode 2 --evaluation $AGENT_EVALUATION_TYPE $@ &

@@ -30,7 +30,7 @@ def main():
     config_paths = os.environ["CHALLENGE_CONFIG_FILE"]
     config = habitat.get_config(config_paths)
     config.defrost()
-    config.SEED = 200
+    config.SEED = 100
     # config.ENVIRONMENT.ITERATOR_OPTIONS.SHUFFLE = False
     config.SIMULATOR.HABITAT_SIM_V0.GPU_DEVICE_ID = args_2.sem_gpu_id
     config.SIMULATOR.AGENT_0.SENSORS =  ['RGB_SENSOR', 'DEPTH_SENSOR', 'SEMANTIC_SENSOR']
@@ -47,7 +47,7 @@ def main():
     
     print(len(hab_env.episodes), 'episodes in dataset')
     
-    num_episodes = 5
+    num_episodes = 500
     start = args_2.start_ep
     end = args_2.end_ep if args_2.end_ep > 0 else num_episodes
     
