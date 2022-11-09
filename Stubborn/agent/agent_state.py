@@ -25,7 +25,7 @@ class Agent_State:
         self.gt_mask_channel = 8
         if args.cuda:
             torch.cuda.manual_seed(args.seed)
-        self.device = args.device = torch.device("cuda:0" if args.cuda else "cpu")
+        self.device = args.device = torch.device("cuda:" + str(args.sem_gpu_id) if args.cuda else "cpu")
 
         self.map_size = args.map_size_cm // args.map_resolution
         self.full_w, self.full_h = self.map_size, self.map_size
