@@ -439,7 +439,7 @@ class Agent_Helper:
                     planner.set_multi_goal(goal)
 
                     # assume replan true suggests failure in planning
-                    stg_x, stg_y, distance, stop = planner.get_short_term_goal(
+                    stg_x, stg_y, distance, stop, _ = planner.get_short_term_goal(
                         state)
         # If we fail to plan a path to the goal, make sure to use optimistic collision map
         if self.found_goal == 1 and distance > self.args.change_goal_threshold:
