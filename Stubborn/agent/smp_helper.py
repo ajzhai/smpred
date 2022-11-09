@@ -576,13 +576,13 @@ class Agent_Helper:
 
     def _preprocess_obs(self, rgb, depth, info, use_seg=True):
         args = self.args
+        sem_seg_pred = self._get_sem_pred(
+            rgb.astype(np.uint8), use_seg=use_seg, depth=depth)
+
         if args.use_gt_seg:
-            sem_seg_pred = info['sem']
-        else:
-            sem_seg_pred = self._get_sem_pred(
-                rgb.astype(np.uint8), use_seg=use_seg, depth=depth)
-
-
+            sem_seg_pred[:, :, self.goal_cat] = info['goalseg']
+            
+            
 
         depth = self._preprocess_depth(depth, args.min_depth, args.max_depth)
 

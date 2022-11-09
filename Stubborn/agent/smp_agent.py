@@ -55,7 +55,7 @@ class SMPAgent(habitat.Agent):
 
         info = self.get_info(observations)
         if self.args.use_gt_seg:
-            info['sem'] = observations['semantic']
+            info['goalseg'] = observations['goalseg']
             
         # get second preprocess
         if self.args.num_sem_categories <= 16:

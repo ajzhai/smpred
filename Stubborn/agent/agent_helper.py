@@ -414,7 +414,7 @@ class Agent_Helper:
 
         state = [start[0] - x1 + 1, start[1] - y1 + 1]
         # assume replan true suggests failure in planning
-        stg_x, stg_y, distance, stop = planner.get_short_term_goal(state)
+        stg_x, stg_y, distance, stop, _ = planner.get_short_term_goal(state)
 
         # Failed to plan a path
         if self.found_goal == 0 and distance > self.args.change_goal_threshold:
