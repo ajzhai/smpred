@@ -575,8 +575,6 @@ class Agent_State:
                 blank = np.ones((22, 1440, 1440)) * np.min(so_pred)
                 blank[:, 240:-240, 240:-240] = so_pred
                 so_pred = blank
-                if self.step % 50 == 49:# and args.print_images:
-                    np.save('data/so_pred%03d.npy' % self.step, so_pred)
             else:
                 so_pred = self.sem_occ_pred.get_prediction(self.full_map.cpu().numpy())
                 
