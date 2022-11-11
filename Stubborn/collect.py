@@ -29,7 +29,7 @@ def main():
     config_paths = os.environ["CHALLENGE_CONFIG_FILE"]
     config = habitat.get_config(config_paths)
     config.defrost()
-    config.SEED = 300
+    config.SEED = 100
     # config.ENVIRONMENT.ITERATOR_OPTIONS.SHUFFLE = False
     config.SIMULATOR.HABITAT_SIM_V0.GPU_DEVICE_ID = args_2.sem_gpu_id
     config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_STEPS = -1

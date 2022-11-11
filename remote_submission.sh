@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#python Stubborn/collect_stubborn.py -v 0 --dump_location ./data/tmp --exp_name debug --print_images 0 --start_ep 0 --end_ep 5 --evaluation $AGENT_EVALUATION_TYPE $@ 
+#python Stubborn/collect.py -v 0 --dump_location ./data/tmp --exp_name vis_final --print_images 0 --start_ep 0 --end_ep 20 --evaluation $AGENT_EVALUATION_TYPE $@ 
 #python Stubborn/collect.py --dump_location ./data/tmp --exp_name debug --print_images 1 --switch_step 501 --map_resolution 2 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
 #python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_val4 --print_images 0 --start_ep 2178 --end_ep 2195 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
@@ -12,21 +12,36 @@
 # python Stubborn/collect_stubborn.py -v 0 --sem_gpu_id 1 --exp_name mp3d_val3 --print_images 0 --start_ep 1695 --end_ep 2195 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect_withgt.py -v 0 --sem_gpu_id 1 --exp_name gt --print_images 0 --alpha 250 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 5 --exp_name mp3d_val0 --print_images 0 --start_ep 0 --end_ep 695 --alpha 100 --erode_recover 1 --inhib_mode 0 --map_size_cm 7200 --global_downscaling 3 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 5 --exp_name mp3d_val1 --print_images 0 --start_ep 695 --end_ep 1195 --alpha 100 --erode_recover 1 --inhib_mode 0 --map_size_cm 7200 --global_downscaling 3 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 5 --exp_name mp3d_val2 --print_images 0 --start_ep 1195 --end_ep 1695 --alpha 100 --erode_recover 1 --inhib_mode 0 --map_size_cm 7200 --global_downscaling 3 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 5 --exp_name mp3d_val3 --print_images 0 --start_ep 1695 --end_ep 2195 --alpha 100 --erode_recover 1 --inhib_mode 0 --map_size_cm 7200 --global_downscaling 3 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_withgt.py -v 0 --sem_gpu_id 5 --exp_name gt_a100 --print_images 0 --alpha 100 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 1 --exp_name mp3d_val0_a100 --print_images 0 --start_ep 0 --end_ep 695 --alpha 100 --erode_recover 1 --inhib_mode 0  --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 1 --exp_name mp3d_val1_a100 --print_images 0 --start_ep 695 --end_ep 1195 --alpha 100 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 1 --exp_name mp3d_val2_a100 --print_images 0 --start_ep 1195 --end_ep 1695 --alpha 100 --erode_recover 1 --inhib_mode 0  --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 1 --exp_name mp3d_val3_a100 --print_images 0 --start_ep 1695 --end_ep 2195 --alpha 100 --erode_recover 1 --inhib_mode 0  --evaluation $AGENT_EVALUATION_TYPE $@ &
 
-# python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_a125 --print_images 0 --alpha 125 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# # python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a250 --print_images 0 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
-# # python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a300 --print_images 0 --alpha 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_val0_a150 --print_images 0 --start_ep 0 --end_ep 695 --alpha 150 --erode_recover 1 --inhib_mode 0  --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_val1_a150 --print_images 0 --start_ep 695 --end_ep 1195 --alpha 150 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_val2_a150 --print_images 0 --start_ep 1195 --end_ep 1695 --alpha 150 --erode_recover 1 --inhib_mode 0  --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_val3_a150 --print_images 0 --start_ep 1695 --end_ep 2195 --alpha 150 --erode_recover 1 --inhib_mode 0  --evaluation $AGENT_EVALUATION_TYPE $@ &
 
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 6 --exp_name mp3d_val0_inh2 --print_images 0 --start_ep 0 --end_ep 695 --alpha 100 --erode_recover 1 --inhib_mode 2 --map_size_cm 7200 --global_downscaling 3 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 6 --exp_name mp3d_val1_inh2 --print_images 0 --start_ep 695 --end_ep 1195 --alpha 100 --erode_recover 1 --inhib_mode 2 --map_size_cm 7200 --global_downscaling 3 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 6 --exp_name mp3d_val2_inh2 --print_images 0 --start_ep 1195 --end_ep 1695 --alpha 100 --erode_recover 1 --inhib_mode 2 --map_size_cm 7200 --global_downscaling 3 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 6 --exp_name mp3d_val3_inh2 --print_images 0 --start_ep 1695 --end_ep 2195 --alpha 100 --erode_recover 1 --inhib_mode 2 --map_size_cm 7200 --global_downscaling 3 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_withgt.py -v 0 --sem_gpu_id 6 --exp_name gt_a800 --print_images 0 --alpha 800 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 3 --exp_name mp3d_val0_a250 --print_images 0 --start_ep 0 --end_ep 695 --alpha 250 --erode_recover 1 --inhib_mode 0  --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 3 --exp_name mp3d_val1_a250 --print_images 0 --start_ep 695 --end_ep 1195 --alpha 250 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 3 --exp_name mp3d_val2_a250 --print_images 0 --start_ep 1195 --end_ep 1695 --alpha 250 --erode_recover 1 --inhib_mode 0  --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 3 --exp_name mp3d_val3_a250 --print_images 0 --start_ep 1695 --end_ep 2195 --alpha 250 --erode_recover 1 --inhib_mode 0  --evaluation $AGENT_EVALUATION_TYPE $@ &
+
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 5 --exp_name mp3d_val0_a400 --print_images 0 --start_ep 0 --end_ep 695 --alpha 400 --erode_recover 1 --inhib_mode 0  --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 5 --exp_name mp3d_val1_a400 --print_images 0 --start_ep 695 --end_ep 1195 --alpha 400 --erode_recover 1 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 5 --exp_name mp3d_val2_a400 --print_images 0 --start_ep 1195 --end_ep 1695 --alpha 400 --erode_recover 1 --inhib_mode 0  --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 5 --exp_name mp3d_val3_a400 --print_images 0 --start_ep 1695 --end_ep 2195 --alpha 400 --erode_recover 1 --inhib_mode 0  --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_withgt.py -v 0 --sem_gpu_id 5 --exp_name gt_a100 --print_images 0 --alpha 100 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
+
+# # python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 2 --exp_name mp3d_a125 --print_images 0 --alpha 125 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# # # python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a250 --print_images 0 --alpha 250 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# # # python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 0 --exp_name mp3d_a300 --print_images 0 --alpha 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
+
+# python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 6 --exp_name mp3d_val0_inh2 --print_images 0 --start_ep 0 --end_ep 695 --alpha 100 --erode_recover 1 --inhib_mode 2 --map_size_cm 7200 --global_downscaling 3 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 6 --exp_name mp3d_val1_inh2 --print_images 0 --start_ep 695 --end_ep 1195 --alpha 100 --erode_recover 1 --inhib_mode 2 --map_size_cm 7200 --global_downscaling 3 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 6 --exp_name mp3d_val2_inh2 --print_images 0 --start_ep 1195 --end_ep 1695 --alpha 100 --erode_recover 1 --inhib_mode 2 --map_size_cm 7200 --global_downscaling 3 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_mp3d.py -v 0 --sem_gpu_id 6 --exp_name mp3d_val3_inh2 --print_images 0 --start_ep 1695 --end_ep 2195 --alpha 100 --erode_recover 1 --inhib_mode 2 --map_size_cm 7200 --global_downscaling 3 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_withgt.py -v 0 --sem_gpu_id 6 --exp_name gt_a800 --print_images 0 --alpha 800 --inhib_mode 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
 # python Stubborn/collect.py --sem_gpu_id 0 --exp_name final_a1 --print_images 0 --alpha 1 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect.py --sem_gpu_id 0 --exp_name final_a10 --print_images 0 --alpha 10 --evaluation $AGENT_EVALUATION_TYPE $@ &
