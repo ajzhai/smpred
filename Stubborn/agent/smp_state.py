@@ -560,7 +560,7 @@ class Agent_State:
         # ------------------------------------------------------------------
         
         # Activating prediction
-        if (self.step % args.smp_step == args.smp_step - 1 or dist_to_goal < 15) and self.step >= args.switch_step:
+        if (self.step % args.smp_step == args.smp_step - 1 or dist_to_goal < 15 or self.step == 0) and self.step >= args.switch_step:
             
             self.full_map[:, self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]] = \
                     self.local_map
@@ -584,6 +584,9 @@ class Agent_State:
                 target = self.goal_cat
             else:
                 target = self.goal_cat
+                
+            #self.full_pred = so_pred[target] ########################
+                
             so_pred = so_pred[target,
                               self.lmb[0]:self.lmb[1],
                               self.lmb[2]:self.lmb[3]]

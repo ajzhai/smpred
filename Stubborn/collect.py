@@ -45,7 +45,7 @@ def main():
     
     num_episodes = 500
     start = args_2.start_ep
-    end = args_2.end_ep if args_2.end_ep > 0 else num_episodes
+    end = start + 1#args_2.end_ep if args_2.end_ep > 0 else num_episodes
     
     save_steps = list(range(25, 525, 25))
     succs, spls, dtgs, sspls, epls = [], [], [], [], []
@@ -82,7 +82,13 @@ def main():
                 #     full_map_seq[seq_i] = full_map.astype(np.uint8)
                 #     seq_i += 1
                     
-        
+                if step_i in [1, 10, 20, 49, 61]:
+                    cv2.imwrite('./data/vis/rgb%d_%d.png' % (count_episodes, step_i), observations['rgb'])
+                    np.save('./data/vis/fm%d_%d.npy' % (count_episodes, step_i), nav_agent.agent_states.full_map.cpu().numpy())
+                    np.save('./data/vis/fp%d_%d.npy' % (count_episodes, step_i), nav_agent.agent_states.full_pred)
+                    print(nav_agent.agent_states.global_goals[0][0] +  nav_agent.agent_states.lmb[0], 
+                          nav_agent.agent_states.global_goals[0][1] +  nav_agent.agent_states.lmb[2])
+                    
             if args_2.only_explore == 0:
                 # Record final map, nav metrics, final front-view RGB
                 # full_map = nav_agent.agent_states.full_map.cpu().numpy() * 255
