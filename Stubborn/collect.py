@@ -45,7 +45,7 @@ def main():
     
     num_episodes = 500
     start = args_2.start_ep
-    end = start + 1#args_2.end_ep if args_2.end_ep > 0 else num_episodes
+    end = args_2.end_ep if args_2.end_ep > 0 else num_episodes
     
     save_steps = list(range(25, 525, 25))
     succs, spls, dtgs, sspls, epls = [], [], [], [], []
@@ -62,8 +62,10 @@ def main():
             step_i = 0
             seq_i = 0
             # full_map_seq = np.zeros((len(save_steps), 4 + args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h), dtype=np.uint8)
-            while not hab_env.episode_over:
+            while not hab_env.episode_over: #and step_i < 250:
                 sys.stdout.flush()
+                # if step_i in [71]:#0, 19, 39, 46, 73]:#[0, 9, 19, 48, 60]:
+                #     cv2.imwrite('./data/vis/rgbsee%d_%d.png' % (count_episodes, step_i + 1), observations['rgb'][:, :, ::-1])
                 action = nav_agent.act(observations)
                 observations = hab_env.step(action)
                 # if step_i in range(19, 22):
@@ -82,12 +84,17 @@ def main():
                 #     full_map_seq[seq_i] = full_map.astype(np.uint8)
                 #     seq_i += 1
                     
-                if step_i in [1, 10, 20, 49, 61]:
-                    cv2.imwrite('./data/vis/rgb%d_%d.png' % (count_episodes, step_i), observations['rgb'])
-                    np.save('./data/vis/fm%d_%d.npy' % (count_episodes, step_i), nav_agent.agent_states.full_map.cpu().numpy())
-                    np.save('./data/vis/fp%d_%d.npy' % (count_episodes, step_i), nav_agent.agent_states.full_pred)
-                    print(nav_agent.agent_states.global_goals[0][0] +  nav_agent.agent_states.lmb[0], 
-                          nav_agent.agent_states.global_goals[0][1] +  nav_agent.agent_states.lmb[2])
+                # if step_i in [72]:#1, 20, 40, 47, 74]: #[1, 10, 20, 49, 61]:
+                #     np.save('./data/vis/fmsee%d_%d.npy' % (count_episodes, step_i), nav_agent.agent_states.full_map.cpu().numpy())
+                #     np.save('./data/vis/fpsee%d_%d.npy' % (count_episodes, step_i), nav_agent.agent_states.full_pred)
+                #     np.save('./data/vis/ppisee%d_%d.npy' % (count_episodes, step_i), nav_agent.agent_states.planner_pose_inputs[:3])
+                #     np.save('./data/vis/gsee%d_%d.npy' % (count_episodes, step_i), np.array([nav_agent.agent_states.global_goals[0][0] +  nav_agent.agent_states.lmb[0], 
+                #           nav_agent.agent_states.global_goals[0][1] +  nav_agent.agent_states.lmb[2]]))
+                    # break
+                #     print(step_i)
+                #     print([nav_agent.agent_states.global_goals[0][0] +  nav_agent.agent_states.lmb[0], 
+                #           nav_agent.agent_states.global_goals[0][1] +  nav_agent.agent_states.lmb[2]], sep=",")
+                #     print(list(nav_agent.agent_states.planner_pose_inputs[:3]), sep=",")
                     
             if args_2.only_explore == 0:
                 # Record final map, nav metrics, final front-view RGB
@@ -101,9 +108,8 @@ def main():
                 sspls.append(metrics['softspl'])
                 epls.append(step_i)
                 stats = np.array([succs, spls, dtgs, sspls, epls])
-                # np.save('data/tmp/logged_metrics_smp_a%04d.npy' % args_2.alpha, stats)
-                if args_2.exp_name != 'debug':
-                    np.save('data/lm/logged_metrics_smp_' + args_2.exp_name + '_500.npy', stats)
+                # if args_2.exp_name != 'debug':
+                np.save('data/lm/logged_metrics_smp_' + args_2.exp_name + '_500.npy', stats)
                 print(metrics)
                 # np.save('data/tmp/end%03d.npy' % count_episodes, observations['rgb'])
                 # if args_2.print_images:
@@ -112,7 +118,7 @@ def main():
             # np.savez_compressed('./data/saved_maps/train_rn/f%05d.npz' % count_episodes, maps=full_map_seq)
 
         count_episodes += 1
-        
+        print(np.mean(stats, axis=1))
     
 
 if __name__ == "__main__":

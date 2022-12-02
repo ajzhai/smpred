@@ -25,13 +25,13 @@ def draw_line(start, end, mat, steps=25, w=1):
 
 
 def init_vis_image(goal_name, legend):
-    vis_image = np.ones((655, 1165 + 250, 3)).astype(np.uint8) * 255
-    font = cv2.FONT_HERSHEY_SIMPLEX
+    vis_image = np.ones((600, 1165 + 250, 3)).astype(np.uint8) * 255
+    font = cv2.FONT_HERSHEY_DUPLEX
     fontScale = 1
     color = (20, 20, 20)  # BGR
-    thickness = 2
+    thickness = 1
 
-    text = "Observations (Goal: {})".format(goal_name)
+    text = "RGB Observation (Target: {})".format(goal_name)
     textsize = cv2.getTextSize(text, font, fontScale, thickness)[0]
     textX = (640 - textsize[0]) // 2 + 15
     textY = (50 + textsize[1]) // 2
@@ -39,7 +39,7 @@ def init_vis_image(goal_name, legend):
                             font, fontScale, color, thickness,
                             cv2.LINE_AA)
 
-    text = "Predicted Semantic Map"
+    text = "Semantic Map & Prediction"
     textsize = cv2.getTextSize(text, font, fontScale, thickness)[0]
     textX = 640 + (480 - textsize[0]) // 2 + 30
     textY = (50 + textsize[1]) // 2
@@ -47,7 +47,7 @@ def init_vis_image(goal_name, legend):
                             font, fontScale, color, thickness,
                             cv2.LINE_AA)
     
-    text = "GD Weight"
+    text = "Dist Weight"
     textsize = cv2.getTextSize(text, font, fontScale, thickness)[0]
     textX = 640 + 480 + (240 - textsize[0]) // 2 + 45
     textY = (50 + textsize[1]) // 2
@@ -55,10 +55,10 @@ def init_vis_image(goal_name, legend):
                             font, fontScale, color, thickness,
                             cv2.LINE_AA)
     
-    text = "Final Value"
+    text = "Value Map"
     textsize = cv2.getTextSize(text, font, fontScale, thickness)[0]
     textX = 640 + 480 + (240 - textsize[0]) // 2 + 45
-    textY = 540 + (50 + textsize[1]) // 2
+    textY = 530 + (50 + textsize[1]) // 2
     vis_image = cv2.putText(vis_image, text, (textX, textY),
                             font, fontScale, color, thickness,
                             cv2.LINE_AA)
@@ -73,9 +73,11 @@ def init_vis_image(goal_name, legend):
     vis_image[50:530, 1150] = color
     vis_image[530, 15:655] = color
     vis_image[530, 670:1150] = color
+    
+    vis_image[50:530, 1164] = color
 
     # draw legend
     lx, ly, _ = legend.shape
-    vis_image[537:537 + lx, 155:155 + ly, :] = legend
+    vis_image[537:537 + lx, 582-ly//2:582-ly//2 + ly, :] = legend
 
     return vis_image

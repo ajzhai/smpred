@@ -31,11 +31,11 @@ def main():
     config_paths = '/challenge_objectnav2021.local.rgbd.yaml'  # 2021 MP3D
     config = habitat.get_config(config_paths)
     config.defrost()
-    config.SEED = 100
+    config.SEED = 200
     config.ENVIRONMENT.ITERATOR_OPTIONS.SHUFFLE = True
     config.SIMULATOR.HABITAT_SIM_V0.GPU_DEVICE_ID = args_2.sem_gpu_id
     config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_STEPS = -1
-    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = -1
+    config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 1
     config.DATASET.SPLIT = 'val'
     config.freeze()
     print(config.DATASET.SPLIT)
@@ -53,7 +53,7 @@ def main():
     succs, spls, dtgs, sspls, epls = [], [], [], [], []
     
     count_episodes = 0
-    while count_episodes < num_episodes:
+    while count_episodes < min(end, num_episodes):
         observations = hab_env.reset()
         print(habitat_labels_r[observations['objectgoal'][0] + 1], '############' * 5)
         nav_agent.reset()
@@ -66,6 +66,8 @@ def main():
             
             while not hab_env.episode_over:
                 sys.stdout.flush()
+                if step_i in [143]:#[0, 9, 19, 48, 60]:
+                    cv2.imwrite('./data/vis/rgb%d_%d.png' % (count_episodes, step_i + 1), observations['rgb'][:, :, ::-1])
                 action = nav_agent.act(observations)
                 observations = hab_env.step(action)
                 # cv2.imwrite('./data/tmp/rgb/rgb%d.png' % step_i, observations['rgb'][:, :, ::-1])
@@ -79,6 +81,13 @@ def main():
 
                 step_i += 1
                     
+                if step_i in [144]: #[1, 10, 20, 49, 61]:
+                    np.save('./data/vis/fm%d_%d.npy' % (count_episodes, step_i), nav_agent.agent_states.full_map.cpu().numpy())
+                    np.save('./data/vis/fp%d_%d.npy' % (count_episodes, step_i), nav_agent.agent_states.full_pred)
+                    print(step_i)
+                    print([nav_agent.agent_states.global_goals[0][0] +  nav_agent.agent_states.lmb[0], 
+                          nav_agent.agent_states.global_goals[0][1] +  nav_agent.agent_states.lmb[2]], sep=",")
+                    print(list(nav_agent.agent_states.planner_pose_inputs[:3]), sep=",")
         
             if args_2.only_explore == 0:
                 # Record nav metrics, final front-view RGB

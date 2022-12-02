@@ -475,8 +475,9 @@ class Agent_State:
         r, c = locs[1], locs[0]
         loc_r, loc_c = [int(r * 100.0 / args.map_resolution),
                         int(c * 100.0 / args.map_resolution)]
-        self.local_map[2:4, loc_r - 2:loc_r + 3, loc_c - 2:loc_c + 3] = 1.
-        
+        traj_rad = 1
+        self.local_map[2:4, loc_r - traj_rad:loc_r + traj_rad + 1, loc_c - traj_rad:loc_c + traj_rad + 1] = 1.
+
         # Explored under the agent
         to_fill = (self.selem4idx[0] - (args.col_rad+1) + loc_r, self.selem4idx[1] - (args.col_rad+1) + loc_c)
         self.local_map[1][to_fill] = 1.
@@ -558,13 +559,15 @@ class Agent_State:
 
         
         # ------------------------------------------------------------------
+        # self.full_map[:, self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]] = \
+        #             self.local_map
         
-        # Activating prediction
+        # Activating prediction #(or self.step == 0)
         if (self.step % args.smp_step == args.smp_step - 1 or dist_to_goal < 15 or self.step == 0) and self.step >= args.switch_step:
             
             self.full_map[:, self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]] = \
                     self.local_map
-            # Extract the prediction in the local map bounds
+            
             if args.num_sem_categories == 16 and self.full_w == 960:
                 so_pred = self.sem_occ_pred.get_prediction(self.full_map[:, 120:840, 120:840].cpu().numpy())
                 blank = np.zeros((6, 960, 960))
@@ -585,12 +588,13 @@ class Agent_State:
             else:
                 target = self.goal_cat
                 
-            #self.full_pred = so_pred[target] ########################
+            self.full_pred = so_pred[target] ########################
                 
+            # Extract the prediction in the local map bounds
             so_pred = so_pred[target,
                               self.lmb[0]:self.lmb[1],
                               self.lmb[2]:self.lmb[3]]
-            so_pred *= self.local_map[1].cpu().numpy() == 0
+            so_pred *= self.local_map[1].cpu().numpy() < 0.5
 
             # Weight value based on inverse geodesic distance
             trav = skimage.morphology.binary_dilation(np.rint(self.full_map[0].cpu().numpy()), self.selem) != True

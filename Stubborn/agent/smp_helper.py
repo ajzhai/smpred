@@ -21,8 +21,10 @@ class UnTrapHelper:
         self.total_id = 0
         self.epi_id = 0
 
-    def reset(self):
+    def reset(self, full=False):
         self.total_id += 1
+        if full:
+            self.total_id = 0
         self.epi_id = 0
 
     def get_action(self):
@@ -129,7 +131,7 @@ class Agent_Helper:
         self.edge_buffer = 10 if args.num_sem_categories <= 16 else 40
 
         if args.visualize or args.print_images:
-            self.legend = cv2.imread('Stubborn/sem_legend.png')[:118]
+            self.legend = cv2.imread('Stubborn/new_hm3d_legend.png')[:118]
             self.vis_image = None
             self.rgb_vis = None
 
@@ -156,7 +158,7 @@ class Agent_Helper:
         self.prev_blocked = 0
         self._previous_action = -1
         self.block_threshold = 4
-        self.untrap.reset()
+        self.untrap.reset(full=True)
         self.srh.reset()
         self.use_srh = False
         self.turned = False
@@ -684,7 +686,7 @@ class Agent_Helper:
         m2 = np.logical_and(no_cat_mask, map_mask)
         sem_map[m2] = 1
 
-        #sem_map[vis_mask] = 3
+        sem_map[vis_mask] = 3
 
         selem = skimage.morphology.disk(4)
         goal_mat = 1 - skimage.morphology.binary_dilation(
@@ -729,7 +731,7 @@ class Agent_Helper:
             mapped_data = my_cm(normed_data)[::-1, :, [2, 1, 0]] * 255
             mapped_data_vis = cv2.resize(mapped_data, (240, 240),
                              interpolation=cv2.INTER_NEAREST)
-            right_panel[300:540, :240] = mapped_data_vis
+            right_panel[290:530, :240] = mapped_data_vis
 
             data = self.agent_states.dd_wt
             normed_data = (data - np.min(data)) / (np.max(data) - np.min(data))
@@ -737,6 +739,12 @@ class Agent_Helper:
             mapped_data_vis = cv2.resize(mapped_data, (240, 240),
                              interpolation=cv2.INTER_NEAREST)
             right_panel[50:290, :240] = mapped_data_vis
+            
+            border_color = [100] * 3
+            right_panel[49, :240] = border_color
+            right_panel[530, :240] = border_color
+            right_panel[49:531, 240] = border_color
+            
                                    
         #self.vis_image = np.append(self.vis_image, right_panel, axis=1)
         
@@ -764,7 +772,7 @@ class Agent_Helper:
                 dump_dir, self.rank, self.episode_no - 1,
                 self.rank, self.episode_no - 1, self.timestep)
 
-            cv2.imwrite(fn, self.vis_image, [cv2.IMWRITE_JPEG_QUALITY, 80])
+            cv2.imwrite(fn, self.vis_image, [cv2.IMWRITE_JPEG_QUALITY, 100])
             fn2 = '{}/episodes/thread_{}/eps_{}/{}-{}-Vis-{}.jpg'.format(
                 dump_dir, self.rank+1, self.episode_no,
                 self.rank, self.episode_no, self.timestep)
