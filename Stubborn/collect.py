@@ -66,6 +66,7 @@ def main():
                 sys.stdout.flush()
                 # if step_i in [71]:#0, 19, 39, 46, 73]:#[0, 9, 19, 48, 60]:
                 #     cv2.imwrite('./data/vis/rgbsee%d_%d.png' % (count_episodes, step_i + 1), observations['rgb'][:, :, ::-1])
+                observations['gps'][:2] += np.random.normal(scale=args_2.pose_noise_std, size=2)
                 action = nav_agent.act(observations)
                 observations = hab_env.step(action)
                 # if step_i in range(19, 22):

@@ -464,7 +464,7 @@ class Agent_State:
         self.poses = torch.from_numpy(np.asarray(
             infos['sensor_pose'] )
         ).float().to(self.device)
-        self.poses[:2] += torch.normal(mean=0.0, std=torch.ones(2) * args.pose_noise_std).to(self.device)
+        # self.poses[:2] += torch.normal(mean=0.0, std=torch.ones(2) * args.pose_noise_std).to(self.device)
         
         _, self.local_map, _, self.local_pose = \
             self.sem_map_module(obs, self.poses, self.local_map, self.local_pose,self)
