@@ -111,6 +111,7 @@ def main():
                 # if args_2.exp_name != 'debug':
                 np.save('data/lm/logged_metrics_smp_' + args_2.exp_name + '_500.npy', stats)
                 print(metrics)
+                print(np.mean(stats, axis=1))
                 # np.save('data/tmp/end%03d.npy' % count_episodes, observations['rgb'])
                 # if args_2.print_images:
                 #     cv2.imwrite('./data/tmp/rgb/rgb%d.png' % count_episodes, observations['rgb'])
@@ -118,7 +119,7 @@ def main():
             # np.savez_compressed('./data/saved_maps/train_rn/f%05d.npz' % count_episodes, maps=full_map_seq)
 
         count_episodes += 1
-        print(np.mean(stats, axis=1))
+        
     
 
 if __name__ == "__main__":

@@ -105,7 +105,7 @@ class FMMPlanner():
 
         subset -= subset[self.du, self.du]
         ratio1 = subset / dist_mask
-        subset[ratio1 < -1.] = 1
+        subset[ratio1 < -1.5] = 1
         
 
 

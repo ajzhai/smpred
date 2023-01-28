@@ -116,6 +116,8 @@ def get_args():
     parser.add_argument('--stair_thr', type = float, default = 0.2)
     parser.add_argument('--inhib_mode', type = int, default = 2)
     parser.add_argument('--erode_recover', type = int, default = 0)
+    parser.add_argument('--pose_noise_std', type = float, default = 0)
+    parser.add_argument('--overwrite_map', type = int, default = 0)
                             
     # for data collection purposes. Use 0 to turn off
     # use 1 to turn on
