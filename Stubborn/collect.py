@@ -69,11 +69,11 @@ def main():
                 observations['gps'][:2] += np.random.normal(scale=args_2.pose_noise_std, size=2)
                 action = nav_agent.act(observations)
                 observations = hab_env.step(action)
-                # if step_i in range(19, 22):
-                #     cv2.imwrite('./data/tmp/rgb/rgb%d.png' % step_i, observations['rgb'][:, :, ::-1])
-                # if step_i in range(234, 236):
-                #     print(step_i, observations['gps'], observations['compass'])
-                    #np.save('data/tmp/depth%03d.npy' % step_i, observations['depth'])
+#                 if step_i in range(0, 200):
+#                     cv2.imwrite('./data/tmp/ep1/rgb%d.png' % step_i, observations['rgb'][:, :, ::-1])
+#                 if step_i in range(0, 200):
+#                     print(step_i, observations['gps'], observations['compass'])
+#                     np.save('./data/tmp/ep1/depth%03d.npy' % step_i, observations['depth'])
                           
                 if step_i % 100 == 0:
                     print('episode %d, step %d' % (count_episodes, step_i))

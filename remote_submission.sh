@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-# python Stubborn/collect.py -v 0 --dump_location ./data/tmp --exp_name posenoise --print_images 1 --alpha 100 --pose_noise_std 0.05 --switch_step 0 --start_ep 1 --end_ep 2 --evaluation $AGENT_EVALUATION_TYPE $@ 
+python Stubborn/collect_slam.py -v 0 --dump_location ./data/tmp --exp_name slam --print_images 0 --alpha 100 --pose_noise_std 0.0 --switch_step 0 --start_ep 0 --end_ep 500 --evaluation $AGENT_EVALUATION_TYPE $@ 
 #python Stubborn/collect_mp3d.py --dump_location ./data/tmp --exp_name vis_mp3d --print_images 1 --start_ep 7 --end_ep 8 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
-python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn05 --alpha 100 --pose_noise_std 0.05 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &
-python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn10 --alpha 100 --pose_noise_std 0.10 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &
-python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn15 --alpha 100 --pose_noise_std 0.15 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &
-python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn20 --alpha 100 --pose_noise_std 0.20 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &
-python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn25 --alpha 100 --pose_noise_std 0.25 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &
-python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn30 --alpha 100 --pose_noise_std 0.30 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &
+# python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn05 --alpha 100 --pose_noise_std 0.05 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &
+# python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn10 --alpha 100 --pose_noise_std 0.10 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &
+# python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn15 --alpha 100 --pose_noise_std 0.15 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &
+# python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn20 --alpha 100 --pose_noise_std 0.20 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &
+# python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn25 --alpha 100 --pose_noise_std 0.25 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &
+# python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn30 --alpha 100 --pose_noise_std 0.30 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &
 
 # python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn05owm --alpha 100 --pose_noise_std 0.05 --overwrite_map 1 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &
 # python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn10owm --alpha 100 --pose_noise_std 0.10 --overwrite_map 1 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &

@@ -24,6 +24,7 @@ RUN /bin/bash -c ". activate habitat; python -m pip install transformers"
 # Install mmseg
 ADD mmsegmentation mmsegmentation
 RUN /bin/bash -c ". activate habitat; cd mmsegmentation; pip install -e ."
+RUN /bin/bash -c ". activate habitat; python -m pip install open3d"
 
 ARG INCUBATOR_VER=unknown
 ADD remote_submission.sh remote_submission.sh
