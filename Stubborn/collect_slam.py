@@ -145,7 +145,6 @@ def main():
     
     
 def heading_angle(R):
-    u, s, vh = np.linalg.svd(R - np.eye(3))
     axis = [R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1] ]
     angmag = np.arccos((np.sum(np.diag(R)) - 1) / 2)
     if axis[1] < 0 and angmag > 0.01:
