@@ -29,7 +29,7 @@ def main():
     args_2 = get_args()
     args_2.only_explore = 0  ########## whether to NOT go for goal detections 
     
-    config_paths = os.environ["CHALLENGE_CONFIG_FILE"]
+    config_paths = '/challenge_objectnav2022noisy.local.rgbd.yaml'
     config = habitat.get_config(config_paths)
     config.defrost()
     config.SEED = 100
@@ -187,7 +187,10 @@ def register_one_rgbd_pair(source_rgbd_image, target_rgbd_image, action, intrins
             success_5pt, odo_init_orb = pose_estimation(source_rgbd_image,
                                                 target_rgbd_image,
                                                 intrinsic, False)
-            odo_init[2, 3] = odo_init_orb[2, 3]
+            if abs(odo_init_orb[2, 3] - (-0.25)) > 0.5:
+                odo_init[2, 3] = -0.25
+            else:
+                odo_init[2, 3] = odo_init_orb[2, 3]
             # odo_init[2, 3] += np.random.normal(0, 0.05)
             # odo_init[0, 3] += np.random.normal(0, 0.05)
         elif action == 2:
@@ -208,19 +211,27 @@ def register_one_rgbd_pair(source_rgbd_image, target_rgbd_image, action, intrins
         #print(i + 1, odo_init[[0, 2], 3], myangle(odo_init[:3, :3]))
         #print(time.time() - start)
         #print(odo_init)
-        if success_5pt:
-            [success, trans, info
-            ] = o3d.pipelines.odometry.compute_rgbd_odometry(
-                source_rgbd_image, target_rgbd_image, intrinsic, odo_init,
-                o3d.pipelines.odometry.RGBDOdometryJacobianFromHybridTerm(),
-                option)
-            #print(time.time() - start)
-            #print(i + 1, trans[[0, 2], 3], myangle(trans[:3, :3]))
-            trans[1, :3] = 0
-            trans[:3, 1] = 0
-            trans[1, 1] = 1
-            trans[:2, 3] = 0
-            return [success, trans, info]
+        [success, trans, info] = o3d.pipelines.odometry.compute_rgbd_odometry(
+            source_rgbd_image, target_rgbd_image, intrinsic, odo_init,
+            o3d.pipelines.odometry.RGBDOdometryJacobianFromHybridTerm(),
+            option)
+        #print(time.time() - start)
+        #print(i + 1, trans[[0, 2], 3], myangle(trans[:3, :3]))
+        
+
+        trans[1, :3] = 0
+        trans[:3, 1] = 0
+        trans[1, 1] = 1
+        trans[:2, 3] = 0
+        
+        if action == 1:
+            if abs(trans[2, 3] - odo_init[2, 3]) > 0.5:
+                trans = odo_init
+        elif action in [2, 3]:
+            if abs(heading_angle(trans[:3, :3]) - ang) > 0.2:
+                trans = odo_init
+
+        return [success, trans, info]
     return [False, np.identity(4), np.identity(6)]
 
 
