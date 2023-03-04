@@ -97,8 +97,8 @@ def main():
                 success, trans, info = register_one_rgbd_pair(last_rgbd, curr_rgbd, action['action'], intrinsic_l, True)
                 #print(success, trans)
                 pose = pose @ trans
-                # print(step_i, observations['gps'][:2], [-pose[2, 3], pose[0, 3]])
-                # print(observations['compass'][0], heading_angle(pose[:3, :3]))
+                print(step_i, observations['gps'][:2], [-pose[2, 3], pose[0, 3]])
+                print(observations['compass'][0], heading_angle(pose[:3, :3]))
                 observations['gps'][:2] = [-pose[2, 3], pose[0, 3]]
                 observations['compass'][0] = heading_angle(pose[:3, :3])
                 
@@ -186,7 +186,7 @@ def register_one_rgbd_pair(source_rgbd_image, target_rgbd_image, action, intrins
             success_5pt, odo_init_orb = pose_estimation(source_rgbd_image,
                                                 target_rgbd_image,
                                                 intrinsic, False)
-            if abs(odo_init_orb[2, 3] - (-0.25)) > 0.5:
+            if abs(odo_init_orb[2, 3] - (-0.25)) > 0.5 or np.isnan(odo_init_orb[2, 3]):
                 odo_init[2, 3] = -0.25
             else:
                 odo_init[2, 3] = odo_init_orb[2, 3]
@@ -224,7 +224,7 @@ def register_one_rgbd_pair(source_rgbd_image, target_rgbd_image, action, intrins
         trans[:2, 3] = 0
         
         if action == 1:
-            if abs(trans[2, 3] - odo_init[2, 3]) > 0.5:
+            if abs(trans[2, 3] - odo_init[2, 3]) > 0.5  or np.sum(np.isnan(odo_init_orb[2, 3])) > 0:
                 trans = odo_init
         elif action in [2, 3]:
             if abs(heading_angle(trans[:3, :3]) - ang) > 0.2:
