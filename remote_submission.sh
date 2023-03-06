@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# python Stubborn/collect_slam.py -v 0 --dump_location ./data/tmp --exp_name slam2 --print_images 1 --alpha 100 --pose_noise_std 0.0 --switch_step 0 --start_ep 3 --end_ep 5 --evaluation $AGENT_EVALUATION_TYPE $@ 
+#python Stubborn/collect_slam.py -v 0 --dump_location ./data/tmp --exp_name slam2 --print_images 1 --alpha 100 --pose_noise_std 0.0 --switch_step 0 --start_ep 4 --end_ep 5 --evaluation $AGENT_EVALUATION_TYPE $@ 
 #python Stubborn/collect_mp3d.py --dump_location ./data/tmp --exp_name vis_mp3d --print_images 1 --start_ep 7 --end_ep 8 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
 python Stubborn/collect_slam.py -v 0 --sem_gpu_id 6 --exp_name gridslam0 --print_images 0 --alpha 100 --switch_step 0 --start_ep 0 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ &

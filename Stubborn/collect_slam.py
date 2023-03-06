@@ -73,6 +73,8 @@ def main():
         nav_agent.reset()
         print(hab_env._current_episode.scene_id)
         
+        last_gps = observations['gps'][:2]
+        last_comp = observations['compass'][0]
         last_rgb = observations['rgb'].astype(np.float32) / 255.
         last_depth = preprocess_depth(observations['depth'], 0.5, 5)
         last_rgbd = o3d.geometry.RGBDImage.create_from_color_and_depth(
@@ -84,7 +86,7 @@ def main():
             seq_i = 0
             actions = []
             # full_map_seq = np.zeros((len(save_steps), 4 + args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h), dtype=np.uint8)
-            while not hab_env.episode_over:
+            while not hab_env.episode_over:# and step_i < 50:
                 sys.stdout.flush()
                 
                 observations['gps'][:2] += np.random.normal(scale=args_2.pose_noise_std, size=2)
@@ -100,9 +102,16 @@ def main():
                                                intrinsic_l, device_id=args_2.sem_gpu_id, icp_refine=args_2.icp_refine)
                 #print(success, trans)
                 pose = pose @ trans
-                #print(step_i, observations['gps'], '  ', observations['compass'])
-                print(step_i, observations['gps'][:2], [-pose[2, 3], pose[0, 3]])
-                print(observations['compass'][0], heading_angle(pose[:3, :3]))
+                # print(step_i, observations['gps'], '  ', observations['compass'], '    ', 
+                #       observations['gps'][:2] - last_gps, '  ', observations['compass'][0] - last_comp)
+#                 last_gps = np.asarray(observations['gps'][:2]).copy()
+#                 last_comp = observations['compass'][0]
+                
+                
+                pose[2, 3] = np.clip(pose[2, 3], a_min=-19, a_max=19)
+                pose[0, 3] = np.clip(pose[0, 3], a_min=-19, a_max=19)
+                #print(step_i, observations['gps'][:2], [-pose[2, 3], pose[0, 3]])
+                #print(observations['compass'][0], heading_angle(pose[:3, :3]))
                 observations['gps'][:2] = [-pose[2, 3], pose[0, 3]]
                 observations['compass'][0] = heading_angle(pose[:3, :3])
                 
@@ -112,7 +121,6 @@ def main():
 #                 if step_i in range(0, 200):
 #                     cv2.imwrite('./data/tmp/ep4/rgb%d.png' % step_i, observations['rgb'][:, :, ::-1])
 #                 if step_i in range(0, 200):
-                    
 #                     np.save('./data/tmp/ep4/depth%03d.npy' % step_i, observations['depth'])
                           
                 if step_i % 100 == 0:
@@ -159,22 +167,25 @@ def heading_angle(R):
     else:
         return angmag
 
-
+    
 def preprocess_depth(depth, min_d, max_d):
     depth = depth[:, :] * 1
 
     for i in range(depth.shape[1]):
-        depth[:, i][depth[:, i] == 0.] = depth[:, i].max()
+        invalid = depth[:, i] == 0.
+        if np.mean(invalid) > 0.9:
+            depth[:, i][invalid] = depth[:, i].max()
+        else:
+            depth[:, i][invalid] = np.inf #depth[:, i].max()
 
     mask2 = depth > 0.99
     depth[mask2] = 0.
 
     mask1 = depth == 0
-    depth[mask1] = np.inf #100.0
-    depth = min_d * 1 + depth * max_d * 1
+    depth[mask1] = np.inf
+    depth = min_d * 1. + depth * (max_d - min_d) * 1.
     return depth
     
-
 
 def grid_register(source_rgbd_image, target_rgbd_image, action, intrinsic, device_id=0, icp_refine=False):
     start = time.time()
