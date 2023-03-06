@@ -196,9 +196,9 @@ def grid_register(source_rgbd_image, target_rgbd_image, action, intrinsic, devic
         target_pcd = o3d.geometry.PointCloud.create_from_rgbd_image(
             target_rgbd_image, intrinsic)
         source_pcd = o3d.t.geometry.PointCloud(
-            o3d.core.Tensor(np.asarray(source_pcd.points[::4]))).cuda(device_id).voxel_down_sample(voxel_size=0.01)
+            o3d.core.Tensor(np.asarray(source_pcd.points[::4]))).cuda().voxel_down_sample(voxel_size=0.01)
         target_pcd = o3d.t.geometry.PointCloud(
-            o3d.core.Tensor(np.asarray(target_pcd.points[::4]))).cuda(device_id).voxel_down_sample(voxel_size=0.01)
+            o3d.core.Tensor(np.asarray(target_pcd.points[::4]))).cuda().voxel_down_sample(voxel_size=0.01)
     except:
         return init_trans, 0
     
