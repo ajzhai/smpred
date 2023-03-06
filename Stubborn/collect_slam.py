@@ -82,6 +82,7 @@ def main():
 
             step_i = 0
             seq_i = 0
+            actions = []
             # full_map_seq = np.zeros((len(save_steps), 4 + args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h), dtype=np.uint8)
             while not hab_env.episode_over:
                 sys.stdout.flush()
@@ -94,9 +95,11 @@ def main():
                 curr_depth = preprocess_depth(observations['depth'], 0.5, 5)
                 curr_rgbd = o3d.geometry.RGBDImage.create_from_color_and_depth(
                     o3d.geometry.Image(curr_rgb), o3d.geometry.Image(curr_depth), depth_scale=1.0, depth_trunc=5.0) 
-                success, trans, info = register_one_rgbd_pair(last_rgbd, curr_rgbd, action['action'], intrinsic_l, True)
+                #success, trans, info = register_one_rgbd_pair(last_rgbd, curr_rgbd, action['action'], intrinsic_l, True)
+                trans, fitness = grid_register(last_rgbd, curr_rgbd, action['action'], intrinsic_l, icp_refine=args_2.icp_refine)
                 #print(success, trans)
                 pose = pose @ trans
+                #print(step_i, observations['gps'], '  ', observations['compass'])
                 print(step_i, observations['gps'][:2], [-pose[2, 3], pose[0, 3]])
                 print(observations['compass'][0], heading_angle(pose[:3, :3]))
                 observations['gps'][:2] = [-pose[2, 3], pose[0, 3]]
@@ -106,17 +109,19 @@ def main():
                 
                 
 #                 if step_i in range(0, 200):
-#                     cv2.imwrite('./data/tmp/ep1/rgb%d.png' % step_i, observations['rgb'][:, :, ::-1])
+#                     cv2.imwrite('./data/tmp/ep4/rgb%d.png' % step_i, observations['rgb'][:, :, ::-1])
 #                 if step_i in range(0, 200):
-#                     print(step_i, observations['gps'], observations['compass'])
-#                     np.save('./data/tmp/ep1/depth%03d.npy' % step_i, observations['depth'])
+                    
+#                     np.save('./data/tmp/ep4/depth%03d.npy' % step_i, observations['depth'])
                           
                 if step_i % 100 == 0:
                     print('episode %d, step %d' % (count_episodes, step_i))
                     sys.stdout.flush()
 
                 step_i += 1
+                actions.append(action['action'])
                 
+            # print(actions)
                 
             if args_2.only_explore == 0:
                 # Record final map, nav metrics, final front-view RGB
@@ -146,8 +151,9 @@ def main():
     
 def heading_angle(R):
     axis = [R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1] ]
-    angmag = np.arccos((np.sum(np.diag(R)) - 1) / 2)
-    if axis[1] < 0 and angmag > 0.01:
+    trace_R = np.clip(np.sum(np.diag(R)), a_min=-1, a_max=3)
+    angmag = np.arccos((trace_R - 1) / 2)
+    if axis[1] < 0 and angmag > 0.001:
         return -angmag
     else:
         return angmag
@@ -167,7 +173,61 @@ def preprocess_depth(depth, min_d, max_d):
     depth = min_d * 1 + depth * max_d * 1
     return depth
     
+
+
+def grid_register(source_rgbd_image, target_rgbd_image, action, intrinsic, icp_refine=False):
+    start = time.time()
     
+    flip = -1 if action == 3 else 1
+    init_trans = np.eye(4)
+    if action == 1:
+        init_trans[2, 3] = -0.25
+    else:
+        ang = flip * 30 * np.pi / 180
+        init_trans[0, 0] = np.cos(ang)
+        init_trans[0, 2] = np.sin(ang)
+        init_trans[2, 0] = -np.sin(ang)
+        init_trans[2, 2] = np.cos(ang)
+    
+    try:
+        source_pcd = o3d.geometry.PointCloud.create_from_rgbd_image(
+            source_rgbd_image, intrinsic)
+        target_pcd = o3d.geometry.PointCloud.create_from_rgbd_image(
+            target_rgbd_image, intrinsic)
+        source_pcd = o3d.t.geometry.PointCloud(
+            o3d.core.Tensor(np.asarray(source_pcd.points[::4]))).cuda().voxel_down_sample(voxel_size=0.01)
+        target_pcd = o3d.t.geometry.PointCloud(
+            o3d.core.Tensor(np.asarray(target_pcd.points[::4]))).cuda().voxel_down_sample(voxel_size=0.01)
+    except:
+        return init_trans, 0
+    
+    best_fitness = 0
+    best_trans = init_trans
+    for ang_deg in (np.arange(25, 35, 0.25) if action in [2, 3] else [ -2, -1, 0, 1, 2]):
+        for zdist in (np.arange(0.0, 0.31, 0.01) if action == 1 else [0]):
+            for xdist in (np.arange(0, 0.01, 0.01) if action == 1 else [0]):
+                
+                trans = np.eye(4)
+                trans[2, 3] = -zdist
+                trans[0, 3] = xdist
+                ang = flip * ang_deg * np.pi / 180
+                trans[0, 0] = np.cos(ang)
+                trans[0, 2] = np.sin(ang)
+                trans[2, 0] = -np.sin(ang)
+                trans[2, 2] = np.cos(ang)
+                fitness = o3d.t.pipelines.registration.evaluate_registration(source_pcd, 
+                    target_pcd, 0.03, transformation=trans).fitness
+                if fitness > best_fitness:
+                    best_fitness = fitness
+                    best_trans = trans
+                    
+    if icp_refine:
+        icp_result = o3d.t.pipelines.registration.icp(source_pcd, target_pcd, 0.03, best_trans)
+        best_trans = icp_result.transformation.cpu().numpy()
+    if np.sum(np.isnan(best_trans)) > 0:
+        best_trans = init_trans
+    return best_trans, best_fitness
+
 def register_one_rgbd_pair(source_rgbd_image, target_rgbd_image, action, intrinsic,
                            with_opencv):
 

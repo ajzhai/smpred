@@ -118,6 +118,7 @@ def get_args():
     parser.add_argument('--erode_recover', type = int, default = 0)
     parser.add_argument('--pose_noise_std', type = float, default = 0)
     parser.add_argument('--overwrite_map', type = int, default = 0)
+    parser.add_argument('--icp_refine', type = int, default = 0)
                             
     # for data collection purposes. Use 0 to turn off
     # use 1 to turn on
