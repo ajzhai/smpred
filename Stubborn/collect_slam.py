@@ -96,7 +96,8 @@ def main():
                 curr_rgbd = o3d.geometry.RGBDImage.create_from_color_and_depth(
                     o3d.geometry.Image(curr_rgb), o3d.geometry.Image(curr_depth), depth_scale=1.0, depth_trunc=5.0) 
                 #success, trans, info = register_one_rgbd_pair(last_rgbd, curr_rgbd, action['action'], intrinsic_l, True)
-                trans, fitness = grid_register(last_rgbd, curr_rgbd, action['action'], intrinsic_l, icp_refine=args_2.icp_refine)
+                trans, fitness = grid_register(last_rgbd, curr_rgbd, action['action'], 
+                                               intrinsic_l, device_id=args_2.sem_gpu_id, icp_refine=args_2.icp_refine)
                 #print(success, trans)
                 pose = pose @ trans
                 #print(step_i, observations['gps'], '  ', observations['compass'])
@@ -175,7 +176,7 @@ def preprocess_depth(depth, min_d, max_d):
     
 
 
-def grid_register(source_rgbd_image, target_rgbd_image, action, intrinsic, icp_refine=False):
+def grid_register(source_rgbd_image, target_rgbd_image, action, intrinsic, device_id=0, icp_refine=False):
     start = time.time()
     
     flip = -1 if action == 3 else 1
@@ -195,9 +196,9 @@ def grid_register(source_rgbd_image, target_rgbd_image, action, intrinsic, icp_r
         target_pcd = o3d.geometry.PointCloud.create_from_rgbd_image(
             target_rgbd_image, intrinsic)
         source_pcd = o3d.t.geometry.PointCloud(
-            o3d.core.Tensor(np.asarray(source_pcd.points[::4]))).cuda().voxel_down_sample(voxel_size=0.01)
+            o3d.core.Tensor(np.asarray(source_pcd.points[::4]))).cuda(device_id).voxel_down_sample(voxel_size=0.01)
         target_pcd = o3d.t.geometry.PointCloud(
-            o3d.core.Tensor(np.asarray(target_pcd.points[::4]))).cuda().voxel_down_sample(voxel_size=0.01)
+            o3d.core.Tensor(np.asarray(target_pcd.points[::4]))).cuda(device_id).voxel_down_sample(voxel_size=0.01)
     except:
         return init_trans, 0
     

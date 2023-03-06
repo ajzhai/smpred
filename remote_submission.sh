@@ -3,17 +3,17 @@
 # python Stubborn/collect_slam.py -v 0 --dump_location ./data/tmp --exp_name slam2 --print_images 1 --alpha 100 --pose_noise_std 0.0 --switch_step 0 --start_ep 3 --end_ep 5 --evaluation $AGENT_EVALUATION_TYPE $@ 
 #python Stubborn/collect_mp3d.py --dump_location ./data/tmp --exp_name vis_mp3d --print_images 1 --start_ep 7 --end_ep 8 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
-python Stubborn/collect_slam.py -v 0 --sem_gpu_id 3 --exp_name gridslam0 --print_images 0 --alpha 100 --switch_step 0 --start_ep 0 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ 
-python Stubborn/collect_slam.py -v 0 --sem_gpu_id 3 --exp_name gridslam1 --print_images 0 --alpha 100 --switch_step 0 --start_ep 100 --end_ep 200 --evaluation $AGENT_EVALUATION_TYPE $@ 
-python Stubborn/collect_slam.py -v 0 --sem_gpu_id 3 --exp_name gridslam2 --print_images 0 --alpha 100 --switch_step 0 --start_ep 200 --end_ep 300 --evaluation $AGENT_EVALUATION_TYPE $@ 
-python Stubborn/collect_slam.py -v 0 --sem_gpu_id 3 --exp_name gridslam3 --print_images 0 --alpha 100 --switch_step 0 --start_ep 300 --end_ep 400 --evaluation $AGENT_EVALUATION_TYPE $@ 
-python Stubborn/collect_slam.py -v 0 --sem_gpu_id 3 --exp_name gridslam4 --print_images 0 --alpha 100 --switch_step 0 --start_ep 400 --end_ep 500 --evaluation $AGENT_EVALUATION_TYPE $@ 
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 4 --exp_name gridslam0 --print_images 0 --alpha 100 --switch_step 0 --start_ep 0 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ 
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 4 --exp_name gridslam1 --print_images 0 --alpha 100 --switch_step 0 --start_ep 100 --end_ep 200 --evaluation $AGENT_EVALUATION_TYPE $@ 
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 4 --exp_name gridslam2 --print_images 0 --alpha 100 --switch_step 0 --start_ep 200 --end_ep 300 --evaluation $AGENT_EVALUATION_TYPE $@ 
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 4 --exp_name gridslam3 --print_images 0 --alpha 100 --switch_step 0 --start_ep 300 --end_ep 400 --evaluation $AGENT_EVALUATION_TYPE $@ 
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 4 --exp_name gridslam4 --print_images 0 --alpha 100 --switch_step 0 --start_ep 400 --end_ep 500 --evaluation $AGENT_EVALUATION_TYPE $@ 
 
-python Stubborn/collect_slam.py -v 0 --sem_gpu_id 3 --exp_name icpslam0 --icp_refine 1 --alpha 100 --switch_step 0 --start_ep 0 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ 
-python Stubborn/collect_slam.py -v 0 --sem_gpu_id 3 --exp_name icpslam1 --icp_refine 1 --alpha 100 --switch_step 0 --start_ep 100 --end_ep 200 --evaluation $AGENT_EVALUATION_TYPE $@ 
-python Stubborn/collect_slam.py -v 0 --sem_gpu_id 3 --exp_name icpslam2 --icp_refine 1 --alpha 100 --switch_step 0 --start_ep 200 --end_ep 300 --evaluation $AGENT_EVALUATION_TYPE $@ 
-python Stubborn/collect_slam.py -v 0 --sem_gpu_id 3 --exp_name icpslam3 --icp_refine 1 --alpha 100 --switch_step 0 --start_ep 300 --end_ep 400 --evaluation $AGENT_EVALUATION_TYPE $@ 
-python Stubborn/collect_slam.py -v 0 --sem_gpu_id 3 --exp_name icpslam4 --icp_refine 1 --alpha 100 --switch_step 0 --start_ep 400 --end_ep 500 --evaluation $AGENT_EVALUATION_TYPE $@ 
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 5 --exp_name icpslam0 --icp_refine 1 --alpha 100 --switch_step 0 --start_ep 0 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ 
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 5 --exp_name icpslam1 --icp_refine 1 --alpha 100 --switch_step 0 --start_ep 100 --end_ep 200 --evaluation $AGENT_EVALUATION_TYPE $@ 
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 5 --exp_name icpslam2 --icp_refine 1 --alpha 100 --switch_step 0 --start_ep 200 --end_ep 300 --evaluation $AGENT_EVALUATION_TYPE $@ 
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 5 --exp_name icpslam3 --icp_refine 1 --alpha 100 --switch_step 0 --start_ep 300 --end_ep 400 --evaluation $AGENT_EVALUATION_TYPE $@ 
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 5 --exp_name icpslam4 --icp_refine 1 --alpha 100 --switch_step 0 --start_ep 400 --end_ep 500 --evaluation $AGENT_EVALUATION_TYPE $@ 
 # python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn05 --alpha 100 --pose_noise_std 0.05 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &
 
 # python Stubborn/collect.py -v 0 --sem_gpu_id 7  --exp_name pn05owm --alpha 100 --pose_noise_std 0.05 --overwrite_map 1 --switch_step 0 --evaluation $AGENT_EVALUATION_TYPE $@  &
