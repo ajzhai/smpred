@@ -86,7 +86,7 @@ def main():
             seq_i = 0
             actions = []
             # full_map_seq = np.zeros((len(save_steps), 4 + args_2.num_sem_categories, nav_agent.agent_states.full_w, nav_agent.agent_states.full_h), dtype=np.uint8)
-            while not hab_env.episode_over:# and step_i < 50:
+            while not hab_env.episode_over:
                 sys.stdout.flush()
                 
                 observations['gps'][:2] += np.random.normal(scale=args_2.pose_noise_std, size=2)
@@ -104,24 +104,24 @@ def main():
                 pose = pose @ trans
                 # print(step_i, observations['gps'], '  ', observations['compass'], '    ', 
                 #       observations['gps'][:2] - last_gps, '  ', observations['compass'][0] - last_comp)
-#                 last_gps = np.asarray(observations['gps'][:2]).copy()
-#                 last_comp = observations['compass'][0]
+                # last_gps = np.asarray(observations['gps'][:2]).copy()
+                # last_comp = observations['compass'][0]
                 
                 
                 pose[2, 3] = np.clip(pose[2, 3], a_min=-19, a_max=19)
                 pose[0, 3] = np.clip(pose[0, 3], a_min=-19, a_max=19)
-                #print(step_i, observations['gps'][:2], [-pose[2, 3], pose[0, 3]])
-                #print(observations['compass'][0], heading_angle(pose[:3, :3]))
+                print(step_i, observations['gps'][:2], [-pose[2, 3], pose[0, 3]])
+                print(observations['compass'][0], heading_angle(pose[:3, :3]))
                 observations['gps'][:2] = [-pose[2, 3], pose[0, 3]]
                 observations['compass'][0] = heading_angle(pose[:3, :3])
                 
                 last_rgbd = curr_rgbd
                 
                 
-#                 if step_i in range(0, 200):
-#                     cv2.imwrite('./data/tmp/ep4/rgb%d.png' % step_i, observations['rgb'][:, :, ::-1])
-#                 if step_i in range(0, 200):
-#                     np.save('./data/tmp/ep4/depth%03d.npy' % step_i, observations['depth'])
+                # if step_i in range(0, 200):
+                #     cv2.imwrite('./data/tmp/ep4/rgb%d.png' % step_i, observations['rgb'][:, :, ::-1])
+                # if step_i in range(0, 200):
+                #     np.save('./data/tmp/ep4/depth%03d.npy' % step_i, observations['depth'])
                           
                 if step_i % 100 == 0:
                     print('episode %d, step %d' % (count_episodes, step_i))
@@ -130,7 +130,7 @@ def main():
                 step_i += 1
                 actions.append(action['action'])
                 
-            # print(actions)
+            print(actions)
                 
             if args_2.only_explore == 0:
                 # Record final map, nav metrics, final front-view RGB
@@ -215,9 +215,12 @@ def grid_register(source_rgbd_image, target_rgbd_image, action, intrinsic, devic
     
     best_fitness = 0
     best_trans = init_trans
-    for ang_deg in (np.arange(25, 35, 0.25) if action in [2, 3] else [ -2, -1, 0, 1, 2]):
-        for zdist in (np.arange(0.0, 0.31, 0.01) if action == 1 else [0]):
-            for xdist in (np.arange(0, 0.01, 0.01) if action == 1 else [0]):
+    for ang_deg in (np.arange(20, 40, 1) if action in [2, 3] else [ -4, -2, 0, 2, 4]):
+        for zdist in (np.arange(0.0, 0.4, 0.02) if action == 1 else [-0.04, -0.02, 0, 0.02, 0.04]):
+            for xdist in (np.arange(-0.08, 0.081, 0.04) if action == 1 else [-0.04, -0.02, 0, 0.02, 0.04]):
+    # for ang_deg in (np.arange(25, 35, 0.25) if action in [2, 3] else [ -2, -1, 0, 1, 2]):
+    #     for zdist in (np.arange(0.0, 0.31, 0.01) if action == 1 else [0]):
+    #         for xdist in (np.arange(0, 0.01, 0.01) if action == 1 else [0]):
                 
                 trans = np.eye(4)
                 trans[2, 3] = -zdist
