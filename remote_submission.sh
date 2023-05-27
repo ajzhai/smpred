@@ -1,13 +1,50 @@
 #!/usr/bin/env bash
 
+# python Stubborn/collect_slam.py --sem_gpu_id 0 --exp_name debug_dn --print_images 1 --alpha 100 --overwrite_map 1 --depth_noise_mult 0.1 --use_edw 1 --end_ep 1 --evaluation $AGENT_EVALUATION_TYPE $@ &
+
 # python Stubborn/collect_slam.py -v 0 --dump_location ./data/tmp --exp_name slam2 --print_images 1 --alpha 100 --pose_noise_std 0.0 --switch_step 0 --start_ep 4 --end_ep 5 --evaluation $AGENT_EVALUATION_TYPE $@ 
 #python Stubborn/collect_mp3d.py --dump_location ./data/tmp --exp_name vis_mp3d --print_images 1 --start_ep 7 --end_ep 8 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
-#python Stubborn/collect_slam.py -v 0 --sem_gpu_id 1 --exp_name gridslam0h --print_images 0 --alpha 100 --switch_step 0 --start_ep 0 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_slam.py -v 0 --sem_gpu_id 1 --exp_name gridslam1nnn --print_images 0 --alpha 100 --switch_step 0 --start_ep 100 --end_ep 200 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect.py --sem_gpu_id 1 --exp_name edw --alpha 100 --use_edw 1 --evaluation $AGENT_EVALUATION_TYPE $@ &
+
+
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 1 --exp_name dn1_1 --overwrite_map 1 --depth_noise_mult 0.1 --print_images 0 --alpha 100 --switch_step 0 --start_ep 0 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 1 --exp_name dn1_2 --overwrite_map 1 --depth_noise_mult 0.1 --print_images 0 --alpha 100 --switch_step 0 --start_ep 100 --end_ep 200 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 1 --exp_name dn1_3 --overwrite_map 1 --depth_noise_mult 0.1 --print_images 0 --alpha 100 --switch_step 0 --start_ep 200 --end_ep 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 1 --exp_name dn1_4 --overwrite_map 1 --depth_noise_mult 0.1 --print_images 0 --alpha 100 --switch_step 0 --start_ep 300 --end_ep 400 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 1 --exp_name dn1_5 --overwrite_map 1 --depth_noise_mult 0.1 --print_images 0 --alpha 100 --switch_step 0 --start_ep 400 --end_ep 500 --evaluation $AGENT_EVALUATION_TYPE $@ &
+
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 3 --exp_name dn2_1 --overwrite_map 1 --depth_noise_mult 0.2 --print_images 0 --alpha 100 --switch_step 0 --start_ep 0 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 3 --exp_name dn2_2 --overwrite_map 1 --depth_noise_mult 0.2 --print_images 0 --alpha 100 --switch_step 0 --start_ep 100 --end_ep 200 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 3 --exp_name dn2_3 --overwrite_map 1 --depth_noise_mult 0.2 --print_images 0 --alpha 100 --switch_step 0 --start_ep 200 --end_ep 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 3 --exp_name dn2_4 --overwrite_map 1 --depth_noise_mult 0.2 --print_images 0 --alpha 100 --switch_step 0 --start_ep 300 --end_ep 400 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 3 --exp_name dn2_5 --overwrite_map 1 --depth_noise_mult 0.2 --print_images 0 --alpha 100 --switch_step 0 --start_ep 400 --end_ep 500 --evaluation $AGENT_EVALUATION_TYPE $@ &
+
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 4 --exp_name dn3_1 --overwrite_map 1 --depth_noise_mult 0.3 --print_images 0 --alpha 100 --switch_step 0 --start_ep 0 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 4 --exp_name dn3_2 --overwrite_map 1 --depth_noise_mult 0.3 --print_images 0 --alpha 100 --switch_step 0 --start_ep 100 --end_ep 200 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 4 --exp_name dn3_3 --overwrite_map 1 --depth_noise_mult 0.3 --print_images 0 --alpha 100 --switch_step 0 --start_ep 200 --end_ep 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 4 --exp_name dn3_4 --overwrite_map 1 --depth_noise_mult 0.3 --print_images 0 --alpha 100 --switch_step 0 --start_ep 300 --end_ep 400 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 4 --exp_name dn3_5 --overwrite_map 1 --depth_noise_mult 0.3 --print_images 0 --alpha 100 --switch_step 0 --start_ep 400 --end_ep 500 --evaluation $AGENT_EVALUATION_TYPE $@ &
+
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 5 --exp_name dn4_1 --overwrite_map 1 --depth_noise_mult 0.4 --print_images 0 --alpha 100 --switch_step 0 --start_ep 0 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 5 --exp_name dn4_2 --overwrite_map 1 --depth_noise_mult 0.4 --print_images 0 --alpha 100 --switch_step 0 --start_ep 100 --end_ep 200 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 5 --exp_name dn4_3 --overwrite_map 1 --depth_noise_mult 0.4 --print_images 0 --alpha 100 --switch_step 0 --start_ep 200 --end_ep 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 5 --exp_name dn4_4 --overwrite_map 1 --depth_noise_mult 0.4 --print_images 0 --alpha 100 --switch_step 0 --start_ep 300 --end_ep 400 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 5 --exp_name dn4_5 --overwrite_map 1 --depth_noise_mult 0.4 --print_images 0 --alpha 100 --switch_step 0 --start_ep 400 --end_ep 500 --evaluation $AGENT_EVALUATION_TYPE $@ &
+
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 6 --exp_name dn5_1 --overwrite_map 1 --depth_noise_mult 0.5 --print_images 0 --alpha 100 --switch_step 0 --start_ep 0 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 6 --exp_name dn5_2 --overwrite_map 1 --depth_noise_mult 0.5 --print_images 0 --alpha 100 --switch_step 0 --start_ep 100 --end_ep 200 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 6 --exp_name dn5_3 --overwrite_map 1 --depth_noise_mult 0.5 --print_images 0 --alpha 100 --switch_step 0 --start_ep 200 --end_ep 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 6 --exp_name dn5_4 --overwrite_map 1 --depth_noise_mult 0.5 --print_images 0 --alpha 100 --switch_step 0 --start_ep 300 --end_ep 400 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_slam.py -v 0 --sem_gpu_id 6 --exp_name dn5_5 --overwrite_map 1 --depth_noise_mult 0.5 --print_images 0 --alpha 100 --switch_step 0 --start_ep 400 --end_ep 500 --evaluation $AGENT_EVALUATION_TYPE $@ &
+
+
+
+
+# python Stubborn/collect_slam.py -v 0 --sem_gpu_id 1 --exp_name gridslam0h --print_images 0 --alpha 100 --switch_step 0 --start_ep 0 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect_slam.py -v 0 --sem_gpu_id 0 --exp_name gridslam1n --print_images 0 --alpha 100 --switch_step 0 --start_ep 100 --end_ep 200 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect_slam.py -v 0 --sem_gpu_id 1 --exp_name gridslam2h --print_images 0 --alpha 100 --switch_step 0 --start_ep 200 --end_ep 300 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect_slam.py -v 0 --sem_gpu_id 1 --exp_name gridslam3h --print_images 0 --alpha 100 --switch_step 0 --start_ep 300 --end_ep 400 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect_slam.py -v 0 --sem_gpu_id 1 --exp_name gridslam4nnn --print_images 0 --alpha 100 --switch_step 0 --start_ep 400 --end_ep 500 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
 # python Stubborn/collect_slam.py -v 0 --sem_gpu_id 5 --exp_name icpslam0 --icp_refine 1 --alpha 100 --switch_step 0 --start_ep 0 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect_slam.py -v 0 --sem_gpu_id 5 --exp_name icpslam1 --icp_refine 1 --alpha 100 --switch_step 0 --start_ep 100 --end_ep 200 --evaluation $AGENT_EVALUATION_TYPE $@ &

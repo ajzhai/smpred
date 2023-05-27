@@ -31,6 +31,7 @@ def main():
     
     config_paths = '/challenge_objectnav2022noisy.local.rgbd.yaml'
     config = habitat.get_config(config_paths)
+    
     config.defrost()
     config.SEED = 100
     # config.ENVIRONMENT.ITERATOR_OPTIONS.SHUFFLE = False
@@ -38,6 +39,7 @@ def main():
     config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_STEPS = -1
     config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 1
     config.DATASET.SPLIT = 'val'
+    config.SIMULATOR.DEPTH_SENSOR.NOISE_MODEL_KWARGS.noise_multiplier = args_2.depth_noise_mult
     config.freeze()
     print(config.DATASET.SPLIT)
     
@@ -144,8 +146,8 @@ def main():
                 sspls.append(metrics['softspl'])
                 epls.append(step_i)
                 stats = np.array([succs, spls, dtgs, sspls, epls])
-                # if args_2.exp_name != 'debug':
-                np.save('data/lm/logged_metrics_smp_' + args_2.exp_name + '_500.npy', stats)
+                if 'debug' not in args_2.exp_name:
+                    np.save('data/lm/logged_metrics_smp_' + args_2.exp_name + '_500.npy', stats)
                 print(metrics)
                 print(np.mean(stats, axis=1))
                 # np.save('data/tmp/end%03d.npy' % count_episodes, observations['rgb'])
