@@ -215,12 +215,12 @@ def grid_register(source_rgbd_image, target_rgbd_image, action, intrinsic, devic
     
     best_fitness = 0
     best_trans = init_trans
-    for ang_deg in (np.arange(20, 40, 1) if action in [2, 3] else [ -4, -2, 0, 2, 4]):
-        for zdist in (np.arange(0.0, 0.4, 0.02) if action == 1 else [-0.04, -0.02, 0, 0.02, 0.04]):
-            for xdist in (np.arange(-0.08, 0.081, 0.04) if action == 1 else [-0.04, -0.02, 0, 0.02, 0.04]):
-    # for ang_deg in (np.arange(25, 35, 0.25) if action in [2, 3] else [ -2, -1, 0, 1, 2]):
-    #     for zdist in (np.arange(0.0, 0.31, 0.01) if action == 1 else [0]):
-    #         for xdist in (np.arange(0, 0.01, 0.01) if action == 1 else [0]):
+    #for ang_deg in (np.arange(20, 40, 1) if action in [2, 3] else [ -4, -2, 0, 2, 4]):
+    #    for zdist in (np.arange(0.0, 0.4, 0.02) if action == 1 else [-0.04, -0.02, 0, 0.02, 0.04]):
+    #        for xdist in (np.arange(-0.08, 0.081, 0.04) if action == 1 else [-0.04, -0.02, 0, 0.02, 0.04]):
+    for ang_deg in (np.arange(25, 35, 0.25) if action in [2, 3] else [ -2, -1, 0, 1, 2]):
+        for zdist in (np.arange(0.0, 0.31, 0.01) if action == 1 else [0]):
+            for xdist in (np.arange(0, 0.01, 0.01) if action == 1 else [0]):
                 
                 trans = np.eye(4)
                 trans[2, 3] = -zdist
