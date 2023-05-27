@@ -36,6 +36,7 @@ def main():
     config.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_EPISODES = 1
     config.DATASET.SPLIT = 'val'
     config.freeze()
+    print(config.SIMULATOR.DEPTH_SENSOR)
     print(config.DATASET.SPLIT)
     
     nav_agent = SMPAgent(args=args_2,task_config=config)
@@ -109,8 +110,8 @@ def main():
                 sspls.append(metrics['softspl'])
                 epls.append(step_i)
                 stats = np.array([succs, spls, dtgs, sspls, epls])
-                # if args_2.exp_name != 'debug':
-                np.save('data/lm/logged_metrics_smp_' + args_2.exp_name + '_500.npy', stats)
+                if 'debug' not in args_2.exp_name:
+                    np.save('data/lm/logged_metrics_smp_' + args_2.exp_name + '_500.npy', stats)
                 print(metrics)
                 print(np.mean(stats, axis=1))
                 # np.save('data/tmp/end%03d.npy' % count_episodes, observations['rgb'])

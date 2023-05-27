@@ -604,7 +604,7 @@ class Agent_State:
             trav[self.helper.collision_map == 1] = 0     
             trav[self.helper.visited_vis == 1] = 1
             
-            traversible_ma = ma.masked_values(trav * 1, 0)
+            traversible_ma = ma.masked_values(trav * 1, 0)  # masked array
             traversible_ma[np.clip(loc_r + self.lmb[0], a_min=0, a_max=self.full_w-1), 
                            np.clip(loc_c + self.lmb[2], a_min=0, a_max=self.full_h-1)] = 0
             dd = skfmm.distance(traversible_ma, dx=1)
@@ -612,6 +612,13 @@ class Agent_State:
             dd[np.where(dd == np.max(dd))] = np.inf
             #dd[np.where(dd < 100)] = np.inf
             #dd_wt = 20./ (np.clip(dd, a_min=20, a_max=None)) 
+            
+            if args.use_edw:
+                xv, yv = np.meshgrid(range(self.full_w), range(self.full_h))
+                dd = np.sqrt((xv - np.clip(loc_r + self.lmb[0], a_min=0, a_max=self.full_w-1))**2 + 
+                             (yv - np.clip(loc_c + self.lmb[2], a_min=0, a_max=self.full_h-1))**2)
+                dd[trav == 0] = np.inf 
+            
             dd_wt = np.exp(-dd / args.alpha)[self.lmb[0]:self.lmb[1], self.lmb[2]:self.lmb[3]]
             
             if np.sum(dd_wt) < 10 and self.dd_wt is not None:  # stuck inside obstacle

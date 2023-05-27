@@ -198,11 +198,12 @@ class Semantic_Mapping(nn.Module):
         # new_exp = translated[0][1] > 0
         # map_pred[0][agent_states.goal_cat + 4][new_exp] = translated[0][agent_states.goal_cat + 4][new_exp]
         
-        if self.args.overwrite_map:
+        if self.args.overwrite_map == 2:
             new_exp = translated[0][1] > 0
             map_pred[0][:, new_exp] = translated[0][:, new_exp]
-        new_exp = translated[0][1] > 0
-        map_pred[0][0][new_exp] = ( maps_last[0][0][new_exp] +  translated[0][0][new_exp]) / 2.
+        elif self.args.overwrite_map == 1:
+            new_exp = translated[0][1] > 0
+            map_pred[0][0][new_exp] = ( maps_last[0][0][new_exp] +  translated[0][0][new_exp]) / 2.
         # old_exp = maps_last[0][1] > 0.5
         # map_pred[0][:, old_exp] = maps_last[0][:, old_exp]
         return fp_map_pred[0], map_pred[0], pose_pred[0], current_poses[0]
