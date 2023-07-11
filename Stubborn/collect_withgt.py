@@ -114,7 +114,7 @@ def main():
                 epls.append(step_i)
                 stats = np.array([succs, spls, dtgs, sspls, epls])
                 # np.save('data/tmp/logged_metrics_smp_a%04d.npy' % args_2.alpha, stats)
-                if args_2.exp_name != 'debug':
+                if 'debug' not in args_2.exp_name:
                     np.save('data/lm/logged_metrics_smp_' + args_2.exp_name + '_500.npy', stats)
                 print(metrics)
                 # np.save('data/tmp/end%03d.npy' % count_episodes, observations['rgb'])

@@ -476,7 +476,7 @@ class Agent_State:
         r, c = locs[1], locs[0]
         loc_r, loc_c = [int(r * 100.0 / args.map_resolution),
                         int(c * 100.0 / args.map_resolution)]
-        traj_rad = 1
+        traj_rad = 2
         self.local_map[2:4, loc_r - traj_rad:loc_r + traj_rad + 1, loc_c - traj_rad:loc_c + traj_rad + 1] = 1.
 
         # Explored under the agent
