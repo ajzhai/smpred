@@ -6,7 +6,8 @@
 #python Stubborn/collect_mp3d.py --dump_location ./data/tmp --exp_name vis_mp3d --print_images 1 --start_ep 7 --end_ep 8 --evaluation $AGENT_EVALUATION_TYPE $@  # Stubborn (rednet)
 
 # python Stubborn/collect_withgt.py --sem_gpu_id 0 --exp_name debug_gt --print_images 1 --alpha 100 --start_ep 14 --end_ep 15 --evaluation $AGENT_EVALUATION_TYPE $@ &
-python Stubborn/collect.py --sem_gpu_id 0 --exp_name vis_seed100 --print_images 1 --alpha 100 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ &
+# python Stubborn/collect.py --sem_gpu_id 0 --exp_name vis_seed100 --print_images 1 --alpha 100 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ &
+python Stubborn/collect_seg.py --sem_gpu_id 0 --exp_name segnewval --print_images 0 --evaluation $AGENT_EVALUATION_TYPE $@ &
 
 # python Stubborn/collect_slam.py -v 0 --sem_gpu_id 1 --exp_name dn1_1 --overwrite_map 1 --depth_noise_mult 0.1 --print_images 0 --alpha 100 --switch_step 0 --start_ep 0 --end_ep 100 --evaluation $AGENT_EVALUATION_TYPE $@ &
 # python Stubborn/collect_slam.py -v 0 --sem_gpu_id 1 --exp_name dn1_2 --overwrite_map 1 --depth_noise_mult 0.1 --print_images 0 --alpha 100 --switch_step 0 --start_ep 100 --end_ep 200 --evaluation $AGENT_EVALUATION_TYPE $@ &

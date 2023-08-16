@@ -29,6 +29,8 @@ def shuffle_episodes(env, shuffle_interval):
 def main():
     args_2 = get_args()
     args_2.only_explore = 1  ########## whether to NOT go for goal detections 
+    args_2.switch_step = 999
+    args_2.global_downscaling = 4
     
     config_paths = os.environ["CHALLENGE_CONFIG_FILE"]
     config = habitat.get_config(config_paths)
@@ -55,6 +57,8 @@ def main():
 
     scene_visits = {}
     
+    os.makedirs('data/segnew/%s/sem' % config.DATASET.SPLIT, exist_ok=True)
+    os.makedirs('data/segnew/%s/rgb' % config.DATASET.SPLIT, exist_ok=True)
     count_episodes = 0
     saved = 0
     while count_episodes < num_episodes:
@@ -64,9 +68,11 @@ def main():
         annots = hab_env.sim.semantic_annotations()
         instance_id_to_label_id = {int(obj.id.split("_")[-1]): obj.category.index() for obj in annots.objects}
         # for obj in annots.objects:
-        #     print(obj.category.index(), obj.category.name())
+        #     print(dir(obj))
+        #     print(obj.id, obj.semantic_id, obj.category.index(), obj.category.name())
                 
         instance_id_to_cat_name = {int(obj.id.split("_")[-1]): obj.category.name() for obj in annots.objects}
+        instance_id_to_obj = {int(obj.id.split("_")[-1]): obj for obj in annots.objects}
         scene = hab_env.current_episode.scene_id
         if len(observations.keys()) < 6: 
             scene_visits[scene] = 0
@@ -88,10 +94,6 @@ def main():
                 sys.stdout.flush()
                 action = nav_agent.act(observations)
                 observations = hab_env.step(action)
-                # cv2.imwrite('./data/tmp/rgb/rgb%d.png' % step_i, observations['rgb'][:, :, ::-1])
-                # if step_i in range(21, 32):
-                #     #print(step_i, observations['gps'], observations['compass'])
-                #     np.save('data/tmp/rgb%03d.npy' % step_i, observations['rgb'])
                           
                 if step_i % 100 == 0:
                     print('\n\n episode %d, step %d' % (count_episodes, step_i))
@@ -101,26 +103,33 @@ def main():
                 sem_obs = observations['semantic']
                 o_lst = []
                 for o_i, o_id in enumerate(np.unique(sem_obs)):
-                    o_cat = instance_id_to_cat_name[o_id]
-                    if o_cat in raw_name_to_mpcat40:
-                        o_cat = raw_name_to_mpcat40[o_cat]
-                    else:
-                        continue
-                    if o_cat in TO_COLLECT:
-                        o_dict = {}
-                        #o_dict['cat_id'] = o_cat
-                        o_dict['cat'] = o_cat #mpcat40_labels[o_cat]
+                    # o_cat = instance_id_to_cat_name[o_id]
+                    # if o_cat in raw_name_to_mpcat40:
+                    #     o_cat = raw_name_to_mpcat40[o_cat]
+                    # else:
+                    #     continue
+                    # if o_cat in TO_COLLECT:
+                    
+                    obj_info = instance_id_to_obj[o_id]
+                    o_dict = {}
+                    #o_dict['cat_id'] = o_cat
+                    o_dict['full_id'] = obj_info.id
+                    o_dict['category_id'] = obj_info.category.index()
+                    o_dict['instance_id'] = obj_info.semantic_id
+                    o_dict['category_name'] = obj_info.category.name()
+                    # o_dict['cat'] = o_cat #mpcat40_labels[o_cat]
+                    if o_dict['category_name'] not in ['wall', 'floor', 'ceiling', 'Unknown']:
                         o_dict['idxs'] = np.where(sem_obs == o_id)
+                    
                         o_lst.append(o_dict)
                 
-                pickle.dump(o_lst, open('data/seg/%s/sem/%03d_%03d.pkl' % (config.DATASET.SPLIT, count_episodes, step_i), 'wb'))
                 
-                cv2.imwrite('data/seg/%s/rgb/%03d_%03d.png' % (config.DATASET.SPLIT, count_episodes, step_i), 
+                pickle.dump(o_lst, open('data/segnew/%s/sem/%03d_%03d.pkl' % (config.DATASET.SPLIT, count_episodes, step_i), 'wb'))
+                
+                cv2.imwrite('data/segnew/%s/rgb/%03d_%03d.png' % (config.DATASET.SPLIT, count_episodes, step_i), 
                             observations['rgb'][:, :, ::-1].astype(np.uint8))
-                # if args_2.print_images:
-                #     cv2.imwrite('./data/tmp/rgb/rgb%d.png' % count_episodes, observations['rgb'])
-                saved += 1
                 
+                saved += 1
                 step_i += 1
                 
 

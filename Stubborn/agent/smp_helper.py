@@ -688,7 +688,7 @@ class Agent_Helper:
 
         sem_map[vis_mask] = 3
 
-        selem = skimage.morphology.disk(1)
+        selem = skimage.morphology.disk(4)
         goal_mat = 1 - skimage.morphology.binary_dilation(
             goal, selem) != True
         #goal_mat = goal
@@ -772,7 +772,7 @@ class Agent_Helper:
                 dump_dir, self.rank, self.episode_no - 1,
                 self.rank, self.episode_no - 1, self.timestep)
 
-            cv2.imwrite(fn, self.vis_image, [cv2.IMWRITE_JPEG_QUALITY, 100])
+            cv2.imwrite(fn, self.vis_image, [cv2.IMWRITE_JPEG_QUALITY, 80])
             fn2 = '{}/episodes/thread_{}/eps_{}/{}-{}-Vis-{}.jpg'.format(
                 dump_dir, self.rank+1, self.episode_no,
                 self.rank, self.episode_no, self.timestep)
